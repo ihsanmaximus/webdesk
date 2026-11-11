@@ -43,3 +43,15 @@
 @media(min-width:701px) and (max-width:1100px){.rlc-activity-module .ram-grid{grid-template-columns:3fr 5fr 4fr;gap:14px}.rlc-activity-module .ram-news-thumb{width:82px;height:70px}.rlc-activity-module .ram-stat{padding:11px 10px;gap:9px}.rlc-activity-module .ram-stat-box{width:48px;height:52px;font-size:19px}.rlc-activity-module .ram-stat-name{font-size:13px}.rlc-activity-module .ram-stat-desc{font-size:10px}.rlc-activity-module .ram-event-card{padding:14px}.rlc-activity-module .ram-event-row{padding:9px}.rlc-activity-module .ram-event-name{font-size:11px}}
 @media(max-width:700px){.rlc-activity-module{padding:42px 16px}.rlc-activity-module .ram-grid{grid-template-columns:1fr;gap:26px}.rlc-activity-module .ram-grid>section:last-child{grid-column:auto}.rlc-activity-module .ram-title{font-size:27px}.rlc-activity-module .ram-event-list{grid-template-columns:1fr}.rlc-activity-module .ram-news-thumb{width:96px;height:76px}.rlc-activity-module .ram-stat-box{width:58px;height:58px;font-size:22px}}
 @media(max-width:380px){.rlc-activity-module .ram-news-item{gap:10px;padding:12px}.rlc-activity-module .ram-news-thumb{width:82px;height:68px}.rlc-activity-module .ram-news-headline{font-size:12px}}
+
+/* User-approved visual correction: no module title, compact two-event card */
+.rlc-activity-module .ram-event-card{background:#7dd3fc;border:1px solid #38bdf8;color:#111827;box-shadow:0 8px 20px -8px rgba(15,35,71,.18)}
+.rlc-activity-module .ram-event-header{border-bottom-color:rgba(15,35,71,.2)}
+.rlc-activity-module .ram-event-header-left{color:#111827}
+.rlc-activity-module .ram-event-header-left span:first-child{color:#111827}
+.rlc-activity-module .ram-event-badge{background:#fbbf24;color:#111827;border-color:#d97706}
+.rlc-activity-module .ram-event-row{background:rgba(255,255,255,.48);border-color:rgba(15,35,71,.18)}
+.rlc-activity-module .ram-event-date{color:#0f2347}
+.rlc-activity-module .ram-event-category{color:#334155}
+.rlc-activity-module .ram-event-name{color:#111827}
+.rlc-activity-module .ram-event-cta{background:#f59e0b;color:#111827}
