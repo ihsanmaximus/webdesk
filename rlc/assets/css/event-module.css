@@ -106,3 +106,16 @@
   height:auto;
   min-height:0;
 }
+
+/* Isolate nested module sections from the site's global section{padding:...} rule.
+   This prevents large artificial vertical gaps when the columns stack on mobile. */
+.rlc-activity-module .ram-grid > section{
+  padding:0;
+  margin:0;
+  min-width:0;
+}
+@media(max-width:700px){
+  .rlc-activity-module .ram-grid{
+    gap:24px;
+  }
+}
