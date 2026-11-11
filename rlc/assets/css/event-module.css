@@ -67,3 +67,31 @@
 .rlc-activity-module .ram-event-name{color:#101827}
 .rlc-activity-module .ram-event-cta{background:#f59e0b;color:#101827}
 .rlc-activity-module .ram-event-cta:hover{background:#fbbf24}
+
+/* Alignment correction: align Upcoming Events card with Liputan Kegiatan */
+@media(min-width:701px){
+  .rlc-activity-module .ram-grid>section:nth-child(3){
+    display:flex;
+    flex-direction:column;
+  }
+  .rlc-activity-module .ram-grid>section:nth-child(3) .ram-event-card{
+    flex:1 1 auto;
+    height:auto;
+    min-height:0;
+    justify-content:space-between;
+  }
+}
+/* Replace yellow accents with a calm blue accent */
+.rlc-activity-module .ram-event-badge{
+  background:#244A73;
+  color:#fff;
+  border:1px solid #1D3C5D;
+}
+.rlc-activity-module .ram-event-date{color:#183B5B}
+.rlc-activity-module .ram-event-cta{
+  background:#244A73;
+  color:#fff;
+}
+.rlc-activity-module .ram-event-cta:hover{
+  background:#1D3C5D;
+}
