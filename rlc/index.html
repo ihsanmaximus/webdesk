@@ -80,6 +80,32 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
 @media(max-width:900px){.hero-visual{min-height:250px}}
 @media(max-width:680px){.hero-grid{padding:14px 0 10px}.hero-visual{min-height:210px}}
 
+
+/* RLC Testimonials — scoped component styles */
+.rlc-testimonials{padding:58px 0 48px;background:linear-gradient(120deg,#eaf2fb 0%,#e3edf8 52%,#edf3fa 100%);overflow:hidden}
+.rlc-testimonials *{box-sizing:border-box}
+.rlct-wrap{width:min(1380px,calc(100% - 64px));margin:0 auto}
+.rlct-heading{text-align:center;margin:0 auto 28px}
+.rlct-badge{display:inline-flex;align-items:center;justify-content:center;padding:6px 17px;border-radius:999px;background:#0d8490;color:#fff;font-size:12px;font-weight:800;letter-spacing:.07em}
+.rlct-heading h2{margin:12px 0 10px;color:#10264a;font-family:Georgia,"Times New Roman",serif;font-size:clamp(25px,3vw,44px);font-weight:700;line-height:1.16}
+.rlct-heading p{margin:0;color:#1f2937;font-size:16px;line-height:1.5}
+.rlct-carousel{display:flex;align-items:center;gap:14px}
+.rlct-viewport{width:100%;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x mandatory;scroll-behavior:smooth}
+.rlct-viewport::-webkit-scrollbar{display:none}
+.rlct-track{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px}
+.rlct-card{min-width:0;min-height:466px;padding:26px 18px 22px;border-radius:18px;background:#fff;box-shadow:0 8px 16px rgba(15,35,62,.16);display:flex;flex-direction:column;align-items:center;text-align:center;scroll-snap-align:start}
+.rlct-avatar{width:194px;height:194px;max-width:100%;border-radius:50%;object-fit:cover;background:#e5e7eb}
+.rlct-stars{margin:14px 0 10px;color:#d99a16;font-size:25px;letter-spacing:1px;line-height:1}
+.rlct-card blockquote{margin:0 0 18px;color:#111827;font-size:16px;line-height:1.48;flex:1}
+.rlct-card h3{margin:0;color:#10264a;font-size:17px;font-weight:800;line-height:1.35}
+.rlct-origin{margin:4px 0 0;color:#6b7280;font-size:14px}
+.rlct-arrow{flex:0 0 36px;width:36px;height:36px;border:1px solid #d8e1eb;border-radius:9px;background:rgba(255,255,255,.8);color:#526579;font-size:25px;line-height:1;cursor:pointer;box-shadow:0 2px 5px #102f5d12}
+.rlct-arrow:hover{background:#fff;color:#102f5d}
+.rlct-dots{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:28px}
+.rlct-dots button{width:9px;height:9px;border:0;border-radius:99px;background:#c5d0dc;padding:0;cursor:pointer}
+.rlct-dots button.is-active{width:32px;background:#64748b}
+@media(max-width:1100px){.rlct-track{grid-template-columns:repeat(5, minmax(220px,1fr))}.rlct-card{min-height:440px}.rlct-avatar{width:170px;height:170px}}
+@media(max-width:640px){.rlc-testimonials{padding:42px 0 34px}.rlct-wrap{width:calc(100% - 28px)}.rlct-heading{margin-bottom:22px}.rlct-heading h2{font-size:27px}.rlct-heading p{font-size:14px}.rlct-desktop-break{display:none}.rlct-carousel{gap:7px}.rlct-arrow{flex-basis:30px;width:30px;height:30px;font-size:21px}.rlct-viewport{padding:3px 1px 12px}.rlct-track{grid-template-columns:repeat(5,minmax(245px,1fr));gap:14px}.rlct-card{min-height:420px;padding:22px 18px 20px}.rlct-avatar{width:170px;height:170px}.rlct-card blockquote{font-size:15px}.rlct-card h3{font-size:16px}}
 </style>
 <link rel="stylesheet" href="assets/css/event-module.css">
 </head>
@@ -149,6 +175,59 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
 </div><p class="catalog-note">*Contoh konten demonstrasi, bukan pengumuman jadwal atau penawaran kelas yang sedang dibuka.</p></div></section>
 
 <section id="institusi"><div class="wrap b2b"><div class="b2b-photo"><div class="b2b-stamp"><b>Program untuk institusi</b><small>Disusun berdasarkan kebutuhan tim dan organisasi.</small></div></div><div class="b2b-copy"><span class="eyebrow">Institutional learning</span><h2>Bangun kompetensi tim. Rancang pelatihan bersama RLC.</h2><p>Rumah sakit, klinik, Puskesmas, dan institusi kesehatan dapat menyampaikan kebutuhan pengembangan SDM untuk dibahas menjadi program pelatihan yang sesuai.</p><div class="b2b-points"><div class="b2b-point"><span class="check">✓</span><span>Identifikasi kebutuhan kompetensi dan sasaran peserta.</span></div><div class="b2b-point"><span class="check">✓</span><span>Diskusi topik, format, metode, dan rencana pelaksanaan.</span></div><div class="b2b-point"><span class="check">✓</span><span>Penawaran program institusi berdasarkan ruang lingkup yang disepakati.</span></div></div><button class="btn" data-open="In-house training institusi">Konsultasikan Kebutuhan Institusi →</button></div></div></section>
+<section class="rlc-testimonials" id="testimoni" aria-label="Testimoni alumni RLC">
+  <div class="rlct-wrap">
+    <header class="rlct-heading">
+      <span class="rlct-badge">TESTIMONI</span>
+      <h2>Apa Kata Alumni Rifdaira Learning Center?</h2>
+      <p>Cerita sukses dan pengalaman langsung dari para dokter, perawat, dan tenaga medis<br class="rlct-desktop-break"> yang telah mengikuti pelatihan kami.</p>
+    </header>
+    <div class="rlct-carousel">
+      <button class="rlct-arrow rlct-prev" type="button" aria-label="Testimoni sebelumnya">‹</button>
+      <div class="rlct-viewport">
+        <div class="rlct-track">
+          <article class="rlct-card">
+            <img class="rlct-avatar" src="https://i.pravatar.cc/240?img=12" alt="Alumni dokter">
+            <div class="rlct-stars" aria-label="5 dari 5 bintang">★★★★★</div>
+            <blockquote>“Pelatihan ACLS di RLC sangat profesional dan aplikatif. Instrukturya sangat berpengalaman.”</blockquote>
+            <h3>dr. Ahmad Fauzi, Sp.JP</h3><p class="rlct-origin">RSUD Pasar Minggu, Jakarta</p>
+          </article>
+          <article class="rlct-card">
+            <img class="rlct-avatar" src="https://i.pravatar.cc/240?img=47" alt="Alumni perawat">
+            <div class="rlct-stars" aria-label="5 dari 5 bintang">★★★★★</div>
+            <blockquote>“Materi BTCLS sangat terstruktur dan mudah dipahami. Fasilitas praktik sangat memadai!”</blockquote>
+            <h3>Ns. Indah Lestari, S.Kep</h3><p class="rlct-origin">RS Sentosa</p>
+          </article>
+          <article class="rlct-card">
+            <img class="rlct-avatar" src="https://i.pravatar.cc/240?img=14" alt="Alumni dokter">
+            <div class="rlct-stars" aria-label="5 dari 5 bintang">★★★★★</div>
+            <blockquote>“Sangat terbantu dengan Workshop USG &amp; ANC. Instrukturya sabar dan telaten membimbing.”</blockquote>
+            <h3>dr. Rian Pratama</h3><p class="rlct-origin">Klinik Pratama Medika</p>
+          </article>
+          <article class="rlct-card">
+            <img class="rlct-avatar" src="https://i.pravatar.cc/240?img=女" alt="Alumni tenaga kesehatan">
+            <div class="rlct-stars" aria-label="5 dari 5 bintang">★★★★★</div>
+            <blockquote>“Pelatihan BHD &amp; PPI di RLC sangat interaktif. Sangat merekomendasikan untuk tim medis.”</blockquote>
+            <h3>Ns. Sri Wahyuni</h3><p class="rlct-origin">Puskesmas Depok</p>
+          </article>
+          <article class="rlct-card">
+            <img class="rlct-avatar" src="https://i.pravatar.cc/240?img=44" alt="Alumni dokter">
+            <div class="rlct-stars" aria-label="5 dari 5 bintang">★★★★★</div>
+            <blockquote>“Manajemen pelatihan yang sangat tertib, materi up-to-date, dan sertifikasi cepat diproses.”</blockquote>
+            <h3>dr. Alifia Putri</h3><p class="rlct-origin">RSUD Dr. Soetomo</p>
+          </article>
+        </div>
+      </div>
+      <button class="rlct-arrow rlct-next" type="button" aria-label="Testimoni berikutnya">›</button>
+    </div>
+    <div class="rlct-dots" aria-label="Navigasi testimoni">
+      <button class="is-active" type="button" aria-label="Halaman 1"></button>
+      <button type="button" aria-label="Halaman 2"></button>
+      <button type="button" aria-label="Halaman 3"></button>
+    </div>
+  </div>
+</section>
+
 
 <section class="feature-pair" aria-label="Program unggulan dan verifikasi sertifikat"><div class="wrap feature-grid">
 <div class="feature-program"><div class="feature-heading"><span class="eyebrow">Pilihan pembelajaran</span><h2>Program Unggulan RLC</h2><p>Pilihan program pelatihan yang relevan dengan kebutuhan tenaga kesehatan saat ini.</p></div>
@@ -181,5 +260,16 @@ $('#modalClose').addEventListener('click',()=>$('#leadModal').classList.remove('
 $('#leadModal').addEventListener('click',e=>{if(e.target===$('#leadModal'))$('#leadModal').classList.remove('open')});
 $('#leadForm').addEventListener('submit',e=>{e.preventDefault();$('#leadForm').style.display='none';$('#formSuccess').classList.add('show')});
 $('#verifyBtn').addEventListener('click',()=>{const v=$('#verifyCode').value.trim().toUpperCase(),r=$('#verifyResult');r.classList.add('show');if(v==='RLC-DEMO-2026-001'||v==='RLC-DEMO-001'){r.innerHTML='<strong>✓ Contoh dokumen ditemukan (data simulasi)</strong><br>Nama: Peserta Demonstrasi<br>Program: Contoh Pelatihan RLC<br>Status: Contoh data — bukan sertifikat resmi.'}else if(!v){r.textContent='Masukkan kode contoh terlebih dahulu.'}else{r.textContent='Kode tidak ditemukan dalam data demonstrasi. Pastikan kode yang dimasukkan benar.'}});
+</script>
+
+<script>
+(()=>{const root=document.querySelector('.rlc-testimonials');if(!root)return;
+const view=root.querySelector('.rlct-viewport'),track=root.querySelector('.rlct-track'),prev=root.querySelector('.rlct-prev'),next=root.querySelector('.rlct-next'),dots=[...root.querySelectorAll('.rlct-dots button')];
+const step=()=>{const card=track.querySelector('.rlct-card');return card?card.getBoundingClientRect().width+parseFloat(getComputedStyle(track).columnGap||0):260};
+const update=()=>{const max=Math.max(1,view.scrollWidth-view.clientWidth),ratio=view.scrollLeft/max;const active=Math.min(2,Math.round(ratio*2));dots.forEach((d,i)=>d.classList.toggle('is-active',i===active));};
+prev.addEventListener('click',()=>view.scrollBy({left:-step(),behavior:'smooth'}));next.addEventListener('click',()=>view.scrollBy({left:step(),behavior:'smooth'}));
+dots.forEach((d,i)=>d.addEventListener('click',()=>view.scrollTo({left:(view.scrollWidth-view.clientWidth)*(i/2),behavior:'smooth'})));
+view.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update);update();
+})();
 </script>
 </body></html>
