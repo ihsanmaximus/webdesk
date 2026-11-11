@@ -95,3 +95,14 @@
 .rlc-activity-module .ram-event-cta:hover{
   background:#1D3C5D;
 }
+
+/* Shared column-height alignment on desktop, tablet and stacked mobile */
+.rlc-activity-module .ram-grid>section:nth-child(3){
+  display:flex;
+  flex-direction:column;
+}
+.rlc-activity-module .ram-grid>section:nth-child(3) .ram-event-card{
+  flex:1 1 auto;
+  height:auto;
+  min-height:0;
+}
