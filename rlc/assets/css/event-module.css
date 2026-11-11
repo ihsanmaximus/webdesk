@@ -55,3 +55,15 @@
 .rlc-activity-module .ram-event-category{color:#334155}
 .rlc-activity-module .ram-event-name{color:#111827}
 .rlc-activity-module .ram-event-cta{background:#f59e0b;color:#111827}
+
+/* Final agreed treatment: darker sky-blue upcoming panel, black typography */
+.rlc-activity-module .ram-event-card{background:#4A91B8;border:1px solid #36799F;color:#101827;box-shadow:0 8px 20px -8px rgba(15,35,71,.2)}
+.rlc-activity-module .ram-event-header{border-bottom-color:rgba(16,24,39,.22)}
+.rlc-activity-module .ram-event-header-left{color:#101827}
+.rlc-activity-module .ram-event-badge{background:#fbbf24;color:#101827;border-color:#d97706}
+.rlc-activity-module .ram-event-row{background:#D6EAF5;border-color:rgba(15,35,71,.16)}
+.rlc-activity-module .ram-event-date{color:#101827}
+.rlc-activity-module .ram-event-category{color:#334155}
+.rlc-activity-module .ram-event-name{color:#101827}
+.rlc-activity-module .ram-event-cta{background:#f59e0b;color:#101827}
+.rlc-activity-module .ram-event-cta:hover{background:#fbbf24}
