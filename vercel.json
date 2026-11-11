@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/penawaran/rlc/index.html"
+    },
+    {
       "source": "/penawaran/rlc/bab/:slug/",
       "destination": "/penawaran/rlc/index.html"
     },
