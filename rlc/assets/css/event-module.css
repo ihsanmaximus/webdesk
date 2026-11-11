@@ -1,0 +1,45 @@
+/* RLC Activity & Agenda module — scoped styles */
+.rlc-activity-module{background:#f8fafc;color:#0f172a;padding:48px 16px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.5}
+.rlc-activity-module *{box-sizing:border-box}
+.rlc-activity-module .ram-container{max-width:1240px;margin:0 auto}
+.rlc-activity-module .ram-header{margin-bottom:28px;padding-bottom:18px;border-bottom:1px solid #e2e8f0}
+.rlc-activity-module .ram-subtitle{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#0c4a6e;margin-bottom:6px}
+.rlc-activity-module .ram-title{font-size:32px;font-weight:800;letter-spacing:-.02em;color:#0f172a;line-height:1.2}
+.rlc-activity-module .ram-desc{font-size:14px;color:#64748b;margin-top:8px}
+.rlc-activity-module .ram-grid{display:grid;grid-template-columns:3fr 5fr 4fr;gap:24px;align-items:stretch}
+.rlc-activity-module .ram-col-header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:14px}
+.rlc-activity-module .ram-col-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#64748b}
+.rlc-activity-module .ram-col-link{font-size:12px;font-weight:600;color:#0c4a6e;text-decoration:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.rlc-activity-module .ram-numbers{display:flex;flex-direction:column;gap:12px}
+.rlc-activity-module .ram-stat{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:border-color .2s,box-shadow .2s}
+.rlc-activity-module .ram-stat:hover{border-color:#38bdf8;box-shadow:0 4px 12px rgba(14,165,233,.08)}
+.rlc-activity-module .ram-stat-box{width:64px;height:64px;background:#0f2347;color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:800;flex-shrink:0}
+.rlc-activity-module .ram-stat-name{font-size:16px;font-weight:700;color:#0f172a;line-height:1.2}
+.rlc-activity-module .ram-stat-desc{font-size:12px;color:#64748b;margin-top:3px;line-height:1.35}
+.rlc-activity-module .ram-accreditation{background:linear-gradient(135deg,#0c2b5e,#0a192f);border-radius:12px;padding:14px 16px;color:#fff;margin-top:14px;font-size:12px;line-height:1.4;text-align:center}
+.rlc-activity-module .ram-accreditation strong{display:block;color:#7dd3fc;margin-bottom:2px;font-size:12px}
+.rlc-activity-module .ram-news{background:#fff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);display:flex;flex-direction:column}
+.rlc-activity-module .ram-news-item{display:flex;gap:14px;padding:16px;text-decoration:none;color:inherit;border-bottom:1px solid #f1f5f9;transition:background-color .2s;align-items:center}
+.rlc-activity-module .ram-news-item:last-child{border-bottom:0}
+.rlc-activity-module .ram-news-item:hover{background:#f8fafc}
+.rlc-activity-module .ram-news-thumb{width:112px;height:82px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#e2e8f0}
+.rlc-activity-module .ram-news-content{flex:1;min-width:0}
+.rlc-activity-module .ram-news-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.rlc-activity-module .ram-news-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:4px;background:#f1f5f9;color:#475569}
+.rlc-activity-module .ram-news-date{font-size:11px;color:#94a3b8}
+.rlc-activity-module .ram-news-headline{font-size:13px;font-weight:700;color:#1e293b;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.rlc-activity-module .ram-event-card{background:#0d1b33;border:1px solid #1e293b;border-radius:16px;padding:20px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 10px 25px -5px rgba(15,23,42,.3);height:100%;min-height:100%}
+.rlc-activity-module .ram-event-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:12px;border-bottom:1px solid #1e2e4a;margin-bottom:14px}
+.rlc-activity-module .ram-event-header-left{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#cbd5e1}
+.rlc-activity-module .ram-event-badge{font-size:10px;font-weight:700;background:rgba(245,158,11,.2);color:#fbbf24;padding:4px 8px;border-radius:999px;border:1px solid rgba(245,158,11,.3);white-space:nowrap}
+.rlc-activity-module .ram-event-list{display:flex;flex-direction:column;gap:10px}
+.rlc-activity-module .ram-event-row{background:rgba(30,41,59,.6);border:1px solid rgba(51,65,85,.7);border-radius:10px;padding:10px 12px}
+.rlc-activity-module .ram-event-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}
+.rlc-activity-module .ram-event-date{font-size:11px;font-weight:700;color:#fbbf24}
+.rlc-activity-module .ram-event-category{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;text-align:right}
+.rlc-activity-module .ram-event-name{font-size:12px;font-weight:500;color:#f8fafc;line-height:1.4}
+.rlc-activity-module .ram-event-cta{margin-top:16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;background:#f59e0b;color:#0f172a;text-decoration:none;font-size:12px;font-weight:700;padding:12px;border-radius:10px;transition:background-color .2s}
+.rlc-activity-module .ram-event-cta:hover{background:#fbbf24}
+@media(max-width:1100px){.rlc-activity-module .ram-grid{grid-template-columns:1fr 1fr;gap:22px}.rlc-activity-module .ram-grid>section:last-child{grid-column:1/-1}.rlc-activity-module .ram-event-list{display:grid;grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.rlc-activity-module{padding:42px 16px}.rlc-activity-module .ram-grid{grid-template-columns:1fr;gap:26px}.rlc-activity-module .ram-grid>section:last-child{grid-column:auto}.rlc-activity-module .ram-title{font-size:27px}.rlc-activity-module .ram-event-list{grid-template-columns:1fr}.rlc-activity-module .ram-news-thumb{width:96px;height:76px}.rlc-activity-module .ram-stat-box{width:58px;height:58px;font-size:22px}}
+@media(max-width:380px){.rlc-activity-module .ram-news-item{gap:10px;padding:12px}.rlc-activity-module .ram-news-thumb{width:82px;height:68px}.rlc-activity-module .ram-news-headline{font-size:12px}}
