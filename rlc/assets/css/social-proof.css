@@ -1,0 +1,16 @@
+/* RLC social proof / institutional logo strip */
+.rlc-social-proof{background:#F4F7FB;padding:54px 0 48px;border-top:1px solid #E5EBF3;border-bottom:1px solid #E5EBF3}
+.rsp-wrap{width:min(1160px,calc(100% - 44px));margin:0 auto}
+.rsp-heading{text-align:center;max-width:680px;margin:0 auto 27px}
+.rsp-heading .eyebrow{font-size:10px;justify-content:center}
+.rsp-heading h2{font-family:"Plus Jakarta Sans",sans-serif;font-size:clamp(23px,2.7vw,31px);line-height:1.2;letter-spacing:-.8px;color:#142238;margin:10px 0 7px}
+.rsp-heading p{font:400 12px/1.65 "DM Sans",sans-serif;color:#617086;margin:0}
+.rsp-logo-row{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:4px 1px 10px}
+.rsp-logo-row::-webkit-scrollbar{display:none}
+.rsp-logo{height:86px;flex:1 0 0;min-width:150px;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;background:#fff;border:1px solid #E5EBF3;border-radius:11px;box-shadow:0 4px 14px #102f5d07}
+.rsp-kemkes img{display:block;width:min(100%,190px);height:54px;object-fit:contain}
+.rsp-emblem{width:36px;height:36px;flex:0 0 36px;border-radius:50%;display:grid;place-items:center;background:#E7F3F1;color:#08796F;font:800 12px "Plus Jakarta Sans",sans-serif;border:1px solid #CDE5E0}
+.rsp-name{display:block;color:#344760;font:700 11px/1.35 "DM Sans",sans-serif;text-align:left}
+.rsp-name small{display:block;color:#8390A0;font:500 9px/1.4 "DM Sans",sans-serif;margin-top:3px}
+.rsp-disclaimer{text-align:center;font:400 10px/1.5 "DM Sans",sans-serif;color:#8A96A6;margin:14px 0 0}
+@media(max-width:680px){.rlc-social-proof{padding:43px 0 38px}.rsp-wrap{width:calc(100% - 34px)}.rsp-heading{margin-bottom:20px}.rsp-heading h2{font-size:23px}.rsp-logo-row{justify-content:flex-start;gap:10px}.rsp-logo{flex:0 0 156px;min-width:156px;height:76px;padding:10px 12px}.rsp-kemkes{flex-basis:180px}.rsp-kemkes img{height:48px}.rsp-emblem{width:31px;height:31px;flex-basis:31px;font-size:10px}.rsp-name{font-size:10px}.rsp-disclaimer{font-size:9px}}
