@@ -132,6 +132,34 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
   .hero .hero-note{color:#e7effb}
 }
 
+
+/* Desktop hero: use the seminar photo as a full-width background behind the copy */
+@media(min-width:761px){
+  .hero{
+    min-height:560px!important;
+    background:
+      linear-gradient(90deg,rgba(7,27,54,.94) 0%,rgba(7,27,54,.82) 43%,rgba(7,27,54,.30) 100%),
+      url("assets/images/rlc-hero-medical-seminar.png") center 38%/cover no-repeat!important;
+    display:flex!important;
+    align-items:center!important;
+    position:relative;
+  }
+  .hero-photo{display:none!important}
+  .hero-copy-panel{background:transparent!important;width:100%}
+  .hero-grid{
+    display:block!important;
+    min-height:560px!important;
+    padding:72px 0!important;
+    align-content:center;
+  }
+  .hero-grid>div:first-child{max-width:650px}
+  .hero .eyebrow{color:#dceaff}
+  .hero h1{color:#fff;max-width:620px}
+  .hero h1 span{color:#b9d6ff}
+  .hero p{color:#f0f5fc;max-width:590px}
+  .hero .hero-note{color:#e7effb}
+}
+
 </style>
 <link rel="stylesheet" href="assets/css/event-module.css">
 <link rel="stylesheet" href="assets/css/testimonials.css">
