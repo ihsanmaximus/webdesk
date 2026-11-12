@@ -11,6 +11,14 @@
     {
       "source": "/penawaran/rlc/bab/:slug",
       "destination": "/penawaran/rlc/index.html"
+    },
+    {
+      "source": "/live",
+      "destination": "https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/"
+    },
+    {
+      "source": "/live/:path*",
+      "destination": "https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/:path*"
     }
   ]
 }
