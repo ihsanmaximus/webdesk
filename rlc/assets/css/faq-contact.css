@@ -1,0 +1,35 @@
+/* RLC FAQ + Contact — modular section stylesheet */
+.rlc-faq-contact{background:#fff;padding:76px 0 82px;color:#142238}
+.rfc-wrap{width:min(1160px,calc(100% - 44px));margin:0 auto}
+.rfc-grid{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(360px,.96fr);gap:34px;align-items:start}
+.rfc-heading{margin-bottom:24px}
+.rfc-heading .eyebrow,.rfc-contact-card>.eyebrow{font-size:10px}
+.rfc-heading h2,.rfc-contact-card h2{font-family:"Plus Jakarta Sans",sans-serif;font-size:clamp(25px,2.7vw,32px);line-height:1.18;letter-spacing:-.8px;color:#142238;margin:11px 0 9px}
+.rfc-heading p,.rfc-contact-intro{font-size:13px;line-height:1.7;color:#617086;margin:0}
+.rfc-accordion{display:grid;gap:12px}
+.rfc-item{min-width:0}
+.rfc-question{width:100%;display:grid;grid-template-columns:42px minmax(0,1fr);align-items:center;gap:12px;border:0;border-radius:11px;background:#102F5D;color:#fff;padding:10px 16px 10px 10px;text-align:left;min-height:58px;font:700 13px/1.45 "DM Sans",sans-serif;cursor:pointer;transition:background .2s,box-shadow .2s}
+.rfc-question:hover,.rfc-question[aria-expanded="true"]{background:#173F75;box-shadow:0 5px 16px #102f5d20}
+.rfc-plus{width:38px;height:38px;border-radius:9px;background:#fff;color:#102F5D;display:grid;place-items:center;font:500 25px/1 "DM Sans",sans-serif;flex:0 0 auto}
+.rfc-answer{margin:0 0 2px 54px;padding:13px 15px 14px;border:1px solid #E1E8F0;border-top:0;border-radius:0 0 10px 10px;background:#F7F9FC}
+.rfc-answer p{font-size:12px;line-height:1.7;color:#53647b;margin:0}
+.rfc-contact-card{background:#fff;border:1px solid #E1E8F0;border-radius:16px;padding:27px;box-shadow:0 12px 34px #102f5d0b}
+.rfc-contact-card h2{font-size:26px;margin-bottom:8px}
+.rfc-contact-intro{margin-bottom:21px}
+.rfc-form{display:grid;gap:12px}
+.rfc-field{display:grid;gap:6px;min-width:0}
+.rfc-field label{font-size:11px;font-weight:700;color:#344760}
+.rfc-field label span{color:#B54747}
+.rfc-field input,.rfc-field select,.rfc-field textarea{width:100%;min-width:0;border:1px solid #DCE4EF;border-radius:8px;padding:11px 12px;background:#fff;color:#142238;font:400 12px/1.5 "DM Sans",sans-serif;outline:none;transition:border-color .2s,box-shadow .2s}
+.rfc-field textarea{resize:vertical;min-height:82px}
+.rfc-field input::placeholder,.rfc-field textarea::placeholder{color:#9AA6B5}
+.rfc-field input:focus,.rfc-field select:focus,.rfc-field textarea:focus{border-color:#3978D8;box-shadow:0 0 0 3px #3978D81A}
+.rfc-field-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.rfc-submit{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:9px;padding:13px 16px;background:#102F5D;color:#fff;font:700 12px "DM Sans",sans-serif;cursor:pointer;transition:background .2s,transform .2s}
+.rfc-submit:hover:not(:disabled){background:#173F75;transform:translateY(-1px)}
+.rfc-submit:disabled{opacity:.8;cursor:default}
+.rfc-form-note{font-size:10px;line-height:1.55;color:#8390A0;margin:0}
+.rfc-form-success{padding:12px 13px;border-radius:9px;background:#EAF5F1;color:#176B56;font-size:11px;line-height:1.6}
+@media(max-width:900px){.rfc-grid{grid-template-columns:minmax(0,1fr) minmax(320px,.92fr);gap:20px}.rfc-contact-card{padding:22px}.rfc-question{font-size:12px}}
+@media(max-width:680px){.rlc-faq-contact{padding:49px 0 55px}.rfc-wrap{width:min(100% - 34px,560px)}.rfc-grid{grid-template-columns:1fr;gap:29px}.rfc-heading{margin-bottom:19px}.rfc-heading h2{font-size:26px}.rfc-accordion{gap:10px}.rfc-question{grid-template-columns:38px minmax(0,1fr);gap:10px;min-height:55px;padding:8px 12px 8px 8px;font-size:12px}.rfc-plus{width:36px;height:36px;font-size:23px}.rfc-answer{margin-left:46px;padding:11px 12px}.rfc-contact-card{padding:21px;border-radius:13px}.rfc-contact-card h2{font-size:24px}.rfc-field-row{grid-template-columns:1fr;gap:12px}}
+@media(max-width:360px){.rfc-question{font-size:11px}.rfc-contact-card{padding:17px}}
