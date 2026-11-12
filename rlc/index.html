@@ -109,6 +109,15 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
  .hero p{font-size:15px;line-height:1.65}
 }
 
+
+/* Hero crop refinement: shorter desktop frame, subject centered on mobile */
+@media(min-width:761px){
+ .hero{min-height:500px!important;background-position:center 34%!important}
+ .hero-grid{min-height:500px!important;padding:56px 0!important}
+}
+@media(max-width:760px){
+ .hero{background-position:82% center!important}
+}
 </style>
 <link rel="stylesheet" href="assets/css/event-module.css">
 <link rel="stylesheet" href="assets/css/testimonials.css">
