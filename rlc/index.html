@@ -90,9 +90,10 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
 @media(max-width:680px){.brand{gap:12px}.brand-name strong{font-size:21px;letter-spacing:-.65px}.brand-name small{font-size:11px;letter-spacing:.9px}}
 @media(max-width:380px){.brand{gap:9px}.brand-name strong{font-size:18px;letter-spacing:-.55px}.brand-name small{font-size:10px;letter-spacing:.7px}}
 
-/* RLC full-bleed medical seminar hero */
-.hero{min-height:650px;background:linear-gradient(90deg,rgba(8,30,62,.88) 0%,rgba(8,30,62,.68) 46%,rgba(8,30,62,.12) 100%),url("assets/images/rlc-hero-medical-seminar.png") center 38%/cover no-repeat!important;display:flex;align-items:center}
-.hero-grid{display:block!important;min-height:650px!important;padding:90px 0!important}
+/* RLC hero: preserve the complete seminar photograph */
+.hero{min-height:0!important;background:none!important;display:flex;flex-direction:column;align-items:stretch;overflow:hidden}
+.hero-photo{display:block;width:100%;height:auto;object-fit:contain;object-position:center}
+.hero-grid{display:block!important;min-height:0!important;padding:56px 0!important}
 .hero-grid>div:first-child{position:relative;z-index:2;max-width:650px}
 .hero .eyebrow{color:#dceaff}
 .hero h1{color:#fff}
@@ -101,22 +102,12 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
 .hero .hero-note{color:#e7effb}
 .hero .seal{background:#dcebea;color:#08796f}
 .hero-visual{display:none!important}
+.hero-copy-panel{background:linear-gradient(115deg,#0b2549,#153e70);width:100%}
 @media(max-width:760px){
- .hero{min-height:720px;background-position:58% center!important}
- .hero-grid{min-height:720px!important;padding:76px 0 64px!important;display:flex!important;align-items:flex-end}
+ .hero-grid{padding:34px 0 40px!important}
  .hero-grid>div:first-child{max-width:100%}
- .hero h1{font-size:clamp(34px,9vw,48px)}
+ .hero h1{font-size:clamp(32px,8vw,46px)}
  .hero p{font-size:15px;line-height:1.65}
-}
-
-
-/* Hero crop refinement: shorter desktop frame, subject centered on mobile */
-@media(min-width:761px){
- .hero{min-height:500px!important;background-position:center 34%!important}
- .hero-grid{min-height:500px!important;padding:56px 0!important}
-}
-@media(max-width:760px){
- .hero{background-position:72% center!important}
 }
 </style>
 <link rel="stylesheet" href="assets/css/event-module.css">
@@ -128,7 +119,7 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
 <body>
 <header class="nav"><div class="navin"><a class="brand" href="#home" aria-label="Rifdaira Learning Center"><img class="brand-logo" src="assets/images/rlc-logo-navbar.png" alt="Rifdaira Learning Center"><span class="brand-name"><strong>RIFDAIRA</strong><small>LEARNING CENTER</small></span></a><button class="hamb" id="hamb" aria-label="Buka navigasi">☰</button><nav class="navlinks" id="navlinks"><a href="#tentang">About</a><a href="#tim">Tim RLC</a><a href="#event-rlc">Event</a><a href="#program">Program</a><a href="#institusi">Kerjasama</a><a href="#kontak" class="navcta">Hubungi RLC ↗</a></nav></div></header>
 <main>
-<section class="hero" id="home"><div class="wrap hero-grid"><div><span class="eyebrow">Belajar · Bertumbuh · Berdampak</span><h1>Kompetensi Nakes Lebih Kuat, <span>Layanan Kesehatan Lebih Baik.</span></h1><p>Ruang belajar dan pengembangan kompetensi bagi tenaga kesehatan melalui pelatihan, workshop, dan bimbingan teknis yang relevan dengan kebutuhan praktik.</p><div class="hero-actions"><a class="btn" href="#program">Jelajahi Program <span>→</span></a><a class="btn light" href="#institusi">Pelatihan Institusi</a></div><div class="hero-note"><span class="seal">✓</span><span>Institusi pelatihan dengan akreditasi Kementerian Kesehatan RI*</span></div></div><div class="hero-visual"><div class="hero-img"></div><div class="hero-float"><b>Pengembangan kompetensi berkelanjutan</b><span>Temukan program yang sesuai dengan profesi dan kebutuhan pengembangan Anda.</span></div></div></div></section>
+<section class="hero" id="home"><img class="hero-photo" src="assets/images/rlc-hero-medical-seminar.png" alt="Dokter memberikan pengarahan dalam seminar kepada peserta tenaga kesehatan"><div class="hero-copy-panel"><div class="wrap hero-grid"><div><span class="eyebrow">Belajar · Bertumbuh · Berdampak</span><h1>Kompetensi Nakes Lebih Kuat, <span>Layanan Kesehatan Lebih Baik.</span></h1><p>Ruang belajar dan pengembangan kompetensi bagi tenaga kesehatan melalui pelatihan, workshop, dan bimbingan teknis yang relevan dengan kebutuhan praktik.</p><div class="hero-actions"><a class="btn" href="#program">Jelajahi Program <span>→</span></a><a class="btn light" href="#institusi">Pelatihan Institusi</a></div><div class="hero-note"><span class="seal">✓</span><span>Institusi pelatihan dengan akreditasi Kementerian Kesehatan RI*</span></div></div><div class="hero-visual"><div class="hero-img"></div><div class="hero-float"><b>Pengembangan kompetensi berkelanjutan</b><span>Temukan program yang sesuai dengan profesi dan kebutuhan pengembangan Anda.</span></div></div></div></div></section>
 <div class="trustbar"><div class="wrap trustgrid">
 <div class="trustitem"><span class="trusticon"><svg viewBox="0 0 24 24"><path d="m12 3 7 3v5c0 4.5-2.8 7.7-7 10-4.2-2.3-7-5.5-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><div><b>Akreditasi Kemenkes RI*</b><small>Fondasi kredibilitas lembaga</small></div></div>
 <div class="trustitem"><span class="trusticon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M17 8h4M19 6v4M17 15a4 4 0 0 1 4 4v1"/></svg></span><div><b>Lintas Profesi</b><small>Dokter dan tenaga kesehatan</small></div></div>
