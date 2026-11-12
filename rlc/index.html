@@ -81,6 +81,109 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
 @media(max-width:680px){.hero-grid{padding:14px 0 10px}.hero-visual{min-height:210px}}
 
 
+\n/* Header refinement: stacked institutional wordmark */
+.topline{display:none!important}
+.brand{gap:14px;min-width:0}
+.brand-name{display:flex;flex-direction:column;align-items:flex-start;gap:1px;font-family:"DM Sans",sans-serif;white-space:nowrap;line-height:1.05}
+.brand-name strong{display:block;font-size:23px;font-weight:800;letter-spacing:-.7px;color:#102F5D}
+.brand-name small{display:block;font-size:12px;font-weight:800;letter-spacing:1.05px;color:#2456A6}
+@media(max-width:680px){.brand{gap:12px}.brand-name strong{font-size:21px;letter-spacing:-.65px}.brand-name small{font-size:11px;letter-spacing:.9px}}
+@media(max-width:380px){.brand{gap:9px}.brand-name strong{font-size:18px;letter-spacing:-.55px}.brand-name small{font-size:10px;letter-spacing:.7px}}
+
+/* RLC hero: preserve the complete seminar photograph */
+.hero{min-height:0!important;background:none!important;display:flex;flex-direction:column;align-items:stretch;overflow:hidden}
+.hero-photo{display:block;width:100%;height:auto;object-fit:contain;object-position:center}
+.hero-grid{display:block!important;min-height:0!important;padding:56px 0!important}
+.hero-grid>div:first-child{position:relative;z-index:2;max-width:650px}
+.hero .eyebrow{color:#dceaff}
+.hero h1{color:#fff}
+.hero h1 span{color:#b9d6ff}
+.hero p{color:#f0f5fc;max-width:590px}
+.hero .hero-note{color:#e7effb}
+.hero .seal{background:#dcebea;color:#08796f}
+.hero-visual{display:none!important}
+.hero-copy-panel{background:linear-gradient(115deg,#0b2549,#153e70);width:100%}
+@media(max-width:760px){
+ .hero-grid{padding:34px 0 40px!important}
+ .hero-grid>div:first-child{max-width:100%}
+ .hero h1{font-size:clamp(32px,8vw,46px)}
+ .hero p{font-size:15px;line-height:1.65}
+}
+
+/* Mobile refinement: seminar photo becomes the hero background, with copy layered over it */
+@media(max-width:760px){
+  .hero{
+    min-height:640px!important;
+    background:
+      linear-gradient(180deg,rgba(7,27,54,.18) 0%,rgba(7,27,54,.52) 34%,rgba(11,37,73,.97) 78%,#0b2549 100%),
+      url("https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/assets/images/rlc-hero-medical-seminar.png") center center/cover no-repeat!important;
+    display:flex!important;
+    flex-direction:column;
+    justify-content:flex-end;
+  }
+  .hero-photo{display:none!important}
+  .hero-copy-panel{background:transparent!important;width:100%}
+  .hero-grid{display:block!important;padding:230px 0 34px!important;min-height:0!important}
+  .hero-grid>div:first-child{max-width:100%}
+  .hero .eyebrow{color:#dceaff}
+  .hero h1{color:#fff}
+  .hero h1 span{color:#b9d6ff}
+  .hero p{color:#f0f5fc}
+  .hero .hero-note{color:#e7effb}
+}
+
+
+/* Desktop hero: use the seminar photo as a full-width background behind the copy */
+@media(min-width:761px){
+  .hero{
+    min-height:560px!important;
+    background:
+      linear-gradient(90deg,rgba(7,27,54,.94) 0%,rgba(7,27,54,.82) 43%,rgba(7,27,54,.30) 100%),
+      url("https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/assets/images/rlc-hero-medical-seminar.png") center 38%/cover no-repeat!important;
+    display:flex!important;
+    align-items:center!important;
+    position:relative;
+  }
+  .hero-photo{display:none!important}
+  .hero-copy-panel{background:transparent!important;width:100%}
+  .hero-grid{
+    display:block!important;
+    min-height:560px!important;
+    padding:72px 0!important;
+    align-content:center;
+  }
+  .hero-grid>div:first-child{max-width:650px}
+  .hero .eyebrow{color:#dceaff}
+  .hero h1{color:#fff;max-width:620px}
+  .hero h1 span{color:#b9d6ff}
+  .hero p{color:#f0f5fc;max-width:590px}
+  .hero .hero-note{color:#e7effb}
+}
+
+
+/* Mobile hero refinement: bring the speaker into view and reduce empty photo space */
+@media(max-width:760px){
+  .hero{
+    min-height:0!important;
+    background:
+      linear-gradient(180deg,rgba(7,27,54,.10) 0%,rgba(7,27,54,.28) 25%,rgba(7,27,54,.78) 49%,#0b2549 76%,#0b2549 100%),
+      url("https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/assets/images/rlc-hero-medical-seminar.png") 66% top/auto 100% no-repeat!important;
+    background-color:#0b2549!important;
+    display:block!important;
+  }
+  .hero-grid{
+    padding:145px 0 32px!important;
+    min-height:0!important;
+  }
+  .hero-grid>div:first-child{max-width:100%}
+}
+@media(max-width:420px){
+  .hero{
+    background-position:66% top!important;
+  }
+  .hero-grid{padding-top:125px!important}
+}
+
 </style>
 <link rel="stylesheet" href="assets/css/event-module.css">
 <link rel="stylesheet" href="assets/css/testimonials.css">
@@ -89,10 +192,9 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
 <script src="assets/js/faq-contact.js" defer></script>
 </head>
 <body>
-<div class="topline"><div class="wrap"><span><strong>RIFDAIRA LEARNING CENTER</strong> · Pusat Pengembangan Kompetensi Tenaga Kesehatan</span><span>Palembang, Sumatera Selatan</span></div></div>
-<header class="nav"><div class="navin"><a class="brand" href="#home" aria-label="Rifdaira Learning Center"><img class="brand-logo" src="https://webdesk-iq81w0xc5-abufatih551-8678.vercel.app/rlc/assets/images/rlc-logo-navbar.png" alt="Rifdaira Learning Center"></a><button class="hamb" id="hamb" aria-label="Buka navigasi">☰</button><nav class="navlinks" id="navlinks"><a href="#tentang">About</a><a href="#tim">Tim RLC</a><a href="#event-rlc">Event</a><a href="#program">Program</a><a href="#institusi">Kerjasama</a><a href="#kontak" class="navcta">Hubungi RLC ↗</a></nav></div></header>
+<header class="nav"><div class="navin"><a class="brand" href="#home" aria-label="Rifdaira Learning Center"><img class="brand-logo" src="https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/assets/images/rlc-logo-navbar.png" alt="Rifdaira Learning Center"><span class="brand-name"><strong>RIFDAIRA</strong><small>LEARNING CENTER</small></span></a><button class="hamb" id="hamb" aria-label="Buka navigasi">☰</button><nav class="navlinks" id="navlinks"><a href="#tentang">About</a><a href="#tim">Tim RLC</a><a href="#event-rlc">Event</a><a href="#program">Program</a><a href="#institusi">Kerjasama</a><a href="#kontak" class="navcta">Hubungi RLC ↗</a></nav></div></header>
 <main>
-<section class="hero" id="home"><div class="wrap hero-grid"><div><span class="eyebrow">Belajar · Bertumbuh · Berdampak</span><h1>Kompetensi Nakes Lebih Kuat, <span>Layanan Kesehatan Lebih Baik.</span></h1><p>Ruang belajar dan pengembangan kompetensi bagi tenaga kesehatan melalui pelatihan, workshop, dan bimbingan teknis yang relevan dengan kebutuhan praktik.</p><div class="hero-actions"><a class="btn" href="#program">Jelajahi Program <span>→</span></a><a class="btn light" href="#institusi">Pelatihan Institusi</a></div><div class="hero-note"><span class="seal">✓</span><span>Institusi pelatihan dengan akreditasi Kementerian Kesehatan RI*</span></div></div><div class="hero-visual"><div class="hero-img"></div><div class="hero-float"><b>Pengembangan kompetensi berkelanjutan</b><span>Temukan program yang sesuai dengan profesi dan kebutuhan pengembangan Anda.</span></div></div></div></section>
+<section class="hero" id="home"><img class="hero-photo" src="https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/assets/images/rlc-hero-medical-seminar.png" alt="Dokter memberikan pengarahan dalam seminar kepada peserta tenaga kesehatan"><div class="hero-copy-panel"><div class="wrap hero-grid"><div><span class="eyebrow">Belajar · Bertumbuh · Berdampak</span><h1>Kompetensi Nakes Lebih Kuat, <span>Layanan Kesehatan Lebih Baik.</span></h1><p>Ruang belajar dan pengembangan kompetensi bagi tenaga kesehatan melalui pelatihan, workshop, dan bimbingan teknis yang relevan dengan kebutuhan praktik.</p><div class="hero-actions"><a class="btn" href="#program">Jelajahi Program <span>→</span></a><a class="btn light" href="#institusi">Pelatihan Institusi</a></div><div class="hero-note"><span class="seal">✓</span><span>Institusi pelatihan dengan akreditasi Kementerian Kesehatan RI*</span></div></div><div class="hero-visual"><div class="hero-img"></div><div class="hero-float"><b>Pengembangan kompetensi berkelanjutan</b><span>Temukan program yang sesuai dengan profesi dan kebutuhan pengembangan Anda.</span></div></div></div></div></section>
 <div class="trustbar"><div class="wrap trustgrid">
 <div class="trustitem"><span class="trusticon"><svg viewBox="0 0 24 24"><path d="m12 3 7 3v5c0 4.5-2.8 7.7-7 10-4.2-2.3-7-5.5-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><div><b>Akreditasi Kemenkes RI*</b><small>Fondasi kredibilitas lembaga</small></div></div>
 <div class="trustitem"><span class="trusticon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M17 8h4M19 6v4M17 15a4 4 0 0 1 4 4v1"/></svg></span><div><b>Lintas Profesi</b><small>Dokter dan tenaga kesehatan</small></div></div>
@@ -154,6 +256,14 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
 </div><p class="catalog-note">*Contoh konten demonstrasi, bukan pengumuman jadwal atau penawaran kelas yang sedang dibuka.</p></div></section>
 
 <section id="institusi"><div class="wrap b2b"><div class="b2b-photo"><div class="b2b-stamp"><b>Program untuk institusi</b><small>Disusun berdasarkan kebutuhan tim dan organisasi.</small></div></div><div class="b2b-copy"><span class="eyebrow">Institutional learning</span><h2>Bangun kompetensi tim. Rancang pelatihan bersama RLC.</h2><p>Rumah sakit, klinik, Puskesmas, dan institusi kesehatan dapat menyampaikan kebutuhan pengembangan SDM untuk dibahas menjadi program pelatihan yang sesuai.</p><div class="b2b-points"><div class="b2b-point"><span class="check">✓</span><span>Identifikasi kebutuhan kompetensi dan sasaran peserta.</span></div><div class="b2b-point"><span class="check">✓</span><span>Diskusi topik, format, metode, dan rencana pelaksanaan.</span></div><div class="b2b-point"><span class="check">✓</span><span>Penawaran program institusi berdasarkan ruang lingkup yang disepakati.</span></div></div><button class="btn" data-open="In-house training institusi">Konsultasikan Kebutuhan Institusi →</button></div></div></section>
+<section class="feature-pair" aria-label="Program unggulan dan verifikasi sertifikat"><div class="wrap feature-grid">
+<div class="feature-program"><div class="feature-heading"><span class="eyebrow">Pilihan pembelajaran</span><h2>Program Unggulan RLC</h2><p>Pilihan program pelatihan yang relevan dengan kebutuhan tenaga kesehatan saat ini.</p></div>
+<article class="feature-course"><img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=500&q=85" alt="Tenaga kesehatan dalam kegiatan klinis"><div class="feature-course-copy"><span class="course-label">Pelatihan klinis</span><h3>Manajemen Keselamatan Pasien</h3><div class="feature-meta"><span><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M8 21h8M12 18v3"/></svg> Online / Hybrid</span><span>·</span><span><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1"/></svg> Tenaga Kesehatan</span><button class="text-btn" data-course="Manajemen Keselamatan Pasien">Lihat Detail →</button></div></div></article>
+<article class="feature-course"><img src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?auto=format&fit=crop&w=500&q=85" alt="Diskusi peningkatan mutu layanan klinik"><div class="feature-course-copy"><span class="course-label">Manajemen layanan</span><h3>Peningkatan Mutu Layanan Klinik</h3><div class="feature-meta"><span><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M8 21h8M12 18v3"/></svg> Online / Hybrid</span><span>·</span><span><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1"/></svg> Tenaga Kesehatan</span><button class="text-btn" data-course="Peningkatan Mutu Layanan Klinik">Lihat Detail →</button></div></div></article>
+</div>
+<div class="feature-verify" id="verifikasi"><span class="eyebrow">Konsep layanan digital</span><h2>Verifikasi Sertifikat</h2><p>Cek keaslian sertifikat pelatihan RLC secara mandiri dan cepat.</p><div class="verify-form-row"><input id="verifyCode" placeholder="Masukkan nomor sertifikat" aria-label="Nomor sertifikat"><button class="btn" id="verifyBtn">Verifikasi →</button></div><div class="verify-result" id="verifyResult"></div><p class="demo-warning">ⓘ Terhubung dengan database resmi setelah integrasi dan otorisasi RLC disiapkan. Saat ini merupakan simulasi demonstrasi.</p></div>
+</div></section>
+
 <section class="rlc-testimonials" id="testimoni" aria-label="Testimoni alumni RLC">
   <div class="rlct-wrap">
     <header class="rlct-heading">
@@ -166,31 +276,31 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
       <div class="rlct-viewport">
         <div class="rlct-track">
           <article class="rlct-card">
-            <img class="rlct-avatar" src="https://webdesk-iq81w0xc5-abufatih551-8678.vercel.app/rlc/assets/images/rlc-alumni-01.jpg" alt="Alumni dokter">
+            <img class="rlct-avatar" src="https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/assets/images/rlc-alumni-01.jpg" alt="Alumni dokter">
             <div class="rlct-stars" aria-label="5 dari 5 bintang">★★★★★</div>
             <blockquote>“Pelatihan ACLS di RLC sangat profesional dan aplikatif. Instrukturnya sangat berpengalaman.”</blockquote>
             <h3>dr. Ahmad Fauzi, Sp.JP</h3><p class="rlct-origin">RSUD Pasar Minggu, Jakarta</p>
           </article>
           <article class="rlct-card">
-            <img class="rlct-avatar" src="https://webdesk-iq81w0xc5-abufatih551-8678.vercel.app/rlc/assets/images/rlc-alumni-02.jpg" alt="Alumni perawat">
+            <img class="rlct-avatar" src="https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/assets/images/rlc-alumni-02.jpg" alt="Alumni perawat">
             <div class="rlct-stars" aria-label="5 dari 5 bintang">★★★★★</div>
             <blockquote>“Materi BTCLS sangat terstruktur dan mudah dipahami. Fasilitas praktik sangat memadai!”</blockquote>
             <h3>Ns. Indah Lestari, S.Kep</h3><p class="rlct-origin">RS Sentosa</p>
           </article>
           <article class="rlct-card">
-            <img class="rlct-avatar" src="https://webdesk-iq81w0xc5-abufatih551-8678.vercel.app/rlc/assets/images/rlc-alumni-03.jpg" alt="Alumni dokter">
+            <img class="rlct-avatar" src="https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/assets/images/rlc-alumni-03.jpg" alt="Alumni dokter">
             <div class="rlct-stars" aria-label="5 dari 5 bintang">★★★★★</div>
             <blockquote>“Sangat terbantu dengan Workshop USG &amp; ANC. Instrukturya sabar dan telaten membimbing.”</blockquote>
             <h3>dr. Rian Pratama</h3><p class="rlct-origin">Klinik Pratama Medika</p>
           </article>
           <article class="rlct-card">
-            <img class="rlct-avatar" src="https://webdesk-iq81w0xc5-abufatih551-8678.vercel.app/rlc/assets/images/rlc-alumni-04.jpg" alt="Alumni tenaga kesehatan">
+            <img class="rlct-avatar" src="https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/assets/images/rlc-alumni-04.jpg" alt="Alumni tenaga kesehatan">
             <div class="rlct-stars" aria-label="5 dari 5 bintang">★★★★★</div>
             <blockquote>“Pelatihan BHD &amp; PPI di RLC sangat interaktif. Sangat merekomendasikan untuk tim medis.”</blockquote>
             <h3>Ns. Sri Wahyuni</h3><p class="rlct-origin">Puskesmas Depok</p>
           </article>
           <article class="rlct-card">
-            <img class="rlct-avatar" src="https://webdesk-iq81w0xc5-abufatih551-8678.vercel.app/rlc/assets/images/rlc-alumni-05.jpg" alt="Alumni dokter">
+            <img class="rlct-avatar" src="https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/assets/images/rlc-alumni-05.jpg" alt="Alumni dokter">
             <div class="rlct-stars" aria-label="5 dari 5 bintang">★★★★★</div>
             <blockquote>“Manajemen pelatihan yang sangat tertib, materi up-to-date, dan sertifikasi cepat diproses.”</blockquote>
             <h3>dr. Alifia Putri</h3><p class="rlct-origin">RSUD Dr. Soetomo</p>
@@ -275,13 +385,7 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
 </section>
 
 
-<section class="feature-pair" aria-label="Program unggulan dan verifikasi sertifikat"><div class="wrap feature-grid">
-<div class="feature-program"><div class="feature-heading"><span class="eyebrow">Pilihan pembelajaran</span><h2>Program Unggulan RLC</h2><p>Pilihan program pelatihan yang relevan dengan kebutuhan tenaga kesehatan saat ini.</p></div>
-<article class="feature-course"><img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=500&q=85" alt="Tenaga kesehatan dalam kegiatan klinis"><div class="feature-course-copy"><span class="course-label">Pelatihan klinis</span><h3>Manajemen Keselamatan Pasien</h3><div class="feature-meta"><span><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M8 21h8M12 18v3"/></svg> Online / Hybrid</span><span>·</span><span><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1"/></svg> Tenaga Kesehatan</span><button class="text-btn" data-course="Manajemen Keselamatan Pasien">Lihat Detail →</button></div></div></article>
-<article class="feature-course"><img src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?auto=format&fit=crop&w=500&q=85" alt="Diskusi peningkatan mutu layanan klinik"><div class="feature-course-copy"><span class="course-label">Manajemen layanan</span><h3>Peningkatan Mutu Layanan Klinik</h3><div class="feature-meta"><span><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M8 21h8M12 18v3"/></svg> Online / Hybrid</span><span>·</span><span><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1"/></svg> Tenaga Kesehatan</span><button class="text-btn" data-course="Peningkatan Mutu Layanan Klinik">Lihat Detail →</button></div></div></article>
-</div>
-<div class="feature-verify" id="verifikasi"><span class="eyebrow">Konsep layanan digital</span><h2>Verifikasi Sertifikat</h2><p>Cek keaslian sertifikat pelatihan RLC secara mandiri dan cepat.</p><div class="verify-form-row"><input id="verifyCode" placeholder="Masukkan nomor sertifikat" aria-label="Nomor sertifikat"><button class="btn" id="verifyBtn">Verifikasi →</button></div><div class="verify-result" id="verifyResult"></div><p class="demo-warning">ⓘ Terhubung dengan database resmi setelah integrasi dan otorisasi RLC disiapkan. Saat ini merupakan simulasi demonstrasi.</p></div>
-</div></section>
+
 
 
 
@@ -298,24 +402,14 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
       <p>Contoh institusi kesehatan nasional sebagai referensi sektor layanan dan pengembangan kompetensi.</p>
     </div>
     <div class="rsp-logo-row" aria-label="Contoh institusi kesehatan">
-      <div class="rsp-logo rsp-kemkes">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Logo_of_the_Ministry_of_Health_of_the_Republic_Indonesia_%282024_rev%29.svg" alt="Kementerian Kesehatan Republik Indonesia" loading="lazy">
+      <div class="rsp-logo">
+        <img src="https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/assets/images/rlc-logo-bunda.jpeg" alt="Bunda" loading="lazy">
       </div>
-      <div class="rsp-logo rsp-hospital">
-        <span class="rsp-emblem" aria-hidden="true">MH</span>
-        <span class="rsp-name">RSUP Dr. Mohammad Hoesin<small>Palembang</small></span>
+      <div class="rsp-logo">
+        <img src="https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/assets/images/rlc-logo-rsud-siti-fatimah.png" alt="RSUD Siti Fatimah Provinsi Sumatera Selatan" loading="lazy">
       </div>
-      <div class="rsp-logo rsp-hospital">
-        <span class="rsp-emblem" aria-hidden="true">DS</span>
-        <span class="rsp-name">RSUP Dr. Sardjito<small>Yogyakarta</small></span>
-      </div>
-      <div class="rsp-logo rsp-hospital">
-        <span class="rsp-emblem" aria-hidden="true">HS</span>
-        <span class="rsp-name">RSUP Dr. Hasan Sadikin<small>Bandung</small></span>
-      </div>
-      <div class="rsp-logo rsp-hospital">
-        <span class="rsp-emblem" aria-hidden="true">K</span>
-        <span class="rsp-name">RSUP Dr. Kariadi<small>Semarang</small></span>
+      <div class="rsp-logo">
+        <img src="https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/assets/images/rlc-logo-siloam-hospitals.png" alt="Siloam Hospitals" loading="lazy">
       </div>
     </div>
     <p class="rsp-disclaimer">Logo dan nama ditampilkan sebagai contoh institusi di sektor kesehatan, bukan pernyataan bahwa institusi tersebut merupakan klien atau mitra RLC.</p>
