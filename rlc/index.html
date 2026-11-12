@@ -160,6 +160,30 @@ footer{background:#0D2343;color:#D6E2F2;padding:42px 0 22px}.footgrid{display:gr
   .hero .hero-note{color:#e7effb}
 }
 
+
+/* Mobile hero refinement: bring the speaker into view and reduce empty photo space */
+@media(max-width:760px){
+  .hero{
+    min-height:0!important;
+    background:
+      linear-gradient(180deg,rgba(7,27,54,.10) 0%,rgba(7,27,54,.28) 25%,rgba(7,27,54,.78) 49%,#0b2549 76%,#0b2549 100%),
+      url("assets/images/rlc-hero-medical-seminar.png") 66% top/auto 100% no-repeat!important;
+    background-color:#0b2549!important;
+    display:block!important;
+  }
+  .hero-grid{
+    padding:145px 0 32px!important;
+    min-height:0!important;
+  }
+  .hero-grid>div:first-child{max-width:100%}
+}
+@media(max-width:420px){
+  .hero{
+    background-position:66% top!important;
+  }
+  .hero-grid{padding-top:125px!important}
+}
+
 </style>
 <link rel="stylesheet" href="assets/css/event-module.css">
 <link rel="stylesheet" href="assets/css/testimonials.css">
