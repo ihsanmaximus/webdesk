@@ -13,20 +13,12 @@
       "destination": "/penawaran/rlc/index.html"
     },
     {
-      "source": "/live",
-      "destination": "https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/"
-    },
-    {
-      "source": "/live/:path*",
-      "destination": "https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/:path*"
-    },
-    {
       "source": "/rlc",
-      "destination": "https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/"
+      "destination": "/rlc/index.html"
     },
     {
-      "source": "/rlc/:path*",
-      "destination": "https://webdesk-33a5b9tlx-abufatih551-8678.vercel.app/rlc/:path*"
+      "source": "/live",
+      "destination": "/rlc/index.html"
     }
   ]
 }
