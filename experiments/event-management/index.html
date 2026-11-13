@@ -38,6 +38,42 @@ body.workspace-mode #workspaceView{min-height:100vh}
 @media(max-width:900px){.workspace{grid-template-columns:225px minmax(0,1fr)}.wshead{padding:22px 20px 8px}.wscontent>.page{padding:10px 20px 24px}.ws-topbar{padding:12px 20px}.widget-config-grid{grid-template-columns:1fr}}
 @media(max-width:700px){.workspace{grid-template-columns:205px minmax(0,1fr)}.workspace .side{padding-left:10px;padding-right:10px}.wscontent{min-width:0}.ws-topbar{justify-content:flex-end;min-height:64px;padding:10px}.ws-top-actions .btn{padding:8px 9px;font-size:10px}.wshead{padding:18px 14px 7px}.wscontent>.page{padding:8px 14px 22px}.wshead h1{font-size:23px}.widget-config-grid{grid-template-columns:1fr}}
 @media(max-width:520px){.workspace{display:block}.workspace .side{min-height:auto;max-height:42vh;overflow:auto}.sidebrand{height:65px;padding:12px}.sidehead{padding:12px}.workspace .navgroup{margin:8px 0}.workspace .navchild{padding:8px 10px}.wscontent>.page{padding:8px 12px 20px}}
+
+/* MAXIMUS neutral grey system theme + blue active navigation */
+:root{--navy:#343a40;--navy2:#454d55;--sage:#4d6478;--sagebg:#edf1f5;--bg:#f1f3f5;--card:#fff;--line:#dce1e6;--ink:#252b32;--muted:#737d87;--blue:#1769d2}
+body{background:#f1f3f5;color:#252b32}
+.top{background:#fff;border-bottom:1px solid #dce1e6}
+.brand,.title,.metric strong,.panel h3,.sectionhead h2{color:#303840}
+.btn.primary{background:#4b5967;border-color:#4b5967}
+.btn.navy{background:#343a40;border-color:#343a40}
+.mainside{background:#343a40}
+.mainside .navitem.active{background:#1769d2;color:#fff;box-shadow:inset 3px 0 #9cc7ff}
+.workspace{background:#f1f3f5;grid-template-columns:260px minmax(0,1fr)}
+.workspace .side{background:#343a40}
+.sidebrand{border-bottom:1px solid #ffffff20;color:#fff}
+.sidehead,.workspace .navlabel{color:#c0c7ce}
+.sideevent{padding:10px 0 12px;margin:0 8px 8px;background:transparent;border:0;border-bottom:1px solid #66717b;border-radius:0}
+.sideevent span{color:#c0c7ce}
+.sideevent b{font-size:14px;font-weight:650;color:#fff}
+.sideevent small{color:#c0c7ce}
+.live-nav{width:auto;display:block;margin:2px 0 15px;padding:8px 10px;background:transparent;border:0;border-radius:6px;color:#e4e8ec;font-size:12px;font-weight:600}
+.live-nav:hover{background:#ffffff12}
+.workspace .navchild{color:#d1d6db;padding:9px 12px 9px 14px}
+.workspace .navchild:before{width:4px;height:4px;background:#a8b0b8;margin-right:10px}
+.workspace .navchild:hover{background:#ffffff12;color:#fff}
+.workspace .navchild.active{background:#1769d2;color:#fff;font-weight:750;box-shadow:inset 3px 0 #a9d0ff}
+.workspace .navchild.active:before{background:#fff}
+.wscontent{background:#f1f3f5}
+.ws-topbar{background:#e6e9ec;border-bottom:1px solid #d4d9de}
+.ws-topbar .btn.primary{background:#1769d2;border-color:#1769d2}
+.wshead h1{color:#303840}
+.widget-config-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+#widgetPage{padding:28px;min-height:calc(100vh - 68px);background:#f1f3f5}
+#widgetPage .wshead{padding:0 0 18px;border-bottom:1px solid #dce1e6;margin-bottom:18px}
+#widgetPage .panel{box-shadow:0 2px 8px #2634420a}
+#widgetPagePreview .preview{background:#fff;border:1px solid #dce1e6;min-height:105px}
+#widgetPage .field:focus,.wscontent .field:focus{outline:2px solid #1769d233;border-color:#1769d2}
+@media(max-width:700px){.workspace{grid-template-columns:205px minmax(0,1fr)}.widget-config-grid{grid-template-columns:1fr}#widgetPage{padding:16px}}
 </style></head>
 <body><div class="app">
 <header class="top"><div class="brand">MAXIMUS <small>EVENT MANAGEMENT</small></div><div class="topright"><button class="btn" data-live-demo>▶ Live Demo</button><span class="role">Administrator</span><div class="avatar">A</div></div></header>
@@ -49,7 +85,7 @@ body.workspace-mode #workspaceView{min-height:100vh}
 <div class="panel"><div class="toolbar"><input id="searchUp" class="field search" placeholder="Cari nama atau kode event..."></div><div class="tablewrap"><table><thead><tr><th>Kode</th><th>Nama Event</th><th>Tanggal</th><th>Kuota</th><th>Pendaftar</th><th>Status Setup</th><th>Workspace</th></tr></thead><tbody id="upRows"></tbody></table></div></div>
 <div class="sectionhead"><div><h2>Past Event</h2><p>Event yang telah dikonfirmasi selesai.</p></div></div>
 <div class="panel"><div class="toolbar"><input id="searchPast" class="field search" placeholder="Cari nama atau kode event..."></div><div class="tablewrap"><table><thead><tr><th>Kode</th><th>Nama Event</th><th>Tanggal</th><th>Pendaftar</th><th>Hadir</th><th>Laporan</th><th>Workspace</th></tr></thead><tbody id="pastRows"></tbody></table></div></div>
-<div id="widgetPage" class="shell hidden"><div class="wshead"><div><div class="eyebrow">SYSTEM CONFIGURATION</div><h1 class="title">Widget Live Demo</h1><div class="sub">Atur tiga grid yang ditampilkan pada halaman publik event.</div></div><button class="btn" id="backWidget">← Kembali ke Dashboard</button></div><div class="panel"><h3>Susunan Widget</h3><p class="sub">Pilih konten untuk masing-masing grid. Perubahan akan digunakan oleh Live Demo.</p><div class="widget-config-grid"><div class="formfield"><label>Grid 1</label><select class="field widget-select" id="widget1"></select></div><div class="formfield"><label>Grid 2</label><select class="field widget-select" id="widget2"></select></div><div class="formfield"><label>Grid 3</label><select class="field widget-select" id="widget3"></select></div></div><div class="actions"><span class="hint">Pilihan: Number, Report, Jadwal, Kartu Event, Kartu Pendaftar.</span><button class="btn primary" id="saveWidgets">Simpan Susunan</button></div></div><div class="panel" style="margin-top:14px"><h3>Preview Susunan</h3><div id="widgetPagePreview" class="widget-config-grid"></div></div></div></main></div></div>
+<div id="widgetPage" class="shell hidden"><div class="wshead"><div><div class="eyebrow">SYSTEM CONFIGURATION</div><h1 class="title">Widget</h1><div class="sub">Konfigurasikan tiga slot konten pada halaman Live Demo. Halaman ini berdiri sendiri, bukan pop-up.</div></div><button class="btn" id="backWidget">← Kembali ke Dashboard</button></div><div class="panel"><h3>Pengaturan Tampilan Widget</h3><p class="sub">Pilih jenis konten untuk setiap posisi. Susunan ini menentukan modul yang tampil pada halaman publik.</p><div class="widget-config-grid"><div class="formfield"><label>Grid 1</label><select class="field widget-select" id="widget1"></select></div><div class="formfield"><label>Grid 2</label><select class="field widget-select" id="widget2"></select></div><div class="formfield"><label>Grid 3</label><select class="field widget-select" id="widget3"></select></div></div><div class="actions"><span class="hint">Pilihan: Number, Report, Jadwal, Kartu Event, Kartu Pendaftar.</span><button class="btn primary" id="saveWidgets">Simpan Susunan</button></div></div><div class="panel" style="margin-top:14px"><h3>Preview Susunan</h3><div id="widgetPagePreview" class="widget-config-grid"></div></div></div></main></div></div>
 <main id="workspaceView" class="workspace hidden">
 <aside class="side"><div class="sidebrand">MAXIMUS<small>EVENT MANAGEMENT</small></div><div class="sidehead">EVENT WORKSPACE</div><div class="sideevent"><span>EVENT:</span><b id="sideName">Event Workspace</b><small id="sideCode">Draft</small></div><button class="live-nav" data-live-demo>▶ &nbsp; Live Demo</button><div class="navgroup"><div class="navlabel">EVENT SETUP</div><button class="navchild active" data-sub="details">Data Event</button><button class="navchild" data-sub="speakers">Pembicara</button><button class="navchild" data-sub="tickets">Setting Paket</button><button class="navchild" data-sub="payment">Setting Payment</button><button class="navchild" data-sub="promo">Setting Promo</button><button class="navchild" data-sub="design">Desain Ticket</button></div><div class="navgroup"><div class="navlabel">SETTING PENDAFTARAN</div><button class="navchild" data-reg="landing">Halaman Pendaftaran</button><button class="navchild" data-reg="form">Form Pendaftaran</button><button class="navchild" data-reg="payment">Halaman Payment</button><button class="navchild" data-reg="confirmation">Halaman Konfirmasi</button><button class="navchild" data-reg="thankyou">Halaman Thank You</button></div><div class="navgroup"><div class="navlabel">CHECK-IN</div><button class="navchild" data-checkin="qr">QR Code Peserta</button></div></aside>
 <section class="wscontent"><header class="ws-topbar"><div><b>MAXIMUS</b><span>EVENT MANAGEMENT</span></div><div class="ws-top-actions"><button class="btn" id="backSystem">← Dashboard</button><button class="btn" id="saveDraft">Simpan Draft</button><button class="btn primary" id="submitEvent">Submit Event</button></div></header><div class="wshead"><div><div><div class="eyebrow">EVENT WORKSPACE</div><h1 class="event-heading"><span id="wsTitle">Event baru</span></h1><div class="sub" id="wsSubtitle">Kode event · Draft lokal</div></div></div>
