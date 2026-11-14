@@ -65,7 +65,12 @@ header{height:72px;display:flex;align-items:center;justify-content:center;backgr
 .features li:before{content:"✓";position:absolute;left:0;color:#315d8c;font-weight:900}
 .bottom{margin-top:auto}.cta{display:flex;min-height:48px;align-items:center;justify-content:center;padding:11px 16px;border:1px solid var(--navy);border-radius:30px;background:var(--navy);color:#fff;text-align:center;text-decoration:none;font-size:13px;font-weight:800;transition:.2s}
 .cta:hover{background:var(--blue);transform:translateY(-2px)}.card:not(.featured) .cta{background:#fff;color:var(--navy)}.card:not(.featured) .cta:hover{background:#e8eef7}
+/* Package-specific CTA colors must override the generic card button rule */
+.card:nth-child(1) .cta,.card:nth-child(1) .cta:hover{background:#d9ecdf;color:#24583b;border-color:#c2dfcb}
+.card:nth-child(2) .cta,.card:nth-child(2) .cta:hover{background:#dce7f4;color:#142b4a;border-color:#c5d5e8}
+.card:nth-child(3) .cta,.card:nth-child(3) .cta:hover{background:#f0e3bf;color:#665020;border-color:#e4d3a6}
 .cta-note{margin:8px 0 0;text-align:center;color:#8a95a3;font-size:10px}
+.minisite-note{width:min(900px,calc(100% - 40px));margin:-48px auto 64px;text-align:center;color:#667487;font-size:13px;line-height:1.7}
 footer{padding:24px 18px;background:var(--navy);color:#cbd6e4;text-align:center}.copy{margin:0;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
 @media(min-width:720px){.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.card{padding:29px 26px 25px}.featured{transform:translateY(-8px)}.card:last-child{grid-column:1/-1;width:calc(50% - 10px);justify-self:center}.intro{margin-top:62px}}
 @media(min-width:1040px){.cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.card:last-child{grid-column:auto;width:auto}.featured{transform:translateY(-9px)}}
@@ -88,7 +93,7 @@ footer{padding:24px 18px;background:var(--navy);color:#cbd6e4;text-align:center}
 <section class="bonus" aria-label="Bonus modul minisite">
 <div><span class="bonus-kicker">Bonus jika pesan hari ini</span><h2>Modul Minisite</h2><p>Website mini satu halaman untuk menampilkan event dengan informasi lebih lengkap, seperti detail acara, jadwal, narasumber, dan informasi penting lainnya.</p></div>
 <div class="countdown-wrap"><div class="countdown-title">Penawaran berakhir dalam</div><div class="countdown" role="timer" aria-live="off"><div class="time-unit"><strong id="cd-hours">00</strong><span>Jam</span></div><div class="time-unit"><strong id="cd-minutes">00</strong><span>Menit</span></div><div class="time-unit"><strong id="cd-seconds">00</strong><span>Detik</span></div></div></div>
-</section></main><footer><p class="copy">© 2026 Maximus-Lab</p></footer><script>
+</section><p class="minisite-note">Di bawah halaman paket ini terdapat contoh minisite. Informasi disajikan dalam satu halaman tanpa tautan navigasi.</p></main><footer><p class="copy">© 2026 Maximus-Lab</p></footer><script>
 (function(){
  const h=document.getElementById('cd-hours'),m=document.getElementById('cd-minutes'),s=document.getElementById('cd-seconds');
  function tick(){
