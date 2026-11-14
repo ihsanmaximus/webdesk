@@ -1120,6 +1120,18 @@
     }
 
   
+
+/* HERO IMAGE + LAYOUT FIX */
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr);align-items:center;gap:28px}
+.hero-content{min-width:0}
+.hero-title{font-size:clamp(2rem,7vw,2.85rem);line-height:1.12;letter-spacing:-.035em;overflow-wrap:normal}
+.hero-desc{font-size:1.02rem;line-height:1.75;max-width:58ch}
+.hero-actions .btn{width:100%;min-height:54px}
+.hero-visual{display:block;width:100%;margin:4px 0 0}
+.hero-img-wrapper{width:100%;aspect-ratio:16/10;overflow:hidden;border:4px solid #fff;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);background:#e2e8f0}
+.hero-img-wrapper img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+@media(min-width:768px){.hero-grid{grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:42px}.hero-title{font-size:2.85rem}.hero-actions{display:flex;flex-direction:row;flex-wrap:wrap}.hero-actions .btn{width:auto}.hero-img-wrapper{aspect-ratio:4/3}}
+
 /* Blank renderer structure: no event content is hardcoded. */
 .empty-line{height:14px;background:#e8eef5;border-radius:6px;margin:10px 0;width:72%}
 .empty-line.short{width:42%}.empty-line.long{width:92%}
@@ -1150,6 +1162,7 @@
 <div class="hero-meta"><div class="empty-line"></div><div class="empty-line short"></div></div>
 <div class="hero-actions"><div class="btn btn-primary" style="width:160px;height:48px"></div><div class="btn btn-outline" style="width:130px;height:48px"></div></div>
 </div>
+<div class="hero-visual"><div class="hero-img-wrapper"><div class="empty-image" style="width:100%;height:100%;aspect-ratio:auto">Hero image</div></div></div>
 </div></section>
 
 <section class="hero-image-section"><div class="container"><div class="empty-image"></div></div></section>
@@ -1209,6 +1222,10 @@
    const a=el('a','btn btn-primary',m.hero_primary_cta||'Register Now');a.href='#daftar';
    const b=el('a','btn btn-outline',m.hero_secondary_cta||'View Schedule');b.href='#jadwal';
    actions.append(a,b);c.append(actions);
+   const visual=$('.hero-visual',hero);
+   if(visual&&m.hero_image_url){
+    visual.innerHTML='<div class="hero-img-wrapper"><img src="'+String(m.hero_image_url).replace(/"/g,'&quot;')+'" alt="'+String(m.hero_image_alt||m.title||'Workshop image').replace(/"/g,'&quot;')+'" loading="eager" fetchpriority="high"></div>';
+   }else if(visual){visual.remove();}
   }else hero?.remove();
   $('.hero-image-section')?.remove();
   const fillHeader=(section,title)=>{const header=$('.section-header',section);if(!header)return;header.innerHTML='';header.append(el('h2','section-title',title));};
