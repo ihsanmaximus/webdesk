@@ -43,15 +43,18 @@ export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
       const rows = await supabase(
-        `minisites?select=id,title,slug,description,theme,seo,settings,status,published_at&slug=eq.${encodeURIComponent(slug)}&status=eq.published&limit=1`
+        `minisites?select=*&slug=eq.${encodeURIComponent(slug)}&status=eq.published&limit=1`
       );
-      if (!rows?.length) return send(res, 404, { error: "Minisite tidak ditemukan." });
-
+      if (!rows?.length) return send(res, 404, { error: "Minisite tidak ditemukan atau belum dipublikasikan." });
       const minisite = rows[0];
-      const sections = await supabase(
-        `minisite_sections?select=id,section_key,section_type,title,sort_order,is_visible,content&minisite_id=eq.${minisite.id}&order=sort_order.asc`
-      );
-      return send(res, 200, { minisite, sections: sections.filter((section) => section.is_visible) });
+      const [sections, materials, agenda, speakers, pricing] = await Promise.all([
+        supabase(`minisite_sections?select=section_key,section_type,title,sort_order,is_visible&minisite_id=eq.${minisite.id}&order=sort_order.asc`),
+        supabase(`minisite_materials?select=title,description,sort_order&minisite_id=eq.${minisite.id}&order=sort_order.asc`),
+        supabase(`minisite_agenda?select=day_label,time_label,title,description,sort_order&minisite_id=eq.${minisite.id}&order=sort_order.asc`),
+        supabase(`minisite_speakers?select=name,role,bio,topic,image_url,sort_order&minisite_id=eq.${minisite.id}&order=sort_order.asc`),
+        supabase(`minisite_pricing?select=name,description,original_price,price,unit_label,badge,features,button_label,is_featured,sort_order&minisite_id=eq.${minisite.id}&order=sort_order.asc`)
+      ]);
+      return send(res, 200, { minisite, sections, materials, agenda, speakers, pricing });
     }
 
     if (req.method === "POST") {
