@@ -41,12 +41,12 @@ export default async function handler(req,res){
   const nav=byKey.navbar?.content||{},hero=byKey.hero?.content||{},heroImg=byKey.hero_image?.content||{};
   const materials=byKey.materi_acara?.content?.items||[],agenda=byKey.schedule?.content?.items||[],speakers=byKey.speakers?.content?.items||[],pricing=byKey.pricing?.content?.items||[];
   const reg=byKey.registration?.content||{},footer=byKey.footer?.content||{},sticky=byKey.sticky_cta?.content||{};
+  const settings=b.settings||{},seo=b.seo||{},theme=b.theme||{},published=b.status==="published";
   const heroImageUrl=await storeImage(heroImg.image,slug,"hero","hero-image");
   const ogImageUrl=await storeImage(seo.og_image,slug,"seo","og-image");
   for(let i=0;i<speakers.length;i++){
    speakers[i].image_url=await storeImage(speakers[i].image,slug,"speakers",`speaker-${String(i+1).padStart(2,"0")}`);
   }
-  const settings=b.settings||{},seo=b.seo||{},theme=b.theme||{},published=b.status==="published";
   const sitePayload={
    title,slug,status:published?"published":"draft",description:b.description||"",
    start_date:settings.start_date||null,end_date:settings.end_date||null,event_format:settings.format||null,location:settings.location||null,organizer:settings.organizer||null,
