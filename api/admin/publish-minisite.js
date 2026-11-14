@@ -9,8 +9,8 @@ async function db(path,options={}){
 }
 async function storeImage(value,slug,folder,filename){
  if(!value)return null;
- if(/^https?:\\/\\//i.test(value))return value;
- const match=String(value).match(/^data:(image\\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
+ if(/^https?:\/\//i.test(value))return value;
+ const match=String(value).match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
  if(!match)throw new Error(`Format gambar ${folder} tidak valid.`);
  const mime=match[1],buffer=Buffer.from(match[2],"base64");
  if(buffer.length>5*1024*1024)throw new Error(`Gambar ${folder} melebihi batas 5 MB.`);
@@ -34,7 +34,7 @@ export default async function handler(req,res){
  try{
   const b=typeof req.body==="string"?JSON.parse(req.body):(req.body||{});
   const title=String(b.title||"").trim(),slug=String(b.slug||"").trim().toLowerCase();
-  if(!title||title.split(/\\s+/).length>3)return res.status(400).json({error:"Judul Event wajib diisi, maksimal 3 kata."});
+  if(!title||title.split(/\s+/).length>3)return res.status(400).json({error:"Judul Event wajib diisi, maksimal 3 kata."});
   if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))return res.status(400).json({error:"Slug tidak valid."});
   const sections=Array.isArray(b.sections)?b.sections:[];
   const byKey=Object.fromEntries(sections.map(s=>[s.key,s]));
@@ -70,7 +70,7 @@ export default async function handler(req,res){
    ["minisite_materials",materials.map((x,i)=>({minisite_id:site.id,title:x.title||"",description:x.description||null,sort_order:i+1}))],
    ["minisite_agenda",agenda.map((x,i)=>({minisite_id:site.id,day_label:x.day||null,time_label:x.time||null,title:x.title||"",description:x.description||null,sort_order:i+1}))],
    ["minisite_speakers",speakers.map((x,i)=>({minisite_id:site.id,name:x.name||"",role:x.role||null,bio:x.bio||null,topic:x.topic||null,image_url:x.image_url||null,sort_order:i+1}))],
-   ["minisite_pricing",pricing.map((x,i)=>({minisite_id:site.id,name:x.name||"",description:x.description||null,original_price:Number(x.original_price)||null,price:Number(x.price)||0,unit_label:x.unit||null,badge:x.badge||null,features:String(x.features||"").split(/\\r?\\n/).map(v=>v.trim()).filter(Boolean),button_label:x.button_label||null,is_featured:!!x.featured,sort_order:i+1}))]
+   ["minisite_pricing",pricing.map((x,i)=>({minisite_id:site.id,name:x.name||"",description:x.description||null,original_price:Number(x.original_price)||null,price:Number(x.price)||0,unit_label:x.unit||null,badge:x.badge||null,features:String(x.features||"").split(/\r?\n/).map(v=>v.trim()).filter(Boolean),button_label:x.button_label||null,is_featured:!!x.featured,sort_order:i+1}))]
   ];
   for(const [table] of collections)await db(`${table}?minisite_id=eq.${site.id}`,{method:"DELETE",headers:{Prefer:"return=minimal"}});
   for(const [table,rows] of collections)if(rows.length)await db(table,{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(rows)});
