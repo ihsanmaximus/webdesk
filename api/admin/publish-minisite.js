@@ -41,7 +41,7 @@ export default async function handler(req,res){
   const saved=await db("minisites?on_conflict=slug&select=id,slug,status",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=representation"},body:JSON.stringify(sitePayload)});
   const site=saved?.[0];if(!site?.id)throw new Error("Database tidak mengembalikan ID minisite.");
   await db(`minisite_sections?minisite_id=eq.${site.id}`,{method:"DELETE",headers:{Prefer:"return=minimal"}});
-  const sectionRows=sections.map((s,i)=>({minisite_id:site.id,section_key:s.key,section_type:s.type,title:s.title||null,sort_order:i+1,is_visible:!!s.visible,content:s.content||{}}));
+  const sectionRows=sections.map((s,i)=>({minisite_id:site.id,section_key:s.key,section_type:s.type,section_name:s.section_name||null,title:s.title||null,subheading:s.subheading||null,date_label:s.date_label||null,sort_order:i+1,is_visible:!!s.visible,content:s.content||{}}));
   if(sectionRows.length)await db("minisite_sections",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(sectionRows)});
   const collections=[
    ["minisite_materials",materials.map((x,i)=>({minisite_id:site.id,title:x.title||"",description:x.description||null,sort_order:i+1}))],
