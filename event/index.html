@@ -1008,6 +1008,137 @@
         display: inline-flex;
       }
     }
+
+    /* ==========================================
+       MOBILE-ONLY MINISITE PRESENTATION
+       Keep the complete page in a centered mobile-width canvas.
+       ========================================== */
+    html {
+      background: #e9eef5;
+    }
+
+    body {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100vh;
+      margin: 0 auto;
+      background: var(--bg-body);
+      overflow-x: hidden;
+      box-shadow: 0 0 32px rgba(15, 23, 42, 0.08);
+    }
+
+    .navbar {
+      display: none !important;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 100%;
+      padding-left: 14px;
+      padding-right: 14px;
+    }
+
+    .section {
+      padding: 38px 0;
+    }
+
+    .hero {
+      padding: 28px 0 38px;
+    }
+
+    .hero-grid,
+    .benefits-grid,
+    .speakers-grid,
+    .pricing-grid,
+    .register-grid,
+    .footer-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) !important;
+      gap: 16px;
+    }
+
+    .hero-grid {
+      gap: 22px;
+    }
+
+    .hero-title {
+      font-size: 1.9rem;
+    }
+
+    .hero-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    .hero-visual {
+      margin: 0;
+    }
+
+    .floating-card {
+      position: relative;
+      inset: auto;
+      margin: -18px 10px 0;
+      z-index: 1;
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .floating-stat strong {
+      font-size: 0.95rem;
+    }
+
+    .floating-stat span {
+      font-size: 0.68rem;
+    }
+
+    .section-header {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 1.45rem;
+    }
+
+    .benefit-card,
+    .speaker-card,
+    .price-card,
+    .form-card,
+    .timeline-item {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .speaker-img {
+      height: 220px;
+    }
+
+    .pricing-grid {
+      max-width: 100%;
+    }
+
+    .register-grid {
+      gap: 22px;
+    }
+
+    .footer-grid {
+      gap: 24px;
+    }
+
+    .mobile-sticky-cta,
+    .floating-wa-desktop {
+      display: none !important;
+    }
+
+    .footer {
+      padding-bottom: 28px;
+    }
+
+    @media (min-width: 431px) {
+      body {
+        max-width: 430px;
+      }
+    }
+
   </style>
 </head>
 <body>
