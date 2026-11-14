@@ -1187,85 +1187,87 @@
 (async function(){
  const slug=new URLSearchParams(location.search).get('slug')||'hospital-triage-workshop';
  const api='/api/minisites/'+encodeURIComponent(slug);
- const $=(s,r=document)=>r.querySelector(s);
- const $$=(s,r=document)=>[...r.querySelectorAll(s)];
- const setText=(el,value,kind='body')=>{
-  if(!el)return;
-  el.classList.remove('empty-line','empty-title','empty-price');
-  el.removeAttribute('style');
-  el.textContent=value||'';
-  if(kind==='title'){el.style.cssText='width:auto;height:auto;background:none;border-radius:0;margin:0 0 16px;font-size:2rem;line-height:1.2;font-weight:800;color:var(--primary)';}
-  else if(kind==='heading'){el.style.cssText='width:auto;height:auto;background:none;border-radius:0;margin:0 auto 12px;font-size:1.45rem;line-height:1.3;font-weight:800;color:var(--primary)';}
-  else if(kind==='badge'){el.style.cssText='width:fit-content;height:auto;background:var(--accent-light);border-radius:999px;padding:6px 14px;margin:0 0 14px;display:inline-flex';}
-  else if(kind==='body'){el.style.cssText='width:auto;height:auto;background:none;border-radius:0;margin:0 0 18px;color:var(--text-muted);font-size:1rem;line-height:1.7';}
-  else if(kind==='cardtitle'){el.style.cssText='width:auto;height:auto;background:none;border-radius:0;margin:0 0 8px;color:var(--primary);font-size:1.05rem;font-weight:800;line-height:1.4';}
-  else if(kind==='small'){el.style.cssText='width:auto;height:auto;background:none;border-radius:0;margin:0 0 8px;color:var(--text-muted);font-size:.9rem;line-height:1.6';}
- };
+ const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+ const el=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n};
  try{
   const response=await fetch(api,{cache:'no-store'});if(!response.ok)throw new Error('Workshop belum dipublikasikan.');
   const data=await response.json(),m=data.minisite||{},sections=Object.fromEntries((data.sections||[]).map(s=>[s.section_key,s]));
   const visible=k=>sections[k]?.is_visible!==false;
   document.title=m.seo_meta_title||m.title||'Workshop';
   const meta=$('meta[name="description"]');if(meta)meta.content=m.seo_meta_description||m.description||'';
-  document.documentElement.style.setProperty('--accent',m.theme_primary_color||'#173b70');
-  const nav=$('.navbar');if(nav&&visible('navbar')){setText($('.brand-text span',nav),m.navbar_brand,'small');setText($('.nav-cta',nav),m.navbar_button_label)}else nav?.remove();
+  document.documentElement.style.setProperty('--primary',m.theme_primary_color||'#0F172A');
+  document.documentElement.style.setProperty('--accent','#0284C7');
+  document.documentElement.style.setProperty('--accent-hover','#0369A1');
+  const nav=$('.navbar');if(nav)nav.remove();
   const hero=$('.hero');
   if(hero&&visible('hero')){
-   const c=$('.hero-content',hero),badge=$('.badge',c),oldTitles=$$('.empty-title',c),oldLines=$$('.empty-line',c);
-   setText(badge,m.hero_eyebrow,'badge');
-   const h=document.createElement('h1');h.className='hero-title';h.textContent=m.hero_title||m.title||'';oldTitles[0]?.replaceWith(h);oldTitles.slice(1).forEach(x=>x.remove());
-   const p=document.createElement('p');p.className='hero-description';p.textContent=m.hero_description||m.description||'';oldLines[0]?.replaceWith(p);oldLines.slice(1).forEach(x=>x.remove());
-   $('.hero-meta',c)?.remove();
-   const buttons=$$('.hero-actions .btn',c);setText(buttons[0],m.hero_primary_cta||'Register Now');setText(buttons[1],m.hero_secondary_cta||'View Schedule');
-   buttons[0]&& (buttons[0].style.width='100%');buttons[1]&&(buttons[1].style.width='100%');
+   const c=$('.hero-content',hero);c.innerHTML='';
+   const badge=el('span','badge',m.hero_eyebrow||'');c.append(badge);
+   c.append(el('h1','hero-title',m.hero_title||m.title||''));
+   c.append(el('p','hero-desc',m.hero_description||m.description||''));
+   const actions=el('div','hero-actions');
+   const a=el('a','btn btn-primary',m.hero_primary_cta||'Register Now');a.href='#daftar';
+   const b=el('a','btn btn-outline',m.hero_secondary_cta||'View Schedule');b.href='#jadwal';
+   actions.append(a,b);c.append(actions);
   }else hero?.remove();
-  const imageSection=$('.hero-image-section');if(imageSection)imageSection.remove();
-  const heading=(section,value)=>{const el=$('.section-header .empty-title, .section-header .section-title',section);if(el)setText(el,value,'heading');$('.section-header .badge',section)?.remove()};
-  const cards=(rootSelector,items,render)=>{
-   const root=$(rootSelector);if(!root)return;
-   const template=root.firstElementChild;
-   if(!items?.length){root.closest('.section')?.remove();return}
-   root.innerHTML='';
-   items.forEach(item=>{const node=template.cloneNode(true);render(node,item);root.appendChild(node)});
-  };
+  $('.hero-image-section')?.remove();
+  const fillHeader=(section,title)=>{const header=$('.section-header',section);if(!header)return;header.innerHTML='';header.append(el('h2','section-title',title));};
   const materi=$('#materi');if(materi&&visible('materi_acara')){
-   heading(materi,m.materi_heading||'Workshop Learning Modules');
-   cards('#materi .benefits-grid',data.materials,(n,x)=>{
-    $('.benefit-icon',n)?.remove();const lines=$$('.empty-line',n);
-    setText(lines[0],x.title,'cardtitle');setText(lines[1],x.description,'body');lines.slice(2).forEach(e=>e.remove());
-   });
+   fillHeader(materi,m.materi_heading||'Workshop Learning Modules');
+   const root=$('.benefits-grid',materi);root.innerHTML='';
+   (data.materials||[]).forEach(x=>{const card=el('article','benefit-card');card.append(el('h3','',x.title));card.append(el('p','',x.description));root.append(card)});
+   if(!root.children.length)materi.remove();
   }else materi?.remove();
   const schedule=$('#jadwal');if(schedule&&visible('schedule')){
-   heading(schedule,m.schedule_heading||'Workshop Agenda');
-   cards('#jadwal .timeline',data.agenda,(n,x)=>{
-    const lines=$$('.empty-line',n);setText(lines[0],[x.day_label,x.time_label].filter(Boolean).join(' · '),'small');
-    setText(lines[1],x.title,'cardtitle');setText(lines[2],x.description,'body');
+   fillHeader(schedule,m.schedule_heading||'Workshop Agenda');
+   const root=$('.timeline',schedule);root.innerHTML='';
+   (data.agenda||[]).forEach(x=>{
+    const item=el('article','timeline-item');
+    item.append(el('div','timeline-time',[x.day_label,x.time_label].filter(Boolean).join(' · ')));
+    const content=el('div','timeline-content');content.append(el('h4','',x.title));if(x.description)content.append(el('p','',x.description));item.append(content);root.append(item);
    });
+   if(!root.children.length)schedule.remove();
   }else schedule?.remove();
   const speakers=$('#pembicara');if(speakers&&visible('speakers')){
-   heading(speakers,m.speakers_heading||'Meet the Instructors');
-   cards('#pembicara .speakers-grid',data.speakers,(n,x)=>{
-    const lines=$$('.empty-line',n);setText(lines[0],x.name,'cardtitle');setText(lines[1],x.role,'small');setText(lines[2],x.bio,'body');
-    const avatar=$('.empty-avatar',n);if(x.image_url&&avatar){const img=document.createElement('img');img.src=x.image_url;img.alt=x.name;img.className='speaker-img';avatar.replaceWith(img)}else avatar?.remove();
+   fillHeader(speakers,m.speakers_heading||'Meet the Instructors');
+   const root=$('.speakers-grid',speakers);root.innerHTML='';
+   (data.speakers||[]).forEach(x=>{
+    const card=el('article','speaker-card');
+    const frame=el('div','speaker-img');
+    if(x.image_url){const img=el('img','',undefined);img.src=x.image_url;img.alt=x.name||'Workshop speaker';frame.append(img)}
+    card.append(frame);const info=el('div','speaker-info');
+    info.append(el('div','speaker-role',x.role||''),el('h3','speaker-name',x.name||''),el('p','speaker-bio',x.bio||''));
+    if(x.topic)info.append(el('div','speaker-topic',x.topic));
+    card.append(info);root.append(card);
    });
+   if(!root.children.length)speakers.remove();
   }else speakers?.remove();
   const pricing=$('#paket');if(pricing&&visible('pricing')){
-   heading(pricing,m.pricing_heading||'Registration Packages');
-   cards('#paket .pricing-grid',data.pricing,(n,x)=>{
-    const lines=$$('.empty-line',n),price=$('.empty-price',n);
-    setText(lines[0],x.name,'cardtitle');setText(price,(Number(x.price)||0).toLocaleString('en-US')+' '+(x.unit_label||''),'title');
-    setText(lines[1],x.description,'small');lines.slice(2).forEach(e=>e.remove());
-    const btn=$('.btn',n);if(btn)setText(btn,x.button_label||'Select Package');
+   fillHeader(pricing,m.pricing_heading||'Registration Packages');
+   const root=$('.pricing-grid',pricing);root.innerHTML='';
+   (data.pricing||[]).forEach(x=>{
+    const card=el('article','price-card'+(x.is_featured?' featured':''));
+    if(x.badge)card.append(el('div','popular-tag',x.badge));
+    const body=el('div','');
+    body.append(el('div','price-tier',x.name||'Package'));
+    body.append(el('p','price-desc',x.description||''));
+    const amount=el('div','price-amount');
+    if(x.original_price)amount.append(el('span','price-strike',Number(x.original_price).toLocaleString('en-US')));
+    const value=el('div','price-value',Number(x.price||0).toLocaleString('en-US')+' ');
+    if(x.unit_label)value.append(el('small','', '/'+x.unit_label));amount.append(value);body.append(amount);
+    const list=el('ul','price-features');(x.features||[]).forEach(f=>{const li=el('li');li.append(el('span','check-icon','✓'),document.createTextNode(f));list.append(li)});body.append(list);
+    card.append(body);const btn=el('a','btn '+(x.is_featured?'btn-primary':'btn-outline')+' btn-full',x.button_label||'Select Package');btn.href='#daftar';btn.addEventListener('click',()=>{const select=$('[name="selected_package"]');if(select)select.value=x.name});card.append(btn);root.append(card);
    });
+   if(!root.children.length)pricing.remove();
   }else pricing?.remove();
   const reg=$('#daftar');if(reg&&visible('registration')){
-   const info=$('.register-info',reg);if(info){$('.badge',info)?.remove();setText($('.empty-title',info),m.registration_heading||'Join the Hospital Triage Workshop','title');const lines=$$('.empty-line',info);setText(lines[0],m.registration_description,'body');lines.slice(1).forEach(e=>e.remove())}
+   const info=$('.register-info',reg);if(info){info.innerHTML='';info.append(el('span','badge','Workshop Registration'),el('h2','section-title',m.registration_heading||'Join the Hospital Triage Workshop'),el('p','',m.registration_description||''))}
    const card=$('.form-card',reg);if(card){
     card.innerHTML='<h3>Workshop Registration</h3><p>Complete the form to reserve your place.</p><form id="workshopRegister"><div class="form-group"><label>Full Name</label><input class="form-control" name="full_name" required></div><div class="form-group"><label>WhatsApp</label><input class="form-control" name="whatsapp" required></div><div class="form-group"><label>Email</label><input class="form-control" type="email" name="email"></div><div class="form-group"><label>Education / Profession</label><input class="form-control" name="education"></div><div class="form-group"><label>Package</label><select class="form-control" name="selected_package">'+(data.pricing||[]).map(x=>'<option>'+x.name+'</option>').join('')+'</select></div><button class="btn btn-wa btn-full" type="submit">'+(m.registration_button_label||'Submit Registration')+'</button><p id="registerMessage" class="form-note"></p></form>';
     $('#workshopRegister').onsubmit=async e=>{e.preventDefault();const form=Object.fromEntries(new FormData(e.target));const rr=await fetch(api,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(form)});const result=await rr.json();$('#registerMessage').textContent=rr.ok?'Registration received. Thank you!':(result.error||'Registration failed.')};
    }
   }else reg?.remove();
-  const footer=$('.footer');if(footer&&visible('footer')){const lines=$$('.empty-line',footer);setText(lines[0],m.footer_organization,'cardtitle');setText(lines[1],m.footer_address,'small');lines.slice(2).forEach(e=>e.remove())}else footer?.remove();
+  const footer=$('.footer');if(footer&&visible('footer')){const grid=$('.footer-grid',footer);grid.innerHTML='';const left=el('div');left.append(el('h4','',m.footer_organization||''));if(m.footer_address)left.append(el('p','',m.footer_address));const right=el('div');if(m.footer_whatsapp)right.append(el('p','',m.footer_whatsapp));if(m.footer_email)right.append(el('p','',m.footer_email));grid.append(left,right)}else footer?.remove();
   $('.mobile-sticky-cta')?.remove();
  }catch(e){document.body.innerHTML='<main style="font:16px sans-serif;padding:32px"><h1>Workshop not available</h1><p>'+e.message+'</p></main>'}
 })();
