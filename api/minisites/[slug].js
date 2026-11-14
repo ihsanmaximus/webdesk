@@ -48,7 +48,7 @@ export default async function handler(req, res) {
       if (!rows?.length) return send(res, 404, { error: "Minisite tidak ditemukan atau belum dipublikasikan." });
       const minisite = rows[0];
       const [sections, materials, agenda, speakers, pricing] = await Promise.all([
-        supabase(`minisite_sections?select=section_key,section_type,title,sort_order,is_visible&minisite_id=eq.${minisite.id}&order=sort_order.asc`),
+        supabase(`minisite_sections?select=section_key,section_type,section_name,title,subheading,date_label,sort_order,is_visible&minisite_id=eq.${minisite.id}&order=sort_order.asc`),
         supabase(`minisite_materials?select=title,description,sort_order&minisite_id=eq.${minisite.id}&order=sort_order.asc`),
         supabase(`minisite_agenda?select=day_label,time_label,title,description,sort_order&minisite_id=eq.${minisite.id}&order=sort_order.asc`),
         supabase(`minisite_speakers?select=name,role,bio,topic,image_url,sort_order&minisite_id=eq.${minisite.id}&order=sort_order.asc`),
