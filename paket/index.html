@@ -5,6 +5,7 @@
 <meta property="og:type" content="website"><meta property="og:title" content="Paket Website Khusus RLC | Maximus"><meta property="og:description" content="Pilih solusi website yang sesuai dengan kebutuhan RLC.">
 <title>Paket Website Khusus RLC — Maximus</title>
 <style>
+/* Pricing cards: solid colored price headers with soft matching content surfaces */
 :root{--navy:#142b4a;--blue:#244a73;--ink:#202a38;--muted:#667487;--cream:#f5f7fb;--line:#dfe6ef;--gold:#d8c28c}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--cream);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6}
 header{height:72px;display:flex;align-items:center;justify-content:center;background:#fff;border-bottom:1px solid #e8edf4}
@@ -12,7 +13,39 @@ header{height:72px;display:flex;align-items:center;justify-content:center;backgr
 .hero{padding:16px 16px 0}.hero img{display:block;width:100%;height:clamp(230px,46vw,460px);object-fit:cover;object-position:center 50%;border-radius:20px;box-shadow:0 15px 42px #142b4a20}
 .intro{max-width:850px;margin:52px auto 32px;padding:0 22px;text-align:center}.eyebrow{margin:0 0 9px;color:var(--blue);font-size:10px;font-weight:850;letter-spacing:.2em;text-transform:uppercase}.intro h1{margin:0;color:var(--navy);font:500 clamp(34px,6vw,56px)/1.1 Georgia,serif;letter-spacing:-.03em}.intro p{max-width:650px;margin:16px auto 0;color:var(--muted);font-size:15px}
 .cards{width:min(1180px,calc(100% - 32px));margin:0 auto 76px;display:grid;grid-template-columns:1fr;gap:18px}
-.card{position:relative;display:flex;flex-direction:column;padding:27px 23px 23px;border:1px solid;border-radius:20px;box-shadow:0 8px 28px #142b4a10}
+.card{position:relative;display:flex;flex-direction:column;padding:0 0 23px;border:1px solid;border-radius:20px;overflow:hidden;box-shadow:0 8px 28px #142b4a10}
+.card-head{padding:24px 23px 19px;color:#fff}
+.card:nth-child(1) .card-head{background:#24558c}
+.card:nth-child(2) .card-head{background:#247b9b}
+.card:nth-child(3) .card-head{background:#4d5eb2}
+.card-body{padding:20px 23px 0;display:flex;flex-direction:column;flex:1}
+.card:nth-child(1){background:#f0f6ff;border-color:#d5e0ef}
+.card:nth-child(2){background:#eff9fc;border-color:#cce6ee}
+.card:nth-child(3){background:#f3f3ff;border-color:#dcdcf3}
+.card-head .no{color:#dce9f8}
+.card-head h2{color:#fff;margin:3px 0 7px}
+.card-head .tagline{color:#eef5ff;min-height:0}
+.card-head .tagline-detail{color:#d8e6f5}
+.card-head .pricebox{margin:17px 0 0;padding:14px 0 0;border-top:1px solid #ffffff55;border-bottom:0}
+.card-head .price-label{color:#dce9f8}
+.card-head .price{color:#fff}
+.card-body .label{color:var(--navy)}
+.card:nth-child(1) .cta{background:#d8e8ff;color:#173d68;border-color:#c1d9f7}
+.card:nth-child(2) .cta{background:#d5f0f7;color:#15536c;border-color:#b9e3ee}
+.card:nth-child(3) .cta{background:#e1e2ff;color:#303f8d;border-color:#cdd0ff}
+.card .cta:hover{filter:brightness(.97);transform:translateY(-2px)}
+.card .cta-note{color:#718096}
+.bonus{width:min(1180px,calc(100% - 32px));margin:-34px auto 72px;padding:28px;border-radius:22px;background:linear-gradient(120deg,#173a63,#102947);color:#fff;display:grid;grid-template-columns:1fr;gap:20px;align-items:center}
+.bonus-kicker{display:inline-block;padding:5px 12px;border-radius:30px;background:#f6df9f;color:#17304f;font-size:11px;font-weight:850}
+.bonus h2{margin:9px 0 3px;font:500 32px/1.1 Georgia,serif;color:#fff}
+.bonus p{margin:0;color:#e1eaf5;font-size:14px}
+.countdown-wrap{padding-top:18px;border-top:1px solid #ffffff55}
+.countdown-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#cbd9e8}
+.countdown{display:flex;gap:9px;margin-top:10px}
+.time-unit{flex:1;text-align:center}
+.time-unit strong{display:block;padding:10px 5px;border-radius:12px;background:#fff;color:#142b4a;font-size:clamp(24px,6vw,34px);font-variant-numeric:tabular-nums;line-height:1.2}
+.time-unit span{display:block;margin-top:5px;color:#d5e2f0;font-size:10px}
+@media(min-width:720px){.card-head{padding:27px 26px 20px}.card-body{padding:21px 26px 0}.bonus{grid-template-columns:1.2fr 1fr;gap:32px;padding:34px}.countdown-wrap{padding:0 0 0 28px;border-top:0;border-left:1px solid #ffffff55}}
 .card:nth-child(1){background:linear-gradient(155deg,#eff4fb 0%,#fff 62%);border-color:#d5e0ef}
 .card:nth-child(2){background:linear-gradient(155deg,#e9f2fc 0%,#fff 64%);border-color:#bfd2e9}
 .card:nth-child(3){background:linear-gradient(155deg,#f1f0fa 0%,#fff 62%);border-color:#dcd9ed}
@@ -42,19 +75,30 @@ footer{padding:24px 18px;background:var(--navy);color:#cbd6e4;text-align:center}
 <section class="hero" aria-label="Suasana pelatihan tenaga kesehatan"><img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1800&q=90" alt="Suasana pembelajaran dan kolaborasi profesional bidang kesehatan"></section>
 <main><section class="intro"><p class="eyebrow">Penawaran khusus untuk RLC</p><h1>Temukan Paket Website yang Tepat</h1><p>Solusi digital yang dirancang untuk memperkuat kehadiran online, memudahkan pengelolaan informasi, dan mendukung aktivitas RLC.</p></section>
 <section class="cards" aria-label="Pilihan paket website">
-<article class="card"><span class="no">Paket 01</span><h2>Basic</h2><p class="tagline">Essential Web Presence<span class="tagline-detail">Fondasi digital yang rapi untuk memperkenalkan identitas dan layanan RLC.</span></p>
-<div class="pricebox"><span class="price-label">Harga khusus RLC</span><strong class="price">Rp 1.500.000</strong></div>
-<h3 class="label">Cocok untuk</h3><p class="fit">RLC yang membutuhkan website profil informatif untuk memperkenalkan lembaga, layanan, dan program unggulan.</p><h3 class="label">Fitur paket</h3>
+<article class="card"><div class="card-head"><span class="no">Paket 01</span><h2>Basic</h2><p class="tagline">Essential Web Presence<span class="tagline-detail">Fondasi digital yang rapi untuk memperkenalkan identitas dan layanan RLC.</span></p><div class="pricebox"><span class="price-label">Harga khusus RLC</span><strong class="price">Rp 1.500.000</strong></div></div><div class="card-body"><h3 class="label">Cocok untuk</h3><p class="fit">RLC yang membutuhkan website profil informatif untuk memperkenalkan lembaga, layanan, dan program unggulan.</p><h3 class="label">Fitur paket</h3>
 <ul class="features"><li>Website static</li><li>Responsive / Mobile First</li><li>Free domain .com 1 tahun</li><li>Hosting by Maximus Repository 1 tahun</li><li>Free pembaruan konten 8x (senilai Rp 800 ribu)</li><li>SEO Basic</li><li>Integrasi WhatsApp</li><li>Open Graph dan Metadata</li><li>Tanpa halaman admin</li></ul>
 <div class="bottom"><a class="cta" href="https://wa.me/6282297845527?text=Assalamu%27alaikum%2C%20saya%20ingin%20konsultasi%20Paket%20Basic%20khusus%20RLC." target="_blank" rel="noopener">Konsultasi Paket Basic ↗</a><p class="cta-note">Terhubung langsung dengan tim Maximus</p></div></article>
-<article class="card featured"><span class="badge">Pilihan rekomendasi</span><span class="no">Paket 02</span><h2>Essentials</h2><p class="tagline">Business Starter<span class="tagline-detail">Mulai mengelola artikel dan informasi secara mandiri melalui CMS praktis.</span></p>
-<div class="pricebox"><span class="price-label">Harga khusus RLC</span><strong class="price">Rp 2.500.000</strong></div>
-<h3 class="label">Cocok untuk</h3><p class="fit">RLC yang aktif menerbitkan artikel, berita, edukasi, dan informasi kegiatan melalui CMS sederhana.</p><h3 class="label">Fitur paket</h3>
+<article class="card"><div class="card-head"><span class="no">Paket 02</span><h2>Essentials</h2><p class="tagline">Business Starter<span class="tagline-detail">Mulai mengelola artikel dan informasi secara mandiri melalui CMS praktis.</span></p><div class="pricebox"><span class="price-label">Harga khusus RLC</span><strong class="price">Rp 2.500.000</strong></div></div><div class="card-body"><h3 class="label">Cocok untuk</h3><p class="fit">RLC yang aktif menerbitkan artikel, berita, edukasi, dan informasi kegiatan melalui CMS sederhana.</p><h3 class="label">Fitur paket</h3>
 <ul class="features"><li>Website dynamic</li><li>Responsive / Mobile First</li><li>Free domain .com 1 tahun</li><li>Free hosting by Maximus Repository</li><li>CMS Micro untuk mengelola artikel</li><li>Halaman admin</li><li>SEO On Page</li><li>Integrasi WhatsApp</li><li>Open Graph dan Metadata</li><li>Email bisnis</li></ul>
 <div class="bottom"><a class="cta" href="https://wa.me/6282297845527?text=Assalamu%27alaikum%2C%20saya%20ingin%20konsultasi%20Paket%20Essentials%20khusus%20RLC." target="_blank" rel="noopener">Konsultasi Paket Essentials ↗</a><p class="cta-note">Terhubung langsung dengan tim Maximus</p></div></article>
-<article class="card"><span class="no">Paket 03</span><h2>Corporate</h2><p class="tagline">Integrated Digital Platform<span class="tagline-detail">Satu platform untuk menghubungkan konten, program, event, dan peserta.</span></p>
-<div class="pricebox"><span class="price-label">Harga khusus RLC</span><strong class="price">Rp 5.500.000</strong></div>
-<h3 class="label">Cocok untuk</h3><p class="fit">RLC yang membutuhkan platform terpadu untuk publikasi, manajemen event, peserta, serta komunikasi otomatis.</p><h3 class="label">Fitur paket</h3>
+<article class="card"><div class="card-head"><span class="no">Paket 03</span><h2>Corporate</h2><p class="tagline">Integrated Digital Platform<span class="tagline-detail">Satu platform untuk menghubungkan konten, program, event, dan peserta.</span></p><div class="pricebox"><span class="price-label">Harga khusus RLC</span><strong class="price">Rp 5.500.000</strong></div></div><div class="card-body"><h3 class="label">Cocok untuk</h3><p class="fit">RLC yang membutuhkan platform terpadu untuk publikasi, manajemen event, peserta, serta komunikasi otomatis.</p><h3 class="label">Fitur paket</h3>
 <ul class="features"><li>Website dynamic</li><li>Responsive / Mobile First</li><li>Free domain .com 1 tahun</li><li>Free hosting by Maximus Repository</li><li>CMS Advanced untuk mengelola artikel dan halaman</li><li>Halaman admin</li><li>SEO On Page</li><li>Integrasi WhatsApp</li><li>Event Management</li><li>Guest Management</li><li>Email bisnis</li><li>WhatsApp &amp; Email Automation</li><li>Aplikasi Android PWA</li></ul>
 <div class="bottom"><a class="cta" href="https://wa.me/6282297845527?text=Assalamu%27alaikum%2C%20saya%20ingin%20konsultasi%20Paket%20Corporate%20khusus%20RLC." target="_blank" rel="noopener">Konsultasi Paket Corporate ↗</a><p class="cta-note">Terhubung langsung dengan tim Maximus</p></div></article>
-</section></main><footer><p class="copy">© 2026 Maximus-Lab</p></footer></body></html>
+</section>
+<section class="bonus" aria-label="Bonus modul minisite">
+<div><span class="bonus-kicker">Bonus jika pesan hari ini</span><h2>Modul Minisite</h2><p>Fitur promosi mini website untuk promosi event Anda.</p></div>
+<div class="countdown-wrap"><div class="countdown-title">Penawaran berakhir dalam</div><div class="countdown" role="timer" aria-live="off"><div class="time-unit"><strong id="cd-hours">00</strong><span>Jam</span></div><div class="time-unit"><strong id="cd-minutes">00</strong><span>Menit</span></div><div class="time-unit"><strong id="cd-seconds">00</strong><span>Detik</span></div></div></div>
+</section></main><footer><p class="copy">© 2026 Maximus-Lab</p></footer><script>
+(function(){
+ const h=document.getElementById('cd-hours'),m=document.getElementById('cd-minutes'),s=document.getElementById('cd-seconds');
+ function tick(){
+  const now=new Date(),end=new Date(now);end.setHours(24,0,0,0);
+  let left=Math.max(0,end-now);
+  const hours=Math.floor(left/3600000);left%=3600000;
+  const minutes=Math.floor(left/60000);left%=60000;
+  const seconds=Math.floor(left/1000);
+  h.textContent=String(hours).padStart(2,'0');m.textContent=String(minutes).padStart(2,'0');s.textContent=String(seconds).padStart(2,'0');
+ }
+ tick();setInterval(tick,1000);
+})();
+</script></body></html>
