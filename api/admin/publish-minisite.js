@@ -30,7 +30,7 @@ export default async function handler(req,res){
    navbar_brand:nav.brand||null,navbar_button_label:nav.button_label||null,
    hero_eyebrow:hero.eyebrow||null,hero_title:hero.title||null,hero_description:hero.description||null,hero_primary_cta:hero.primary_cta||null,hero_secondary_cta:hero.secondary_cta||null,
    hero_image_url:null,hero_image_alt:heroImg.alt||null,
-   materi_heading:byKey.materi_acara?.title||null,schedule_heading:byKey.schedule?.title||null,speakers_heading:byKey.speakers?.title||null,pricing_heading:byKey.pricing?.title||null,
+   materi_heading:byKey.materi_acara?.content?.heading||null,schedule_heading:byKey.schedule?.content?.heading||null,speakers_heading:byKey.speakers?.content?.heading||null,pricing_heading:byKey.pricing?.content?.heading||null,
    registration_heading:reg.heading||null,registration_description:reg.description||null,registration_button_label:reg.button_label||null,admin_whatsapp:reg.whatsapp||null,
    footer_organization:footer.organization||null,footer_address:footer.address||null,footer_whatsapp:footer.whatsapp||null,footer_email:footer.email||null,
    sticky_cta_text:sticky.text||null,sticky_cta_button_label:sticky.button_label||null,
