@@ -437,6 +437,36 @@
       border-color: var(--primary);
     }
 
+    .section-header {
+      text-align: center;
+      max-width: 100%;
+      margin: 0 auto 40px;
+    }
+
+    .section-header .badge {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .section-header .section-title,
+    .section-header .section-subtitle {
+      text-align: center;
+    }
+
+    .schedule-date-pill {
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto 32px;
+      padding: 18px 34px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #fff;
+      text-align: center;
+      font-size: 1.35rem;
+      line-height: 1.4;
+      font-weight: 800;
+    }
+
     .timeline {
       max-width: 780px;
       margin: 0 auto;
@@ -1281,6 +1311,7 @@
 .empty-input{height:44px;border:1px solid var(--border);border-radius:var(--radius-sm);margin:8px 0 16px;background:#fff}
 .empty-section-note{font-size:.75rem;color:#94a3b8;text-align:center;margin-top:14px}
 .hero-image-section{padding:0 0 48px}
+@media(max-width:600px){.schedule-date-pill{font-size:1rem;padding:14px 20px;margin-bottom:24px}}
 @media(max-width:430px){.empty-title{height:26px}.empty-card{padding:18px}}
 </style>
 </head>
@@ -1390,16 +1421,31 @@
    }else if(visual){visual.remove();}
   }else hero?.remove();
   $('.hero-image-section')?.remove();
-  const fillHeader=(section,title)=>{const header=$('.section-header',section);if(!header)return;header.innerHTML='';header.append(el('h2','section-title',title));};
+  const fillHeader=(section,key,fallbackTitle)=>{
+   const header=$('.section-header',section);if(!header)return;
+   const config=sections[key]||{};
+   header.innerHTML='';
+   const sectionName=config.section_name||'';
+   const title=config.title||fallbackTitle||'';
+   const subtitle=config.subheading||'';
+   if(sectionName)header.append(el('span','badge',sectionName));
+   if(title)header.append(el('h2','section-title',title));
+   if(subtitle)header.append(el('p','section-subtitle',subtitle));
+  };
   const materi=$('#materi');if(materi&&visible('materi_acara')){
-   fillHeader(materi,m.materi_heading||'Workshop Learning Modules');
+   fillHeader(materi,'materi_acara',m.materi_heading||'');
    const root=$('.benefits-grid',materi);root.innerHTML='';
    (data.materials||[]).forEach(x=>{const card=el('article','benefit-card');card.append(el('h3','',x.title));card.append(el('p','',x.description));root.append(card)});
    if(!root.children.length)materi.remove();
   }else materi?.remove();
   const schedule=$('#jadwal');if(schedule&&visible('schedule')){
-   fillHeader(schedule,m.schedule_heading||'Workshop Agenda');
+   fillHeader(schedule,'schedule',m.schedule_heading||'');
    const root=$('.timeline',schedule);root.innerHTML='';
+   const dateLabel=sections.schedule?.date_label||'';
+   if(dateLabel){
+    const datePill=el('div','schedule-date-pill',dateLabel);
+    root.before(datePill);
+   }
    (data.agenda||[]).forEach(x=>{
     const item=el('article','timeline-item');
     item.append(el('div','timeline-time',[x.day_label,x.time_label].filter(Boolean).join(' · ')));
@@ -1408,7 +1454,7 @@
    if(!root.children.length)schedule.remove();
   }else schedule?.remove();
   const speakers=$('#pembicara');if(speakers&&visible('speakers')){
-   fillHeader(speakers,m.speakers_heading||'Meet the Instructors');
+   fillHeader(speakers,'speakers',m.speakers_heading||'');
    const root=$('.speakers-grid',speakers);root.innerHTML='';
    (data.speakers||[]).forEach(x=>{
     const card=el('article','speaker-card');
@@ -1422,7 +1468,7 @@
    if(!root.children.length)speakers.remove();
   }else speakers?.remove();
   const pricing=$('#paket');if(pricing&&visible('pricing')){
-   fillHeader(pricing,m.pricing_heading||'Registration Packages');
+   fillHeader(pricing,'pricing',m.pricing_heading||'');
    const root=$('.pricing-grid',pricing);root.innerHTML='';
    (data.pricing||[]).forEach(x=>{
     const card=el('article','price-card'+(x.is_featured?' featured':''));
