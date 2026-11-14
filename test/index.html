@@ -1182,4 +1182,33 @@
 
 <footer class="footer"><div class="container"><div class="footer-grid"><div><div class="empty-line long"></div><div class="empty-line short"></div></div><div><div class="empty-line short"></div><div class="empty-line long"></div><div class="empty-line"></div></div></div><div class="footer-bottom"></div></div></footer>
 <div class="mobile-sticky-cta"><div class="sticky-price"><div class="empty-line short"></div><div class="empty-line"></div></div><div class="sticky-buttons"><div class="btn btn-primary"></div></div></div>
+
+<script>
+(async function(){
+ const slug=new URLSearchParams(location.search).get('slug')||'hospital-triage-workshop';
+ const api='/api/minisites/'+encodeURIComponent(slug);
+ try{
+  const response=await fetch(api,{cache:'no-store'});if(!response.ok)throw new Error('Workshop belum dipublikasikan.');
+  const data=await response.json(),m=data.minisite||{},sections=Object.fromEntries((data.sections||[]).map(s=>[s.section_key,s]));
+  const visible=k=>sections[k]?.is_visible!==false;
+  const text=(el,v)=>{if(el&&v)el.textContent=v};
+  const link=(el,v)=>{if(el&&v)el.href=v};
+  document.title=m.seo_meta_title||m.title||'Workshop';
+  const meta=document.querySelector('meta[name="description"]');if(meta)meta.content=m.seo_meta_description||m.description||'';
+  document.documentElement.style.setProperty('--primary',m.theme_primary_color||'#173b70');
+  const nav=document.querySelector('.navbar');if(nav&&visible('navbar')){text(nav.querySelector('.brand-text'),m.navbar_brand);text(nav.querySelector('.nav-cta'),m.navbar_button_label)}else if(nav)nav.remove();
+  const hero=document.querySelector('.hero');
+  if(hero&&visible('hero')){const content=hero.querySelector('.hero-content');if(content){const badge=content.querySelector('.badge');text(badge,m.hero_eyebrow);const titles=content.querySelectorAll('.empty-title');text(titles[0],m.hero_title);if(titles[1])titles[1].remove();const lines=content.querySelectorAll('.empty-line');text(lines[0],m.hero_description);const buttons=content.querySelectorAll('.hero-actions .btn');text(buttons[0],m.hero_primary_cta);text(buttons[1],m.hero_secondary_cta);}}else if(hero)hero.remove();
+  const setHeading=(section,heading)=>{const h=section?.querySelector('.section-header .section-title, .section-header .empty-title');if(h&&heading)h.textContent=heading};
+  const fillCards=(selector,items,make)=>{const root=document.querySelector(selector);if(!root)return;const template=root.firstElementChild;if(!items?.length){root.closest('.section')?.remove();return}root.innerHTML='';items.forEach((item,i)=>{const node=template.cloneNode(true);make(node,item,i);root.appendChild(node)})};
+  const materi=document.querySelector('#materi');if(materi&&visible('materi_acara')){setHeading(materi,m.materi_heading||'Workshop Modules');fillCards('#materi .benefits-grid',data.materials,(n,x)=>{const lines=n.querySelectorAll('.empty-line');text(lines[0],x.title);text(lines[1],x.description);if(lines[2])lines[2].remove()})}else materi?.remove();
+  const schedule=document.querySelector('#jadwal');if(schedule&&visible('schedule')){setHeading(schedule,m.schedule_heading||'Workshop Schedule');fillCards('#jadwal .timeline',[...(data.agenda||[])],(n,x)=>{const lines=n.querySelectorAll('.empty-line');text(lines[0],x.time_label||x.day_label);text(lines[1],x.title);text(lines[2],x.description)})}else schedule?.remove();
+  const speakers=document.querySelector('#pembicara');if(speakers&&visible('speakers')){setHeading(speakers,m.speakers_heading||'Expert Speakers');fillCards('#pembicara .speakers-grid',data.speakers,(n,x)=>{const lines=n.querySelectorAll('.empty-line');text(lines[0],x.name);text(lines[1],x.role);text(lines[2],x.bio);if(x.image_url){const img=document.createElement('img');img.src=x.image_url;img.alt=x.name;img.className='speaker-img';n.querySelector('.empty-avatar')?.replaceWith(img)}})}else speakers?.remove();
+  const pricing=document.querySelector('#paket');if(pricing&&visible('pricing')){setHeading(pricing,m.pricing_heading||'Registration Packages');fillCards('#paket .pricing-grid',data.pricing,(n,x)=>{const lines=n.querySelectorAll('.empty-line');text(lines[0],x.name);const price=n.querySelector('.empty-price');text(price,(Number(x.price)||0).toLocaleString('en-US'));text(lines[1],x.description);const featureLines=n.querySelectorAll('.empty-line');featureLines.forEach((e,i)=>{if(x.features?.[i])text(e,x.features[i]);else if(i>1)e.remove()})})}else pricing?.remove();
+  const reg=document.querySelector('#daftar');if(reg&&visible('registration')){const info=reg.querySelector('.register-info');if(info){text(info.querySelector('.empty-title'),m.registration_heading||'Register for the Workshop');text(info.querySelector('.empty-line'),m.registration_description)}const card=reg.querySelector('.form-card');if(card){card.innerHTML='<h3>Workshop Registration</h3><form id="workshopRegister"><label>Full Name<input class="form-control" name="full_name" required></label><label>WhatsApp<input class="form-control" name="whatsapp" required></label><label>Email<input class="form-control" type="email" name="email"></label><label>Education / Profession<input class="form-control" name="education"></label><label>Package<select class="form-control" name="selected_package">'+(data.pricing||[]).map(x=>'<option>'+x.name+'</option>').join('')+'</select></label><button class="btn btn-wa btn-full" type="submit">'+(m.registration_button_label||'Submit Registration')+'</button><p id="registerMessage" class="form-note"></p></form>';document.getElementById('workshopRegister').onsubmit=async e=>{e.preventDefault();const form=Object.fromEntries(new FormData(e.target));const rr=await fetch(api,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(form)});const result=await rr.json();document.getElementById('registerMessage').textContent=rr.ok?'Registration received. Thank you!':(result.error||'Registration failed.')};}}else reg?.remove();
+  const footer=document.querySelector('.footer');if(footer&&visible('footer')){const lines=footer.querySelectorAll('.empty-line');text(lines[0],m.footer_organization);text(lines[1],m.footer_address)}else footer?.remove();
+  document.querySelectorAll('.empty-line,.empty-title,.empty-image,.empty-avatar,.empty-card,.empty-price,.empty-input').forEach(el=>{if(!el.textContent.trim()&&!el.querySelector('img'))el.remove()});
+ }catch(e){document.body.innerHTML='<main style="font:16px sans-serif;padding:32px"><h1>Workshop not available</h1><p>'+e.message+'</p></main>'}
+})();
+</script>
 </body></html>
