@@ -21,3 +21,7 @@ create policy "Public can read agenda of published minisites" on public.minisite
 create policy "Public can read speakers of published minisites" on public.minisite_speakers for select to anon, authenticated using (exists(select 1 from public.minisites m where m.id=minisite_id and m.status='published'));
 create policy "Public can read pricing of published minisites" on public.minisite_pricing for select to anon, authenticated using (exists(select 1 from public.minisites m where m.id=minisite_id and m.status='published'));
 grant select on public.minisite_materials, public.minisite_agenda, public.minisite_speakers, public.minisite_pricing to anon, authenticated;
+
+-- Restrict the detail tables to public read access only; RLS limits rows to published events.
+revoke all on public.minisite_materials, public.minisite_agenda, public.minisite_speakers, public.minisite_pricing from anon, authenticated;
+grant select on public.minisite_materials, public.minisite_agenda, public.minisite_speakers, public.minisite_pricing to anon, authenticated;
