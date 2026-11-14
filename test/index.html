@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow"><title>Preview Event | Webdesk</title>
+<meta name="robots" content="noindex,nofollow"><meta name="description" id="dynamicDescription" content="Preview minisite dari Webdesk."><meta property="og:title" id="dynamicOgTitle" content="Preview Event | Webdesk"><meta property="og:description" id="dynamicOgDescription" content="Preview minisite dari Webdesk."><meta property="og:image" id="dynamicOgImage" content=""><title>Preview Event | Webdesk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
     /* ==========================================
@@ -1137,7 +1137,13 @@ function badge(t){return t?'<span class="badge">'+esc(t)+'</span>':''}
 function render(data){
  const m=data.minisite, s=data.sections||{}, materials=data.materials||[],agenda=data.agenda||[],speakers=data.speakers||[],pricing=data.pricing||[];
  document.title=esc(m.title)+' | '+esc(m.organizer||'Event');
- if(m.seo_meta_title)document.title=esc(m.seo_meta_title);
+ const metaTitle=m.seo_meta_title||m.title+' | '+(m.organizer||'Event');
+ const metaDescription=m.seo_meta_description||m.description||'';
+ document.getElementById('dynamicDescription').content=metaDescription;
+ document.getElementById('dynamicOgTitle').content=metaTitle;
+ document.getElementById('dynamicOgDescription').content=metaDescription;
+ if(m.seo_og_image_url)document.getElementById('dynamicOgImage').content=m.seo_og_image_url;
+ if(m.seo_canonical_url){let canonical=document.createElement('link');canonical.rel='canonical';canonical.href=m.seo_canonical_url;document.head.appendChild(canonical);}
  if(m.theme_primary_color)document.documentElement.style.setProperty('--primary',m.theme_primary_color);
  const dateText=[fmtDate(m.start_date),fmtDate(m.end_date)].filter(Boolean).join(' – ');
  if(sectionOn(s,'navbar'))$('#navbarMount').innerHTML='<header class="navbar" style="display:block!important"><div class="container nav-container"><a href="#" class="brand"><div class="brand-logo">'+esc(m.navbar_brand||m.organizer||'Event')+'</div><div class="brand-text">'+esc(m.organizer||m.title)+'</div></a><nav class="nav-links"><a href="#materi">Materi</a><a href="#jadwal">Jadwal</a><a href="#pembicara">Pembicara</a><a href="#investasi">Paket</a></nav><a href="#daftar" class="btn btn-primary nav-cta">'+esc(m.navbar_button_label||'Daftar')+'</a></div></header>';
