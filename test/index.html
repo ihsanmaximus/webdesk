@@ -1356,6 +1356,30 @@
    const badge=el('span','badge',m.hero_eyebrow||'');c.append(badge);
    c.append(el('h1','hero-title',m.hero_title||m.title||''));
    c.append(el('p','hero-desc',m.hero_description||m.description||''));
+
+   // Event details card: values come from General Setup fields in Supabase.
+   const metaItems=[];
+   const formatDate=value=>{
+    if(!value)return '';
+    const date=new Date(value+'T12:00:00');
+    if(Number.isNaN(date.getTime()))return '';
+    return new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'long',year:'numeric'}).format(date);
+   };
+   const startDate=formatDate(m.start_date),endDate=formatDate(m.end_date);
+   const dateLabel=startDate?(endDate&&endDate!==startDate?startDate+' – '+endDate:startDate):'';
+   const venueLabel=[m.event_format,m.location].filter(Boolean).join(' · ');
+   if(dateLabel)metaItems.push({icon:'▦',label:dateLabel});
+   if(venueLabel)metaItems.push({icon:'⌖',label:venueLabel});
+   if(metaItems.length){
+    const meta=el('div','hero-meta');
+    metaItems.forEach(item=>{
+     const row=el('div','meta-item');
+     row.append(el('span','meta-icon',item.icon),el('span','',item.label));
+     meta.append(row);
+    });
+    c.append(meta);
+   }
+
    const actions=el('div','hero-actions');
    const a=el('a','btn btn-primary',m.hero_primary_cta||'Register Now');a.href='#daftar';
    const b=el('a','btn btn-outline',m.hero_secondary_cta||'View Schedule');b.href='#jadwal';
