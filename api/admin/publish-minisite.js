@@ -7,12 +7,30 @@ async function db(path,options={}){
  const raw=await r.text();let data=null;try{data=raw?JSON.parse(raw):null}catch{}
  if(!r.ok){const e=new Error(data?.message||"Database request failed");e.status=r.status;throw e}return data;
 }
+async function storeImage(value,slug,folder,filename){
+ if(!value)return null;
+ if(/^https?:\\/\\//i.test(value))return value;
+ const match=String(value).match(/^data:(image\\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
+ if(!match)throw new Error(`Format gambar ${folder} tidak valid.`);
+ const mime=match[1],buffer=Buffer.from(match[2],"base64");
+ if(buffer.length>5*1024*1024)throw new Error(`Gambar ${folder} melebihi batas 5 MB.`);
+ const ext=mime==="image/png"?"png":mime==="image/webp"?"webp":"jpg";
+ const path=`${slug}/${folder}/${filename}.${ext}`;
+ const response=await fetch(`${URL}/storage/v1/object/minisite-images/${path.split("/").map(encodeURIComponent).join("/")}`,{
+  method:"POST",
+  headers:{apikey:SERVICE_KEY,Authorization:`Bearer ${SERVICE_KEY}`,"Content-Type":mime,"Cache-Control":"public, max-age=31536000, immutable","x-upsert":"true"},
+  body:buffer
+ });
+ const raw=await response.text();let result=null;try{result=raw?JSON.parse(raw):null}catch{}
+ if(!response.ok)throw new Error(result?.message||result?.error||`Gagal upload gambar ${folder}.`);
+ return `${URL}/storage/v1/object/public/minisite-images/${path.split("/").map(encodeURIComponent).join("/")}`;
+}
 const val=(obj,key)=>obj?.[key]??null;
 export default async function handler(req,res){
  res.setHeader("Content-Type","application/json; charset=utf-8");res.setHeader("Cache-Control","no-store");
  if(req.method!=="POST"){res.setHeader("Allow","POST");return res.status(405).json({error:"Method not allowed"})}
  if(!URL||!SERVICE_KEY||!ADMIN_TOKEN)return res.status(503).json({error:"Konfigurasi database/admin belum lengkap."});
- if(String(req.headers.authorization||"").replace(/^Bearer\\s+/i,"")!==ADMIN_TOKEN)return res.status(401).json({error:"Token admin tidak valid."});
+ if(String(req.headers.authorization||"").replace(/^Bearer\s+/i,"")!==ADMIN_TOKEN)return res.status(401).json({error:"Token admin tidak valid."});
  try{
   const b=typeof req.body==="string"?JSON.parse(req.body):(req.body||{});
   const title=String(b.title||"").trim(),slug=String(b.slug||"").trim().toLowerCase();
@@ -23,18 +41,23 @@ export default async function handler(req,res){
   const nav=byKey.navbar?.content||{},hero=byKey.hero?.content||{},heroImg=byKey.hero_image?.content||{};
   const materials=byKey.materi_acara?.content?.items||[],agenda=byKey.schedule?.content?.items||[],speakers=byKey.speakers?.content?.items||[],pricing=byKey.pricing?.content?.items||[];
   const reg=byKey.registration?.content||{},footer=byKey.footer?.content||{},sticky=byKey.sticky_cta?.content||{};
+  const heroImageUrl=await storeImage(heroImg.image,slug,"hero","hero-image");
+  const ogImageUrl=await storeImage(seo.og_image,slug,"seo","og-image");
+  for(let i=0;i<speakers.length;i++){
+   speakers[i].image_url=await storeImage(speakers[i].image,slug,"speakers",`speaker-${String(i+1).padStart(2,"0")}`);
+  }
   const settings=b.settings||{},seo=b.seo||{},theme=b.theme||{},published=b.status==="published";
   const sitePayload={
    title,slug,status:published?"published":"draft",description:b.description||"",
    start_date:settings.start_date||null,end_date:settings.end_date||null,event_format:settings.format||null,location:settings.location||null,organizer:settings.organizer||null,
    navbar_brand:nav.brand||null,navbar_button_label:nav.button_label||null,
    hero_eyebrow:hero.eyebrow||null,hero_title:hero.title||null,hero_description:hero.description||null,hero_primary_cta:hero.primary_cta||null,hero_secondary_cta:hero.secondary_cta||null,
-   hero_image_url:null,hero_image_alt:heroImg.alt||null,
+   hero_image_url:heroImageUrl,hero_image_alt:heroImg.alt||null,
    materi_heading:byKey.materi_acara?.content?.heading||null,schedule_heading:byKey.schedule?.content?.heading||null,speakers_heading:byKey.speakers?.content?.heading||null,pricing_heading:byKey.pricing?.content?.heading||null,
    registration_heading:reg.heading||null,registration_description:reg.description||null,registration_button_label:reg.button_label||null,admin_whatsapp:reg.whatsapp||null,
    footer_organization:footer.organization||null,footer_address:footer.address||null,footer_whatsapp:footer.whatsapp||null,footer_email:footer.email||null,
    sticky_cta_text:sticky.text||null,sticky_cta_button_label:sticky.button_label||null,
-   seo_meta_title:seo.title||null,seo_meta_description:seo.description||null,seo_og_image_url:null,seo_canonical_url:seo.canonical||null,
+   seo_meta_title:seo.title||null,seo_meta_description:seo.description||null,seo_og_image_url:ogImageUrl,seo_canonical_url:seo.canonical||null,
    theme_primary_color:theme.primary_color||"#173b70",theme,seo,settings,
    published_at:published?new Date().toISOString():null
   };
@@ -46,7 +69,7 @@ export default async function handler(req,res){
   const collections=[
    ["minisite_materials",materials.map((x,i)=>({minisite_id:site.id,title:x.title||"",description:x.description||null,sort_order:i+1}))],
    ["minisite_agenda",agenda.map((x,i)=>({minisite_id:site.id,day_label:x.day||null,time_label:x.time||null,title:x.title||"",description:x.description||null,sort_order:i+1}))],
-   ["minisite_speakers",speakers.map((x,i)=>({minisite_id:site.id,name:x.name||"",role:x.role||null,bio:x.bio||null,topic:x.topic||null,image_url:null,sort_order:i+1}))],
+   ["minisite_speakers",speakers.map((x,i)=>({minisite_id:site.id,name:x.name||"",role:x.role||null,bio:x.bio||null,topic:x.topic||null,image_url:x.image_url||null,sort_order:i+1}))],
    ["minisite_pricing",pricing.map((x,i)=>({minisite_id:site.id,name:x.name||"",description:x.description||null,original_price:Number(x.original_price)||null,price:Number(x.price)||0,unit_label:x.unit||null,badge:x.badge||null,features:String(x.features||"").split(/\\r?\\n/).map(v=>v.trim()).filter(Boolean),button_label:x.button_label||null,is_featured:!!x.featured,sort_order:i+1}))]
   ];
   for(const [table] of collections)await db(`${table}?minisite_id=eq.${site.id}`,{method:"DELETE",headers:{Prefer:"return=minimal"}});
