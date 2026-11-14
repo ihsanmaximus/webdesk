@@ -19,6 +19,10 @@
     {
       "source": "/live",
       "destination": "/rlc/index.html"
+    },
+    {
+      "source": "/:slug",
+      "destination": "/test/index.html?slug=:slug"
     }
   ]
 }
