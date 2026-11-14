@@ -35,15 +35,15 @@ async function supabase(path, options = {}) {
 }
 
 export default async function handler(req, res) {
-  const slug = String(req.query.slug || "").trim().toLowerCase();
-  if (!slug || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
-    return send(res, 400, { error: "Slug tidak valid." });
-  }
+  const identifier = String(req.query.slug || "").trim();
+  const isSiteId = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(identifier);
+  const isSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(identifier);
+  if (!isSiteId && !isSlug) return send(res, 400, { error: "Site ID tidak valid." });
 
   try {
     if (req.method === "GET") {
       const rows = await supabase(
-        `minisites?select=*&slug=eq.${encodeURIComponent(slug)}&status=eq.published&limit=1`
+        `minisites?select=*&${isSiteId ? "id" : "slug"}=eq.${encodeURIComponent(identifier)}&status=eq.published&limit=1`
       );
       if (!rows?.length) return send(res, 404, { error: "Minisite tidak ditemukan atau belum dipublikasikan." });
       const minisite = rows[0];
@@ -60,7 +60,7 @@ export default async function handler(req, res) {
     if (req.method === "POST") {
       const body = typeof req.body === "string" ? JSON.parse(req.body) : (req.body || {});
       const rows = await supabase(
-        `minisites?select=id&slug=eq.${encodeURIComponent(slug)}&status=eq.published&limit=1`
+        `minisites?select=id&${isSiteId ? "id" : "slug"}=eq.${encodeURIComponent(identifier)}&status=eq.published&limit=1`
       );
       if (!rows?.length) return send(res, 404, { error: "Minisite tidak ditemukan." });
 
