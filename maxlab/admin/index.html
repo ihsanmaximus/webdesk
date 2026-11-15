@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1933">
+  <title>MaxLab — Web Configurator</title>
+  <link rel="stylesheet" href="./assets/css/global.css">
+  <link rel="stylesheet" href="./assets/css/workspace.css">
+  <link rel="stylesheet" href="./assets/css/pages.css">
+  <script src="./assets/js/app.js" defer></script>
+</head>
+<body>
+  <div class="workspace">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__brand">
+        <div class="sidebar__logo">M</div>
+        <div class="sidebar__brand-copy"><strong>MAXLAB</strong><span>WEB CONFIGURATOR</span></div>
+        <button class="sidebar__close" id="sidebar-close" aria-label="Tutup menu">×</button>
+      </div>
+      <nav class="sidebar__nav" aria-label="Navigasi utama">
+        <div class="sidebar__group">
+          <p class="sidebar__label">Website Configuration</p>
+          <button class="nav-item is-active" data-page="general"><span class="nav-item__number">01</span><span class="nav-item__icon">⚙</span><span>General Setup</span></button>
+          <button class="nav-item" data-page="sections"><span class="nav-item__number">02</span><span class="nav-item__icon">▱</span><span>Section Configurator</span></button>
+          <button class="nav-item" data-page="seo"><span class="nav-item__number">03</span><span class="nav-item__icon">⌕</span><span>SEO</span></button>
+        </div>
+      </nav>
+      <div class="sidebar__footer"><span>PAIRED WEBSITE WORKSPACE</span><strong>MAXLAB · V1.0</strong></div>
+    </aside>
+    <div class="workspace__main">
+      <header class="topbar">
+        <button class="topbar__menu" id="sidebar-open" aria-label="Buka menu">☰</button>
+        <div class="topbar__heading"><span>MAXLAB / WEBSITE CONFIGURATOR</span><h1 id="page-title">General Setup</h1></div>
+        <div class="topbar__status"><span class="status-dot"></span> Single website pair</div>
+      </header>
+      <main class="work-area" id="work-area" tabindex="-1">
+        <section class="page-intro"><p class="eyebrow" id="page-eyebrow">WEBSITE SETTINGS</p><h2 id="page-heading">General Setup</h2><p id="page-description">Pengaturan dasar identitas website.</p></section>
+        <section class="work-panel" id="page-content" aria-live="polite"></section>
+      </main>
+    </div>
+    <button class="sidebar-backdrop" id="sidebar-backdrop" aria-label="Tutup menu"></button>
+  </div>
+</body>
+</html>
