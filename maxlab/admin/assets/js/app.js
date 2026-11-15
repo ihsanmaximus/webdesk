@@ -196,9 +196,10 @@ function bindInteractions() {
     row.className = "navbar-menu-row";
     row.innerHTML = '<label class="field"><span>Label Menu</span><input type="text" placeholder="Contoh: Tentang Kami"></label><label class="field"><span>Target URL</span><input type="text" placeholder="#about"></label><button class="remove-menu-button" type="button" aria-label="Hapus menu">×</button>';
     list.appendChild(row);
-    row.querySelector(".remove-menu-button").addEventListener("click", () => row.remove());
+    row.querySelector(".remove-menu-button").addEventListener("click", () => { row.remove(); captureNavbarForm(); });
+    captureNavbarForm();
   });
-  document.querySelectorAll(".remove-menu-button:not(:disabled)").forEach(button => button.addEventListener("click", () => button.closest(".navbar-menu-row")?.remove()));
+  document.querySelectorAll(".remove-menu-button:not(:disabled)").forEach(button => button.addEventListener("click", () => { button.closest(".navbar-menu-row")?.remove(); captureNavbarForm(); }));
   const logoInput = $("#navbar-logo");
   if (logoInput) logoInput.addEventListener("change", () => {
     const file = logoInput.files?.[0];
@@ -206,6 +207,7 @@ function bindInteractions() {
     if (!file || !preview) return;
     preview.src = URL.createObjectURL(file);
     preview.hidden = false;
+    captureNavbarForm();
   });
 
   ["#navbar-brand", "#navbar-whatsapp", "#navbar-cta-label"].forEach(selector => $(selector)?.addEventListener("input", captureNavbarForm));
@@ -389,6 +391,8 @@ async function loadNavbarDraftIntoForm() {
       });
     }
     if (status) status.textContent = "Draft lokal dipulihkan dari browser ini.";
+    navbarDataLoaded = true;
+    navbarFormCache = { ...local, logoDataUrl: local.logoDataUrl || preview?.src || "" };
     return true;
   }
 
