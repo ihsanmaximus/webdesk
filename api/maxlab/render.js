@@ -52,7 +52,6 @@ function pageHtml(website, config, menuItems, heroConfig) {
 .nav-links a:hover{color:#e7c99f}.cta{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border-radius:10px;background:#e4c9a4;color:#493524;text-decoration:none;font-size:14px;font-weight:750;white-space:nowrap}
 .nav-toggle{display:none;width:44px;height:44px;padding:9px;border:1px solid rgba(255,255,255,.35);border-radius:9px;background:transparent;color:#fff;cursor:pointer}
 .nav-toggle span{display:block;height:2px;margin:6px 0;background:currentColor;border-radius:2px;transition:transform .2s ease,opacity .2s ease}
-main{width:min(920px,calc(100% - 36px));margin:72px auto;padding:32px;border:1px solid #e1e6ee;border-radius:18px;background:#fff}
 h1{margin:0 0 10px;font-size:26px}p{margin:0;color:#667085;line-height:1.7}
 @media(max-width:767px){.site-nav{min-height:68px;padding:12px 18px;gap:12px}.brand{font-size:17px;flex:1}.nav-toggle{display:block;flex:0 0 44px}
 .nav-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(8px) rotate(45deg)}.nav-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}.nav-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
@@ -60,23 +59,25 @@ h1{margin:0 0 10px;font-size:26px}p{margin:0;color:#667085;line-height:1.7}
 .nav-links.is-open{display:flex;animation:menuDrop .2s ease-out}.nav-links a{display:block;padding:14px 8px;border-bottom:1px solid rgba(255,255,255,.14);font-size:15px}.nav-links a:last-child{border-bottom:0}.cta{padding:10px 13px;font-size:13px}main{margin:28px auto;padding:24px}}
 @keyframes menuDrop{from{opacity:0;transform:translateY(-7px)}to{opacity:1;transform:translateY(0)}}@media(prefers-reduced-motion:reduce){.nav-links.is-open{animation:none}}
 
-.hero-section{position:relative;isolation:isolate;display:flex;align-items:center;min-height:600px;padding:72px clamp(24px,7vw,100px);overflow:hidden;background-size:cover;background-position:center;background-repeat:no-repeat;color:#fff}
-.hero-section::before{content:"";position:absolute;inset:0;z-index:0;background:#064653}
-.hero-section .hero-gradient{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(270deg,rgba(6,70,83,.96) 0%,rgba(6,70,83,.88) 28%,rgba(6,70,83,.55) 55%,rgba(6,70,83,.12) 82%,transparent 100%)}
-.hero-section .hero-inner{position:relative;z-index:2;width:min(1180px,100%);margin:0 auto}
-.hero-copy{max-width:620px}
-.hero-eyebrow{margin:0 0 16px;color:#bde9a9;font-size:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
-.hero-copy h1{max-width:700px;margin:0 0 20px;color:#fff;font-size:clamp(42px,6vw,76px);font-weight:800;line-height:.99;letter-spacing:-.055em}
-.hero-description{max-width:560px;margin:0;color:#e0eeee;font-size:18px;line-height:1.6}
-.hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
-.hero-cta{display:inline-flex;align-items:center;justify-content:center;padding:14px 22px;border-radius:9px;text-decoration:none;font-size:14px;font-weight:750}
-.hero-cta.primary{background:#bfe99e;color:#123b3f}.hero-cta.secondary{border:1px solid rgba(255,255,255,.72);color:#fff;background:transparent}
-@media(max-width:680px){.hero-section{min-height:720px;padding:52px 22px 60px;align-items:flex-start;background-position:center top}.hero-section .hero-gradient{background:linear-gradient(180deg,#064653 0%,rgba(6,70,83,.94) 28%,rgba(6,70,83,.72) 52%,rgba(6,70,83,.28) 78%,transparent 100%)}.hero-copy h1{font-size:clamp(40px,11vw,58px);letter-spacing:-.035em;margin-bottom:14px}.hero-description{font-size:15px;line-height:1.55}.hero-actions{gap:9px;margin-top:20px}.hero-cta{padding:12px 16px;font-size:12px}}
+/* Hero styling follows the deployed Dokter Faisal hero.css composition. */
+.hero-section{position:relative;overflow:hidden;min-height:560px;padding:64px 0 48px;background-color:#eaf5fc;background-size:cover;background-position:center center;background-repeat:no-repeat;color:#14305a}
+.hero-section .hero-gradient{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(90deg,rgba(234,245,252,.96) 0%,rgba(234,245,252,.84) 42%,rgba(234,245,252,.12) 78%,rgba(234,245,252,0) 100%)}
+.hero-section .hero-inner{position:relative;z-index:2;display:flex;align-items:center;width:min(1120px,calc(100% - 48px));min-height:440px;margin-inline:auto}
+.hero-copy{position:relative;z-index:2;width:52%;max-width:600px;padding:10px 0}
+.hero-eyebrow{display:inline-block;margin:0 0 18px;padding:7px 18px;border-radius:999px;background:#d7ebf8;color:#176b9b;font-size:14px;font-weight:700;letter-spacing:0;text-transform:none}
+.hero-copy h1{max-width:600px;margin:0 0 20px;color:#123d63;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(42px,5.2vw,64px);font-weight:700;line-height:1.12;letter-spacing:-.01em}
+.hero-description{max-width:490px;margin:20px 0 28px;color:#405c73;font-size:18px;line-height:1.65}
+.hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:0}
+.hero-cta{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 28px;border:2px solid #0b5cad;border-radius:999px;text-decoration:none;font-size:16px;font-weight:600}
+.hero-cta.primary{background:#b4c540;border-color:#b4c540;color:#fff}.hero-cta.secondary{background:transparent;border-color:#0b5cad;color:#0b5cad}
+@media(max-width:1024px){.hero-section{min-height:500px;padding:44px 0 36px;background-position:55% center}.hero-section .hero-inner{min-height:420px}.hero-copy{width:54%}.hero-copy h1{font-size:clamp(36px,4vw,52px)}}
+@media(max-width:767px){.hero-section{min-height:auto;padding:0;background-color:#eaf5fc;background-position:85% top}.hero-section .hero-gradient{background:linear-gradient(180deg,rgba(234,245,252,0) 0%,rgba(234,245,252,0) 65%,#fff 100%)}.hero-section .hero-inner{display:block;width:100%;min-height:0;padding-top:450px}.hero-copy{width:100%;max-width:none;padding:28px 24px 34px;background:rgba(255,255,255,.96);border-radius:28px 28px 0 0}.hero-eyebrow{margin-bottom:14px}.hero-copy h1{font-size:clamp(34px,8vw,42px);line-height:1.15}.hero-description{font-size:17px;margin:14px 0 22px}.hero-actions{flex-direction:column;align-items:flex-start;gap:12px}.hero-actions .hero-cta{width:fit-content;max-width:100%;min-height:48px;padding:12px 22px;font-size:15px;font-weight:500}}
+@media(max-width:380px){.hero-section .hero-inner{padding-top:450px}.hero-copy{padding-inline:18px}}
 </style></head><body>
 <header class="site-nav" id="site-navbar"><div class="brand" id="site-brand">${logo}<span>${esc(brand)}</span></div>
 <nav class="nav-links" id="site-menu" aria-label="Navigasi utama">${menus}</nav>${cta}
 <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Buka menu"><span></span><span></span><span></span></button></header>
-<main>${heroHtml(heroConfig)}</main>
+${heroHtml(heroConfig)}
 <script>(function(){const b=document.getElementById("nav-toggle"),m=document.getElementById("site-menu");if(!b||!m)return;function setOpen(v){m.classList.toggle("is-open",v);b.setAttribute("aria-expanded",String(v));b.setAttribute("aria-label",v?"Tutup menu":"Buka menu")}b.addEventListener("click",()=>setOpen(!m.classList.contains("is-open")));m.addEventListener("click",e=>{if(e.target.closest("a"))setOpen(false)});document.addEventListener("keydown",e=>{if(e.key==="Escape")setOpen(false)});window.addEventListener("resize",()=>{if(window.innerWidth>767)setOpen(false)})})();</script>
 </body></html>`;
 }
