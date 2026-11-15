@@ -42,7 +42,8 @@ export default async function handler(req,res){
   const materials=byKey.materi_acara?.content?.items||[],agenda=byKey.schedule?.content?.items||[],speakers=byKey.speakers?.content?.items||[],pricing=byKey.pricing?.content?.items||[];
   const reg=byKey.registration?.content||{},footer=byKey.footer?.content||{},sticky=byKey.sticky_cta?.content||{};
   const settings=b.settings||{},seo=b.seo||{},theme=b.theme||{},action=b.status;
-  const existing=action==="save"?await db(`minisites?select=status,published_at&slug=eq.${encodeURIComponent(slug)}&limit=1`):[];
+  const existing=b.id?await db(`minisites?select=id,status,published_at&id=eq.${encodeURIComponent(String(b.id))}&limit=1`):(await db(`minisites?select=id,status,published_at&slug=eq.${encodeURIComponent(slug)}&limit=1`));
+  if(b.id&&!existing?.length)return res.status(404).json({error:"Landing page yang akan diedit tidak ditemukan."});
   const finalStatus=action==="published"?"published":action==="draft"?"draft":(existing?.[0]?.status||"draft");
   const published=finalStatus==="published";
   const heroImageUrl=await storeImage(heroImg.image,slug,"hero","hero-image");
@@ -64,7 +65,7 @@ export default async function handler(req,res){
    theme_primary_color:theme.primary_color||"#173b70",theme,seo,settings,
    published_at:published?(action==="published"?new Date().toISOString():(existing?.[0]?.published_at||new Date().toISOString())):null
   };
-  const saved=await db("minisites?on_conflict=slug&select=id,slug,status",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=representation"},body:JSON.stringify(sitePayload)});
+  const saved=b.id?await db(`minisites?id=eq.${encodeURIComponent(String(b.id))}&select=id,slug,status`,{method:"PATCH",headers:{Prefer:"return=representation"},body:JSON.stringify(sitePayload)}):await db("minisites?on_conflict=slug&select=id,slug,status",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=representation"},body:JSON.stringify(sitePayload)});
   const site=saved?.[0];if(!site?.id)throw new Error("Database tidak mengembalikan ID minisite.");
   await db(`minisite_sections?minisite_id=eq.${site.id}`,{method:"DELETE",headers:{Prefer:"return=minimal"}});
   const sectionRows=sections.map((s,i)=>({minisite_id:site.id,section_key:s.key,section_type:s.type,section_name:s.section_name||null,title:s.title||null,subheading:s.subheading||null,date_label:s.date_label||null,sort_order:i+1,is_visible:!!s.visible,content:s.content||{}}));
