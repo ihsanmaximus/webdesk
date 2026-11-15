@@ -22,25 +22,17 @@ async function db(path, options = {}) {
   return data;
 }
 const defaults = {
-  version: 1, layout: "text-image", eyebrow: "", headline: "Bangun Sesuatu yang Luar Biasa",
+  version: 1, layout: "background-image", eyebrow: "", headline: "Bangun Sesuatu yang Luar Biasa",
   subheadline: "Perkenalkan bisnis Anda dengan pesan yang jelas, menarik, dan mudah diingat.",
-  eyebrowColor: "#047857", headlineColor: "#172033", descriptionColor: "#172033",
   primaryCtaEnabled: true, primaryCtaLabel: "Hubungi Kami", primaryCtaTarget: "#contact",
   secondaryCtaEnabled: false, secondaryCtaLabel: "Pelajari Lebih Lanjut", secondaryCtaTarget: "#about",
-  imageUrl: "", imageAlt: "Gambar utama website", imagePosition: "right", alignment: "left",
-  height: "large", backgroundColor: "#FFFFFF", textColor: "#172033", accentColor: "#047857",
-  gradientEnabled: true, gradientTheme: "dark", gradientPosition: "left"
+  imageUrl: "", imageAlt: "Background Hero", gradientEnabled: true
 };
 function normalize(input = {}) {
   const c = { ...defaults, ...(input && typeof input === "object" ? input : {}) };
   for (const key of ["eyebrow","headline","subheadline","primaryCtaLabel","primaryCtaTarget","secondaryCtaLabel","secondaryCtaTarget","imageUrl","imageAlt"]) c[key] = String(c[key] ?? "").slice(0, key === "imageUrl" ? 2000 : 1000);
-  if (!["text-only","text-image","background-image","split-full-bleed"].includes(c.layout)) c.layout = defaults.layout;
-  if (!["left","right","top","background"].includes(c.imagePosition)) c.imagePosition = defaults.imagePosition;
-  if (!["left","center","right"].includes(c.alignment)) c.alignment = defaults.alignment;
-  if (!["compact","medium","large"].includes(c.height)) c.height = defaults.height;
-  if (!["dark","light"].includes(c.gradientTheme)) c.gradientTheme = defaults.gradientTheme;
-  if (!["left","right"].includes(c.gradientPosition)) c.gradientPosition = defaults.gradientPosition;
-  for (const key of ["eyebrowColor","headlineColor","descriptionColor","backgroundColor","textColor","accentColor"]) if (!/^#[0-9a-f]{6}$/i.test(c[key])) c[key] = defaults[key];
+  c.layout = "background-image";
+  c.imageUrl = /^https?:\\/\\//i.test(c.imageUrl) ? c.imageUrl : "";
   for (const key of ["primaryCtaEnabled","secondaryCtaEnabled","gradientEnabled"]) c[key] = Boolean(c[key]);
   return c;
 }
