@@ -1,7 +1,7 @@
+import { isAdminAuthorized } from "./auth.js";
 // Admin-only publish endpoint. Persists the complete minisite to Supabase.
 const URL=process.env.SUPABASE_URL;
 const SERVICE_KEY=process.env.SUPABASE_SERVICE_ROLE_KEY;
-const ADMIN_TOKEN=process.env.WEBDESK_ADMIN_TOKEN;
 async function db(path,options={}){
  const r=await fetch(`${URL}/rest/v1/${path}`,{...options,headers:{apikey:SERVICE_KEY,Authorization:`Bearer ${SERVICE_KEY}`,"Content-Type":"application/json",...(options.headers||{})}});
  const raw=await r.text();let data=null;try{data=raw?JSON.parse(raw):null}catch{}
@@ -29,8 +29,8 @@ const val=(obj,key)=>obj?.[key]??null;
 export default async function handler(req,res){
  res.setHeader("Content-Type","application/json; charset=utf-8");res.setHeader("Cache-Control","no-store");
  if(req.method!=="POST"){res.setHeader("Allow","POST");return res.status(405).json({error:"Method not allowed"})}
- if(!URL||!SERVICE_KEY||!ADMIN_TOKEN)return res.status(503).json({error:"Konfigurasi database/admin belum lengkap."});
- if(String(req.headers.authorization||"").replace(/^Bearer\s+/i,"")!==ADMIN_TOKEN)return res.status(401).json({error:"Token admin tidak valid."});
+ if(!URL||!SERVICE_KEY)return res.status(503).json({error:"Konfigurasi database/admin belum lengkap."});
+ if(!isAdminAuthorized(req))return res.status(401).json({error:"Sesi admin tidak valid. Silakan login kembali."});
  try{
   const b=typeof req.body==="string"?JSON.parse(req.body):(req.body||{});
   const title=String(b.title||"").trim(),slug=String(b.slug||"").trim().toLowerCase();
