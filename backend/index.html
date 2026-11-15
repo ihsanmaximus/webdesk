@@ -102,7 +102,7 @@ async function loadLandingPages(){
   const r=await fetch('/api/admin/minisites',{headers:{Authorization:'Bearer '+token}});
   const data=await r.json();if(!r.ok)throw new Error(data.error||'Gagal memuat daftar.');
   if(!data.items?.length){host.innerHTML='<p class="muted">Belum ada landing page tersimpan.</p>';return}
-  host.innerHTML='<div class="lp-list">'+data.items.map(item=>'<div class="lp-row"><div class="lp-info"><strong>'+escapeHtml(item.title||'Tanpa Judul')+'</strong><span>/'+escapeHtml(item.slug)+'</span><small>'+escapeHtml(String(item.status||'draft').toUpperCase())+' · Diperbarui '+escapeHtml(item.updated_at?new Date(item.updated_at).toLocaleString('id-ID'):'—')+'</small></div><a class="btn primary lp-visit" href="/'+encodeURIComponent(item.slug)+'" target="_blank" rel="noopener">Visit ↗</a></div>').join('')+'</div>';
+  host.innerHTML='<div class="lp-list">'+data.items.map(item=>'<div class="lp-row"><div class="lp-info"><strong>'+escapeHtml(item.title||'Tanpa Judul')+'</strong><span>/'+escapeHtml(item.slug)+'</span><small>'+escapeHtml(String(item.status||'draft').toUpperCase())+' · Diperbarui '+escapeHtml(item.updated_at?new Date(item.updated_at).toLocaleString('id-ID'):'—')+'</small></div>'+(item.status==='published'?'<a class="btn primary lp-visit" href="/'+encodeURIComponent(item.slug)+'" target="_blank" rel="noopener">Visit ↗</a>':'<span class="btn secondary lp-visit" aria-disabled="true">Belum Publish</span>')+'</div>').join('')+'</div>';
  }catch(e){host.innerHTML='<p class="muted">'+escapeHtml(e.message||'Gagal memuat daftar.')+'</p>'}
 }
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
