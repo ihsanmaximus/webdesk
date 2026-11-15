@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/rlc",
+      "destination": "/rlc/",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/",
