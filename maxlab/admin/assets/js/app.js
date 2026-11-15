@@ -31,6 +31,35 @@ const content = $("#page-content");
 const sidebar = $("#sidebar");
 const backdrop = $("#sidebar-backdrop");
 const navItems = [...document.querySelectorAll(".nav-item")];
+let navbarFormCache = null;
+let navbarDataLoaded = false;
+function captureNavbarForm() {
+  const brand = $("#navbar-brand");
+  if (!brand) return;
+  navbarFormCache = { ...collectNavbarFormData(), logoDataUrl: $("#navbar-logo-preview")?.src || "" };
+}
+function restoreNavbarFormCache() {
+  if (!navbarFormCache) return;
+  const data = navbarFormCache;
+  if ($("#navbar-brand")) $("#navbar-brand").value = data.brandName || "";
+  if ($("#navbar-whatsapp")) $("#navbar-whatsapp").value = data.whatsappNumber || "";
+  if ($("#navbar-cta-label")) $("#navbar-cta-label").value = data.ctaLabel || "";
+  const preview = $("#navbar-logo-preview");
+  if (preview && data.logoDataUrl) { preview.src = data.logoDataUrl; preview.hidden = false; }
+  const list = $("#navbar-menu-list");
+  if (list && Array.isArray(data.menuItems)) {
+    list.innerHTML = "";
+    data.menuItems.forEach(item => {
+      const row = document.createElement("div"); row.className = "navbar-menu-row";
+      row.innerHTML = '<label class="field"><span>Label Menu</span><input type="text" placeholder="Contoh: Home"></label><label class="field"><span>Target URL</span><input type="text" placeholder="#home"></label><button class="remove-menu-button" type="button" aria-label="Hapus menu">×</button>';
+      row.querySelectorAll("input")[0].value = item.label || "";
+      row.querySelectorAll("input")[1].value = item.targetUrl || "";
+      row.querySelector(".remove-menu-button").addEventListener("click", () => { row.remove(); captureNavbarForm(); });
+      list.appendChild(row);
+    });
+  }
+}
+
 
 function field(label, placeholder, type = "text", value = "") {
   return `<label class="field"><span>${label}</span><input type="${type}" placeholder="${placeholder}" value="${value}"></label>`;
@@ -123,6 +152,7 @@ function renderSeo() {
 }
 
 function render() {
+  captureNavbarForm();
   const [pageTitle, pageEyebrow, pageDescription] = meta[state.activePage];
   title.textContent = pageTitle;
   heading.textContent = pageTitle;
@@ -131,6 +161,10 @@ function render() {
   navItems.forEach(item => item.classList.toggle("is-active", item.dataset.page === state.activePage));
   content.innerHTML = state.activePage === "general" ? renderGeneral() : state.activePage === "sections" ? renderSections() : renderSeo();
   bindInteractions();
+  if (state.activePage === "sections" && state.activeSection === "navbar") {
+    if (navbarFormCache) restoreNavbarFormCache();
+    else if (!navbarDataLoaded) loadNavbarDraftIntoForm();
+  }
 }
 
 function bindInteractions() {
@@ -153,8 +187,7 @@ function bindInteractions() {
   $("#navbar-save-database")?.addEventListener("click", saveNavbarDraft);
   $("#navbar-publish")?.addEventListener("click", publishNavbar);
 
-  const navbarSection = document.querySelector('[data-section-id="navbar"]');
-  if (navbarSection) loadNavbarDraftIntoForm();
+
 
   const addMenu = $("#navbar-add-link");
   if (addMenu) addMenu.addEventListener("click", () => {
@@ -174,6 +207,9 @@ function bindInteractions() {
     preview.src = URL.createObjectURL(file);
     preview.hidden = false;
   });
+
+  ["#navbar-brand", "#navbar-whatsapp", "#navbar-cta-label"].forEach(selector => $(selector)?.addEventListener("input", captureNavbarForm));
+  $("#navbar-menu-list")?.addEventListener("input", captureNavbarForm);
 
   // Pointer-based sorting supports touch screens as well as mouse input.
   const list = $("#section-list");
@@ -256,6 +292,7 @@ async function saveNavbarLocalDraft() {
     const data = collectNavbarFormData();
     data.logoDataUrl = await readNavbarLogo() || ($("#navbar-logo-preview")?.src?.startsWith("data:image/") ? $("#navbar-logo-preview").src : "");
     localStorage.setItem("maxlab:maxlabtest:navbar:draft", JSON.stringify(data));
+    navbarFormCache = data;
     status.textContent = "Draft tersimpan lokal di browser ini.";
     button.textContent = "Draft ✓";
   } catch (error) { status.textContent = "Draft gagal disimpan: " + error.message; }
@@ -273,6 +310,8 @@ async function saveNavbarDraft() {
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Gagal menyimpan ke database.");
     localStorage.removeItem("maxlab:maxlabtest:navbar:draft");
+    navbarFormCache = data;
+    navbarDataLoaded = true;
     status.textContent = "Tersimpan di database. Frontend akan mengambil data terbaru saat dibuka atau di-refresh.";
     button.textContent = "Saved ✓";
   } catch (error) { status.textContent = error.message; button.textContent = "Save"; }
@@ -319,6 +358,7 @@ async function initMaxLabAdminAuth() {
 initMaxLabAdminAuth();
 
 async function loadNavbarDraftIntoForm() {
+  if (navbarDataLoaded) { restoreNavbarFormCache(); return; }
   const status = $("#navbar-save-status");
   const brand = $("#navbar-brand");
   const whatsapp = $("#navbar-whatsapp");
@@ -356,6 +396,7 @@ async function loadNavbarDraftIntoForm() {
   try {
     const response = await fetch("/api/maxlab/navbar?slug=maxlabtest", { cache: "no-store" });
     const data = await response.json();
+    if (!$("#navbar-brand")?.isConnected) return;
     if (response.ok && data.config) {
       const config = data.config;
       if (brand && !brand.value) brand.value = config.brand_name || "";
@@ -387,7 +428,10 @@ async function loadNavbarDraftIntoForm() {
     if (status) status.textContent = "Draft lokal tidak dapat dibaca: " + error.message;
     return;
   }
+  if (!$("#navbar-brand")?.isConnected) return;
+  navbarDataLoaded = true;
+  navbarFormCache = { ...collectNavbarFormData(), logoDataUrl: preview?.src || "" };
   if (status) status.textContent = databaseLoaded
-    ? "Draft terakhir berhasil dimuat dari Supabase."
+    ? "Konfigurasi berhasil dimuat."
     : "Belum ada Draft lokal atau konfigurasi database.";
 }
