@@ -155,6 +155,9 @@ function bindInteractions() {
   const saveDraft = $("#navbar-save-draft");
   if (saveDraft) saveDraft.addEventListener("click", saveNavbarDraft);
 
+  const navbarSection = document.querySelector('[data-section-id="navbar"]');
+  if (navbarSection) loadNavbarDraftIntoForm();
+
   const addMenu = $("#navbar-add-link");
   if (addMenu) addMenu.addEventListener("click", () => {
     const list = $("#navbar-menu-list");
@@ -380,3 +383,39 @@ async function initMaxLabAdminAuth() {
   });
 }
 initMaxLabAdminAuth();
+
+async function loadNavbarDraftIntoForm() {
+  try {
+    const response = await fetch("/api/maxlab/navbar?slug=maxlabtest", { cache: "no-store" });
+    const data = await response.json();
+    if (!response.ok || !data.config) return;
+    const config = data.config;
+    const brand = $("#navbar-brand");
+    const whatsapp = $("#navbar-whatsapp");
+    const cta = $("#navbar-cta-label");
+    if (brand && !brand.value) brand.value = config.brand_name || "";
+    if (whatsapp && !whatsapp.value) whatsapp.value = config.whatsapp_number || "";
+    if (cta && !cta.value) cta.value = config.cta_label || "";
+    const preview = $("#navbar-logo-preview");
+    if (preview && config.logo_url) { preview.src = config.logo_url; preview.hidden = false; }
+    const list = $("#navbar-menu-list");
+    if (list && data.menuItems?.length && list.dataset.loaded !== "true") {
+      list.innerHTML = "";
+      data.menuItems.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "navbar-menu-row";
+        row.innerHTML = '<label class="field"><span>Label Menu</span><input type="text" placeholder="Contoh: Home"></label><label class="field"><span>Target URL</span><input type="text" placeholder="#home"></label><button class="remove-menu-button" type="button" aria-label="Hapus menu">×</button>';
+        row.querySelectorAll("input")[0].value = item.label || "";
+        row.querySelectorAll("input")[1].value = item.target_url || "";
+        row.querySelector(".remove-menu-button").addEventListener("click", () => row.remove());
+        list.appendChild(row);
+      });
+      list.dataset.loaded = "true";
+    }
+    const status = $("#navbar-save-status");
+    if (status) status.textContent = "Draft terakhir berhasil dimuat dari Supabase.";
+  } catch (error) {
+    const status = $("#navbar-save-status");
+    if (status) status.textContent = "Belum dapat memuat draft: " + error.message;
+  }
+}
