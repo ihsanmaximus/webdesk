@@ -104,12 +104,10 @@
     min-height: auto;
     padding: 0;
     background-color: #eaf5fc;
-    background-image:
-      linear-gradient(180deg,rgba(234,245,252,0) 0%,rgba(234,245,252,0) 65%,#fff 100%),
-      var(--hero-image, none);
+    background-image: var(--hero-image, none);
     background-repeat: no-repeat;
-    background-size: 100% 470px, auto 470px;
-    background-position: center top, 85% top;
+    background-size: auto 470px;
+    background-position: 85% top;
   }
   .hero-section.no-gradient { background-image: var(--hero-image, none); }
   .hero-section .hero-gradient {
