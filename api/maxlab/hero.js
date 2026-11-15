@@ -32,7 +32,7 @@ function normalize(input = {}) {
   const c = { ...defaults, ...(input && typeof input === "object" ? input : {}) };
   for (const key of ["eyebrow","headline","subheadline","primaryCtaLabel","primaryCtaTarget","secondaryCtaLabel","secondaryCtaTarget","imageUrl","imageAlt"]) c[key] = String(c[key] ?? "").slice(0, key === "imageUrl" ? 2000 : 1000);
   c.layout = "background-image";
-  c.imageUrl = /^https?:\\/\\//i.test(c.imageUrl) ? c.imageUrl : "";
+  c.imageUrl = /^https?:\/\//i.test(c.imageUrl) ? c.imageUrl : "";
   for (const key of ["primaryCtaEnabled","secondaryCtaEnabled","gradientEnabled"]) c[key] = Boolean(c[key]);
   return c;
 }
