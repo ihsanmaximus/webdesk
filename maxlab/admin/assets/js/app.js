@@ -254,7 +254,7 @@ async function saveNavbarLocalDraft() {
   try {
     button.disabled = true;
     const data = collectNavbarFormData();
-    data.logoDataUrl = await readNavbarLogo() || $("#navbar-logo-preview")?.src || "";
+    data.logoDataUrl = await readNavbarLogo() || ($("#navbar-logo-preview")?.src?.startsWith("data:image/") ? $("#navbar-logo-preview").src : "");
     localStorage.setItem("maxlab:maxlabtest:navbar:draft", JSON.stringify(data));
     status.textContent = "Draft tersimpan lokal di browser ini.";
     button.textContent = "Draft ✓";
@@ -326,57 +326,75 @@ async function initMaxLabAdminAuth() {
 initMaxLabAdminAuth();
 
 async function loadNavbarDraftIntoForm() {
-  try {
-    const response = await fetch("/api/maxlab/navbar?slug=maxlabtest", { cache: "no-store" });
-    const data = await response.json();
-    if (!response.ok || !data.config) return;
-    const config = data.config;
-    const brand = $("#navbar-brand");
-    const whatsapp = $("#navbar-whatsapp");
-    const cta = $("#navbar-cta-label");
-    if (brand && !brand.value) brand.value = config.brand_name || "";
-    if (whatsapp && !whatsapp.value) whatsapp.value = config.whatsapp_number || "";
-    if (cta && !cta.value) cta.value = config.cta_label || "";
-    const preview = $("#navbar-logo-preview");
-    if (preview && config.logo_url) { preview.src = config.logo_url; preview.hidden = false; }
-    const list = $("#navbar-menu-list");
-    if (list && data.menuItems?.length && list.dataset.loaded !== "true") {
+  const status = $("#navbar-save-status");
+  const brand = $("#navbar-brand");
+  const whatsapp = $("#navbar-whatsapp");
+  const cta = $("#navbar-cta-label");
+  const preview = $("#navbar-logo-preview");
+  const list = $("#navbar-menu-list");
+
+  // Restore the local browser draft independently; it must work even when
+  // no database configuration exists yet or the API is temporarily unavailable.
+  function restoreLocalDraft() {
+    const localRaw = localStorage.getItem("maxlab:maxlabtest:navbar:draft");
+    if (!localRaw) return false;
+    const local = JSON.parse(localRaw);
+    if (brand) brand.value = local.brandName || "";
+    if (whatsapp) whatsapp.value = local.whatsappNumber || "";
+    if (cta) cta.value = local.ctaLabel || "";
+    if (local.logoDataUrl && preview) { preview.src = local.logoDataUrl; preview.hidden = false; }
+    if (list && Array.isArray(local.menuItems)) {
       list.innerHTML = "";
-      data.menuItems.forEach(item => {
+      local.menuItems.forEach(item => {
         const row = document.createElement("div");
         row.className = "navbar-menu-row";
         row.innerHTML = '<label class="field"><span>Label Menu</span><input type="text" placeholder="Contoh: Home"></label><label class="field"><span>Target URL</span><input type="text" placeholder="#home"></label><button class="remove-menu-button" type="button" aria-label="Hapus menu">×</button>';
         row.querySelectorAll("input")[0].value = item.label || "";
-        row.querySelectorAll("input")[1].value = item.target_url || "";
+        row.querySelectorAll("input")[1].value = item.targetUrl || "";
         row.querySelector(".remove-menu-button").addEventListener("click", () => row.remove());
         list.appendChild(row);
       });
-      list.dataset.loaded = "true";
     }
-    const status = $("#navbar-save-status");
-    const localRaw = localStorage.getItem("maxlab:maxlabtest:navbar:draft");
-    if (localRaw) {
-      const local = JSON.parse(localRaw);
-      if (brand) brand.value = local.brandName || "";
-      if (whatsapp) whatsapp.value = local.whatsappNumber || "";
-      if (cta) cta.value = local.ctaLabel || "";
-      if (local.logoDataUrl && preview) { preview.src = local.logoDataUrl; preview.hidden = false; }
-      if (list && Array.isArray(local.menuItems)) {
+    if (status) status.textContent = "Draft lokal dipulihkan dari browser ini.";
+    return true;
+  }
+
+  let databaseLoaded = false;
+  try {
+    const response = await fetch("/api/maxlab/navbar?slug=maxlabtest", { cache: "no-store" });
+    const data = await response.json();
+    if (response.ok && data.config) {
+      const config = data.config;
+      if (brand && !brand.value) brand.value = config.brand_name || "";
+      if (whatsapp && !whatsapp.value) whatsapp.value = config.whatsapp_number || "";
+      if (cta && !cta.value) cta.value = config.cta_label || "";
+      if (preview && config.logo_url) { preview.src = config.logo_url; preview.hidden = false; }
+      if (list && data.menuItems?.length && list.dataset.loaded !== "true") {
         list.innerHTML = "";
-        local.menuItems.forEach(item => {
+        data.menuItems.forEach(item => {
           const row = document.createElement("div");
           row.className = "navbar-menu-row";
           row.innerHTML = '<label class="field"><span>Label Menu</span><input type="text" placeholder="Contoh: Home"></label><label class="field"><span>Target URL</span><input type="text" placeholder="#home"></label><button class="remove-menu-button" type="button" aria-label="Hapus menu">×</button>';
           row.querySelectorAll("input")[0].value = item.label || "";
-          row.querySelectorAll("input")[1].value = item.targetUrl || "";
+          row.querySelectorAll("input")[1].value = item.target_url || "";
           row.querySelector(".remove-menu-button").addEventListener("click", () => row.remove());
           list.appendChild(row);
         });
+        list.dataset.loaded = "true";
       }
-      if (status) status.textContent = "Draft lokal dipulihkan dari browser ini.";
-    } else if (status) status.textContent = "Draft terakhir berhasil dimuat dari Supabase.";
+      databaseLoaded = true;
+    }
   } catch (error) {
-    const status = $("#navbar-save-status");
-    if (status) status.textContent = "Belum dapat memuat draft: " + error.message;
+    if (status) status.textContent = "Database belum dapat dimuat; memeriksa Draft lokal...";
   }
+
+  try {
+    if (restoreLocalDraft()) return;
+  } catch (error) {
+    if (status) status.textContent = "Draft lokal tidak dapat dibaca: " + error.message;
+    return;
+  }
+  if (status) status.textContent = databaseLoaded
+    ? "Draft terakhir berhasil dimuat dari Supabase."
+    : "Belum ada Draft lokal atau konfigurasi database.";
 }
