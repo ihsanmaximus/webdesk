@@ -30,7 +30,7 @@
       --radius-lg: 24px;
       --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
       --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
-      --shadow-lg: 0 20px 35px -10px rgba(2, 132, 199, 0.18);
+      --shadow-lg: var(--theme-shadow, 0 14px 32px rgba(40, 90, 158, 0.16));
       --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -133,7 +133,7 @@
     .btn-primary {
       background-color: var(--accent);
       color: #FFFFFF;
-      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+      box-shadow: var(--theme-shadow);
     }
 
     .btn-primary:hover {
@@ -156,7 +156,7 @@
     .btn-wa {
       background-color: var(--emerald);
       color: #FFFFFF;
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+      box-shadow: var(--theme-shadow);
     }
 
     .btn-wa:hover {
@@ -913,7 +913,7 @@
       border-radius: 999px;
       font-weight: 700;
       font-size: 0.9rem;
-      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+      box-shadow: var(--theme-shadow);
       align-items: center;
       gap: 10px;
       transition: var(--transition);
@@ -1131,7 +1131,7 @@
     }
 
     .footer {
-      padding-bottom: 28px;
+      padding-bottom: 150px;
     }
 
     @media (min-width: 431px) {
