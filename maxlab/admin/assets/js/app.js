@@ -266,7 +266,7 @@ async function saveNavbarDraft() {
   try {
     button.disabled = true; button.textContent = "Saving...";
     const data = collectNavbarFormData();
-    data.logoDataUrl = await readNavbarLogo();
+    data.logoDataUrl = await readNavbarLogo() || ($("#navbar-logo-preview")?.src?.startsWith("data:image/") ? $("#navbar-logo-preview").src : "");
     const response = await fetch("/api/maxlab/navbar", {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
     });
