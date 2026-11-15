@@ -15,7 +15,23 @@ async function db(path) {
   if (!response.ok) throw new Error(data?.message || "Gagal mengambil data website.");
   return data;
 }
-function pageHtml(website, config, menuItems) {
+function heroHtml(config) {
+  if (!config) return "";
+  const c = config;
+  const image = c.imageUrl ? esc(c.imageUrl) : "";
+  const height = c.height === "compact" ? "360px" : c.height === "medium" ? "480px" : "600px";
+  const bgImage = c.layout === "background-image" && image ? `background-image:url('${image}');background-size:cover;background-position:center;` : "";
+  const textAlign = c.alignment || "left";
+  const buttons = `${c.primaryCtaEnabled ? `<a class="hero-cta primary" href="${esc(c.primaryCtaTarget || "#contact")}">${esc(c.primaryCtaLabel || "Hubungi Kami")}</a>` : ""}${c.secondaryCtaEnabled ? `<a class="hero-cta secondary" href="${esc(c.secondaryCtaTarget || "#about")}">${esc(c.secondaryCtaLabel || "Pelajari Lebih Lanjut")}</a>` : ""}`;
+  const copy = `<div class="hero-copy" style="text-align:${esc(textAlign)}">${c.eyebrow ? `<p class="hero-eyebrow" style="color:${esc(c.eyebrowColor)}">${esc(c.eyebrow)}</p>` : ""}<h1 style="color:${esc(c.headlineColor)}">${esc(c.headline)}</h1><p class="hero-description" style="color:${esc(c.descriptionColor)}">${esc(c.subheadline)}</p><div class="hero-actions">${buttons}</div></div>`;
+  let layout = copy;
+  if (c.layout === "text-image" && image) layout = `<div class="hero-two-col">${copy}<img class="hero-image" src="${image}" alt="${esc(c.imageAlt)}"></div>`;
+  if (c.layout === "split-full-bleed") layout = `<div class="hero-split">${c.imagePosition === "left" && image ? `<img class="hero-image" src="${image}" alt="${esc(c.imageAlt)}">` : ""}${copy}${c.imagePosition !== "left" && image ? `<img class="hero-image" src="${image}" alt="${esc(c.imageAlt)}">` : ""}</div>`;
+  if (c.layout === "text-image" && !image) layout = copy;
+  const gradient = c.layout === "background-image" && c.gradientEnabled ? `<div class="hero-gradient ${esc(c.gradientPosition)} ${esc(c.gradientTheme)}"></div>` : "";
+  return `<section class="hero-section ${esc(c.layout)}" style="min-height:${height};background-color:${esc(c.backgroundColor)};color:${esc(c.textColor)};${bgImage}">${gradient}<div class="hero-inner">${layout}</div></section>`;
+}
+function pageHtml(website, config, menuItems, heroConfig) {
   const brand = config?.brand_name || website.name || "Website";
   const logo = config?.logo_url ? `<img src="${esc(config.logo_url)}" alt="">` : "";
   const menus = (menuItems || []).filter(item => item.is_active !== false).map(item =>
@@ -46,7 +62,7 @@ h1{margin:0 0 10px;font-size:26px}p{margin:0;color:#667085;line-height:1.7}
 <header class="site-nav" id="site-navbar"><div class="brand" id="site-brand">${logo}<span>${esc(brand)}</span></div>
 <nav class="nav-links" id="site-menu" aria-label="Navigasi utama">${menus}</nav>${cta}
 <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Buka menu"><span></span><span></span><span></span></button></header>
-<main><h1>${esc(brand)}</h1><p>Halaman dirender dari data terbaru di database.</p></main>
+<main><div class="intro-card"><h2>${esc(brand)}</h2><p>Halaman dirender dari data terbaru di database.</p></div>${heroHtml(heroConfig)}</main>
 <script>(function(){const b=document.getElementById("nav-toggle"),m=document.getElementById("site-menu");if(!b||!m)return;function setOpen(v){m.classList.toggle("is-open",v);b.setAttribute("aria-expanded",String(v));b.setAttribute("aria-label",v?"Tutup menu":"Buka menu")}b.addEventListener("click",()=>setOpen(!m.classList.contains("is-open")));m.addEventListener("click",e=>{if(e.target.closest("a"))setOpen(false)});document.addEventListener("keydown",e=>{if(e.key==="Escape")setOpen(false)});window.addEventListener("resize",()=>{if(window.innerWidth>767)setOpen(false)})})();</script>
 </body></html>`;
 }
