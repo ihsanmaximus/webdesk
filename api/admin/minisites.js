@@ -1,13 +1,13 @@
+import { isAdminAuthorized } from "./auth.js";
 // Admin-only list endpoint for saved landing pages.
 const URL=process.env.SUPABASE_URL;
 const SERVICE_KEY=process.env.SUPABASE_SERVICE_ROLE_KEY;
-const ADMIN_TOKEN=process.env.WEBDESK_ADMIN_TOKEN;
 export default async function handler(req,res){
  res.setHeader("Content-Type","application/json; charset=utf-8");
  res.setHeader("Cache-Control","no-store");
  if(!["GET","DELETE"].includes(req.method)){res.setHeader("Allow","GET, DELETE");return res.status(405).json({error:"Method not allowed"});}
- if(!URL||!SERVICE_KEY||!ADMIN_TOKEN)return res.status(503).json({error:"Konfigurasi database/admin belum lengkap."});
- if(String(req.headers.authorization||"").replace(/^Bearer\s+/i,"")!==ADMIN_TOKEN)return res.status(401).json({error:"Token admin tidak valid."});
+ if(!URL||!SERVICE_KEY)return res.status(503).json({error:"Konfigurasi database/admin belum lengkap."});
+ if(!isAdminAuthorized(req))return res.status(401).json({error:"Sesi admin tidak valid. Silakan login kembali."});
  try{
   const id=String(req.query?.id||"").trim();
   const request=async(path,options={})=>{
