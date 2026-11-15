@@ -74,11 +74,11 @@ export default async function handler(req, res) {
     const websites = await db(`maxlab_websites?select=id&slug=eq.${WEBSITE_SLUG}&limit=1`);
     if (!websites?.length) return json(res, 404, { error: "Website MaxLab Test belum terdaftar." });
     const websiteId = websites[0].id;
-    const existing = await db(`maxlab_navbar_configs?select=id&website_id=eq.${websiteId}&status=eq.draft&order=updated_at.desc&limit=1`);
+    const existing = await db(`maxlab_navbar_configs?select=id,logo_url&website_id=eq.${websiteId}&status=eq.draft&order=updated_at.desc&limit=1`);
     const payload = {
       website_id: websiteId,
       brand_name: brandName || null,
-      logo_url: logoDataUrl || null,
+      logo_url: logoDataUrl || existing?.[0]?.logo_url || null,
       whatsapp_number: whatsappNumber || null,
       cta_label: ctaLabel || null,
       layout_config: {},
