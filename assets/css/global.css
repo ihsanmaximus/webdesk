@@ -1,0 +1,24 @@
+/* Webdesk Landing Page — Global Theme Tokens
+   Palette order: primary, accent, supporting, soft background.
+   Section layouts remain local to each section; this file owns shared visual identity. */
+:root{
+  --primary:#142B4A;
+  --accent:#285A9E;
+  --accent-hover:#142B4A;
+  --accent-light:#E7F2FC;
+  --theme-support:#69A8E8;
+  --emerald:#285A9E;
+  --emerald-hover:#142B4A;
+  --bg-body:#F7FAFD;
+  --bg-card:#FFFFFF;
+  --text-main:#142B4A;
+  --text-muted:#64748B;
+  --border:#DCE7F1;
+  --theme-gradient:linear-gradient(135deg,#142B4A 0%,#285A9E 100%);
+  --theme-shadow:0 14px 32px color-mix(in srgb,#285A9E 16%,transparent);
+}
+html{background:var(--bg-body);color:var(--text-main)}
+body{background:var(--bg-body);color:var(--text-main)}
+a{color:var(--accent)}
+button,.btn{transition:background-color .2s ease,border-color .2s ease,color .2s ease,box-shadow .2s ease}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 45%,white);outline-offset:2px}
