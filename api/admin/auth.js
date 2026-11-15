@@ -1,14 +1,15 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
-const ADMIN_SECRET = process.env.WEBDESK_ADMIN_TOKEN || "";
+const ADMIN_PASSWORD = process.env.WEBDESK_ADMIN_PASSWORD || process.env.WEBDESK_ADMIN_TOKEN || "";
+const SESSION_SECRET = process.env.WEBDESK_SESSION_SECRET || process.env.WEBDESK_ADMIN_TOKEN || "";
 const COOKIE_NAME = "webdesk_admin_session";
 const SESSION_SECONDS = 60 * 60 * 24 * 7;
 
 function sign(value) {
-  return createHmac("sha256", ADMIN_SECRET).update(value).digest("base64url");
+  return createHmac("sha256", SESSION_SECRET).update(value).digest("base64url");
 }
 function validSession(req) {
-  if (!ADMIN_SECRET) return false;
+  if (!SESSION_SECRET) return false;
   const cookies = String(req.headers.cookie || "").split(";").map(x => x.trim());
   const entry = cookies.find(x => x.startsWith(COOKIE_NAME + "="));
   if (!entry) return false;
@@ -24,14 +25,12 @@ function cookie(value, maxAge) {
 }
 export function isAdminAuthorized(req) {
   if (validSession(req)) return true;
-  // Temporary compatibility for older workspace tabs during rollout.
-  const bearer = String(req.headers.authorization || "").replace(/^Bearer\s+/i, "");
-  return Boolean(ADMIN_SECRET && bearer && bearer === ADMIN_SECRET);
+  return false;
 }
 export default async function handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
-  if (!ADMIN_SECRET) return res.status(503).json({ error: "Konfigurasi otorisasi admin belum tersedia." });
+  if (!ADMIN_PASSWORD || !SESSION_SECRET) return res.status(503).json({ error: "Konfigurasi login admin belum lengkap." });
   if (req.method === "GET") return res.status(200).json({ authenticated: validSession(req) });
   if (req.method !== "POST") { res.setHeader("Allow", "GET, POST"); return res.status(405).json({ error: "Method not allowed" }); }
   const body = typeof req.body === "string" ? (() => { try { return JSON.parse(req.body); } catch { return {}; } })() : (req.body || {});
@@ -41,7 +40,7 @@ export default async function handler(req, res) {
   }
   const password = String(body.password || "");
   const supplied = Buffer.from(password);
-  const expected = Buffer.from(ADMIN_SECRET);
+  const expected = Buffer.from(ADMIN_PASSWORD);
   if (supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) {
     return res.status(401).json({ error: "Kata sandi admin tidak cocok." });
   }
