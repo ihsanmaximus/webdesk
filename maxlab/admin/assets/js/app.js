@@ -272,24 +272,16 @@ async function saveNavbarDraft() {
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Gagal menyimpan ke database.");
-    status.textContent = "Tersimpan di database sebagai Draft. Belum dipublikasikan.";
+    status.textContent = "Tersimpan di database. Frontend akan mengambil data terbaru saat dibuka atau di-refresh.";
     button.textContent = "Saved ✓";
   } catch (error) { status.textContent = error.message; button.textContent = "Save"; }
   finally { button.disabled = false; }
 }
-async function publishNavbar() {
-  const button = $("#navbar-publish"), status = $("#navbar-save-status");
-  try {
-    button.disabled = true; button.textContent = "Publishing...";
-    const response = await fetch("/api/maxlab/navbar", {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "publish" })
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "Gagal memublikasikan.");
-    status.textContent = "Published. Frontend MaxLab Test merender konfigurasi ini.";
-    button.textContent = "Published ✓";
-  } catch (error) { status.textContent = error.message; button.textContent = "Publish"; }
-  finally { button.disabled = false; }
+function publishNavbar() {
+  const status = $("#navbar-save-status");
+  const page = window.open("/maxlab/maxlabtest/", "_blank");
+  if (page) status.textContent = "Frontend dibuka di tab baru. Save berikutnya akan tampil setelah halaman di-refresh.";
+  else status.textContent = "Browser memblokir tab baru. Izinkan pop-up untuk Webdesk lalu tekan Publish lagi.";
 }
 async function initMaxLabAdminAuth() {
   const gate = document.getElementById("maxlab-auth-gate");
