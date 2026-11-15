@@ -1,0 +1,150 @@
+/* MAXIMUS — HERO SECTION
+   CSS owns all Hero presentation and responsive behavior.
+   HTML renderer supplies structure and configuration values only.
+*/
+.hero-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 560px;
+  padding: 64px 0 48px;
+  background-color: var(--hero-background, #eaf5fc);
+  color: var(--hero-text, #14305a);
+  background-image: var(--hero-image, none);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+.hero-section.hero-height-compact { min-height: 360px; }
+.hero-section.hero-height-medium { min-height: 480px; }
+.hero-section.hero-height-tall { min-height: 600px; }
+.hero-section .hero-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg,rgba(234,245,252,.96) 0%,rgba(234,245,252,.84) 42%,rgba(234,245,252,.12) 78%,rgba(234,245,252,0) 100%);
+}
+.hero-section .hero-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  width: min(1120px,calc(100% - 48px));
+  min-height: 440px;
+  margin-inline: auto;
+}
+.hero-copy {
+  position: relative;
+  z-index: 2;
+  width: 52%;
+  max-width: 600px;
+  padding: 10px 0;
+  text-align: var(--hero-alignment, left);
+}
+.hero-eyebrow {
+  display: inline-block;
+  margin: 0 0 18px;
+  padding: 7px 18px;
+  border-radius: 999px;
+  background: #d7ebf8;
+  color: var(--hero-eyebrow-color, #176b9b);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.hero-copy h1 {
+  max-width: 600px;
+  margin: 0 0 20px;
+  color: var(--hero-headline-color, #123d63);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(42px,5.2vw,64px);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -.01em;
+}
+.hero-description {
+  max-width: 490px;
+  margin: 20px 0 28px;
+  color: var(--hero-description-color, #405c73);
+  font-size: 18px;
+  line-height: 1.65;
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 0; }
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 28px;
+  border: 2px solid #0b5cad;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+}
+.hero-cta.primary {
+  background: var(--hero-accent, #b4c540);
+  border-color: var(--hero-accent, #b4c540);
+  color: #fff;
+}
+.hero-cta.secondary { background: transparent; border-color: #0b5cad; color: #0b5cad; }
+
+@media (max-width: 1024px) {
+  .hero-section { min-height: 500px; padding: 44px 0 36px; background-position: 55% center; }
+  .hero-section .hero-inner { min-height: 420px; }
+  .hero-copy { width: 54%; }
+  .hero-copy h1 { font-size: clamp(36px,4vw,52px); }
+}
+
+/* MOBILE — aligned to Dokter Faisal assets/css/hero.css */
+@media (max-width: 767px) {
+  .hero-section {
+    min-height: auto;
+    padding: 0;
+    background-color: #eaf5fc;
+    background-image:
+      linear-gradient(180deg,rgba(234,245,252,0) 0%,rgba(234,245,252,0) 65%,#fff 100%),
+      var(--hero-image, none);
+    background-repeat: no-repeat;
+    background-size: 100% 470px, auto 470px;
+    background-position: center top, 85% top;
+  }
+  .hero-section.no-gradient { background-image: var(--hero-image, none); }
+  .hero-section .hero-gradient {
+    inset: 0 0 auto;
+    height: 470px;
+    background: linear-gradient(180deg,rgba(234,245,252,0) 0%,rgba(234,245,252,0) 65%,#fff 100%);
+  }
+  .hero-section.no-gradient .hero-gradient { display: none; }
+  .hero-section .hero-inner {
+    display: block;
+    width: 100%;
+    min-height: 0;
+    padding-top: 450px;
+  }
+  .hero-copy {
+    width: 100%;
+    max-width: none;
+    padding: 28px 24px 34px;
+    background: rgba(255,255,255,.96);
+    border-radius: 28px 28px 0 0;
+  }
+  .hero-eyebrow { margin-bottom: 14px; }
+  .hero-copy h1 { font-size: var(--hero-mobile-title-size, 1.875rem); line-height: 1.15; }
+  .hero-description { font-size: 17px; margin: 14px 0 22px; }
+  .hero-actions { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .hero-actions .hero-cta {
+    width: fit-content;
+    max-width: 100%;
+    min-height: 48px;
+    padding: 14px 22px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+}
+@media (max-width: 380px) {
+  .hero-section .hero-inner { padding-top: 450px; }
+  .hero-copy { padding-inline: 18px; }
+}
