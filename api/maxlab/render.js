@@ -29,7 +29,7 @@ function heroHtml(config) {
   if (c.layout === "text-image" && image) layout = `<div class="hero-two-col">${c.imagePosition === "left" ? `<img class="hero-image" src="${image}" alt="${esc(c.imageAlt)}">` : ""}${copy}${c.imagePosition !== "left" ? `<img class="hero-image" src="${image}" alt="${esc(c.imageAlt)}">` : ""}</div>`;
   if (c.layout === "split-full-bleed") layout = `<div class="hero-split">${c.imagePosition === "left" && image ? `<img class="hero-image" src="${image}" alt="${esc(c.imageAlt)}">` : ""}${copy}${c.imagePosition !== "left" && image ? `<img class="hero-image" src="${image}" alt="${esc(c.imageAlt)}">` : ""}</div>`;
   if (c.layout === "text-image" && !image) layout = copy;
-  const gradient = c.layout === "background-image" && c.gradientEnabled ? `<div class="hero-gradient ${esc(c.gradientPosition)} ${esc(c.gradientTheme)}"></div>` : "";
+  const gradient = c.gradientEnabled ? `<div class="hero-gradient"></div>` : "";
   return `<section class="hero-section ${esc(c.layout)}" style="min-height:${height};background-color:${esc(c.backgroundColor)};color:${esc(c.textColor)};${bgImage}">${gradient}<div class="hero-inner">${layout}</div></section>`;
 }
 function pageHtml(website, config, menuItems, heroConfig) {
@@ -59,6 +59,19 @@ h1{margin:0 0 10px;font-size:26px}p{margin:0;color:#667085;line-height:1.7}
 .nav-links{position:absolute;top:100%;left:0;right:0;display:none;flex-direction:column;align-items:stretch;gap:0;padding:8px 18px 16px;background:#6b4f3a;border-top:1px solid rgba(255,255,255,.16);box-shadow:0 12px 24px rgba(42,28,18,.2)}
 .nav-links.is-open{display:flex;animation:menuDrop .2s ease-out}.nav-links a{display:block;padding:14px 8px;border-bottom:1px solid rgba(255,255,255,.14);font-size:15px}.nav-links a:last-child{border-bottom:0}.cta{padding:10px 13px;font-size:13px}main{margin:28px auto;padding:24px}}
 @keyframes menuDrop{from{opacity:0;transform:translateY(-7px)}to{opacity:1;transform:translateY(0)}}@media(prefers-reduced-motion:reduce){.nav-links.is-open{animation:none}}
+
+.hero-section{position:relative;isolation:isolate;display:flex;align-items:center;min-height:600px;padding:72px clamp(24px,7vw,100px);overflow:hidden;background-size:cover;background-position:center;background-repeat:no-repeat;color:#fff}
+.hero-section::before{content:"";position:absolute;inset:0;z-index:0;background:#064653}
+.hero-section .hero-gradient{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(270deg,rgba(6,70,83,.96) 0%,rgba(6,70,83,.88) 28%,rgba(6,70,83,.55) 55%,rgba(6,70,83,.12) 82%,transparent 100%)}
+.hero-section .hero-inner{position:relative;z-index:2;width:min(1180px,100%);margin:0 auto}
+.hero-copy{max-width:620px}
+.hero-eyebrow{margin:0 0 16px;color:#bde9a9;font-size:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.hero-copy h1{max-width:700px;margin:0 0 20px;color:#fff;font-size:clamp(42px,6vw,76px);font-weight:800;line-height:.99;letter-spacing:-.055em}
+.hero-description{max-width:560px;margin:0;color:#e0eeee;font-size:18px;line-height:1.6}
+.hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+.hero-cta{display:inline-flex;align-items:center;justify-content:center;padding:14px 22px;border-radius:9px;text-decoration:none;font-size:14px;font-weight:750}
+.hero-cta.primary{background:#bfe99e;color:#123b3f}.hero-cta.secondary{border:1px solid rgba(255,255,255,.72);color:#fff;background:transparent}
+@media(max-width:680px){.hero-section{min-height:720px;padding:52px 22px 60px;align-items:flex-start;background-position:center top}.hero-section .hero-gradient{background:linear-gradient(180deg,#064653 0%,rgba(6,70,83,.94) 28%,rgba(6,70,83,.72) 52%,rgba(6,70,83,.28) 78%,transparent 100%)}.hero-copy h1{font-size:clamp(40px,11vw,58px);letter-spacing:-.035em;margin-bottom:14px}.hero-description{font-size:15px;line-height:1.55}.hero-actions{gap:9px;margin-top:20px}.hero-cta{padding:12px 16px;font-size:12px}}
 </style></head><body>
 <header class="site-nav" id="site-navbar"><div class="brand" id="site-brand">${logo}<span>${esc(brand)}</span></div>
 <nav class="nav-links" id="site-menu" aria-label="Navigasi utama">${menus}</nav>${cta}
