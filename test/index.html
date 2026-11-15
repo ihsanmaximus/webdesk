@@ -1374,7 +1374,7 @@
   ? new URLSearchParams(location.search).get('slug')
   : (pathParts.length===1 ? decodeURIComponent(pathParts[0]) : '');
  const api='/api/minisites/'+encodeURIComponent(slug||'');
- const $=(s,r=document)=>r.querySelector(s), $=(s,r=document)=>[...r.querySelectorAll(s)];
+ const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
  const el=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n};
  const showError=(title,message,code='')=>{
   document.title=title+' | Webdesk';
