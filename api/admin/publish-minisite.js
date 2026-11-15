@@ -34,7 +34,7 @@ export default async function handler(req,res){
  try{
   const b=typeof req.body==="string"?JSON.parse(req.body):(req.body||{});
   const title=String(b.title||"").trim(),slug=String(b.slug||"").trim().toLowerCase();
-  if(!title||title.split(/\s+/).length>3)return res.status(400).json({error:"Judul Event wajib diisi, maksimal 3 kata."});
+  if(!title||title.split(/\s+/).length>3)return res.status(400).json({error:"Judul Halaman wajib diisi, maksimal 3 kata."});
   if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))return res.status(400).json({error:"Slug tidak valid."});
   const sections=Array.isArray(b.sections)?b.sections:[];
   const byKey=Object.fromEntries(sections.map(s=>[s.key,s]));
