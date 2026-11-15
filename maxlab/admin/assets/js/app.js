@@ -35,18 +35,29 @@ let navbarFormCache = null;
 let navbarDataLoaded = false;
 let heroConfigCache = null;
 let heroConfigLoaded = false;
-const heroDefaults = { version:1, layout:"text-image", eyebrow:"", headline:"Bangun Sesuatu yang Luar Biasa", subheadline:"Perkenalkan bisnis Anda dengan pesan yang jelas, menarik, dan mudah diingat.", eyebrowColor:"#047857", headlineColor:"#172033", descriptionColor:"#172033", primaryCtaEnabled:true, primaryCtaLabel:"Hubungi Kami", primaryCtaTarget:"#contact", secondaryCtaEnabled:false, secondaryCtaLabel:"Pelajari Lebih Lanjut", secondaryCtaTarget:"#about", imageUrl:"", imageAlt:"Gambar utama website", imagePosition:"right", alignment:"left", height:"large", backgroundColor:"#FFFFFF", textColor:"#172033", accentColor:"#047857", gradientEnabled:true, gradientTheme:"dark", gradientPosition:"left" };
+const heroDefaults = { version:1, layout:"background-image", eyebrow:"", headline:"Bangun Sesuatu yang Luar Biasa", subheadline:"Perkenalkan bisnis Anda dengan pesan yang jelas, menarik, dan mudah diingat.", primaryCtaEnabled:true, primaryCtaLabel:"Hubungi Kami", primaryCtaTarget:"#contact", secondaryCtaEnabled:false, secondaryCtaLabel:"Pelajari Lebih Lanjut", secondaryCtaTarget:"#about", imageUrl:"", imageAlt:"Background Hero", gradientEnabled:true };
 function escAttr(value) { return String(value ?? "").replace(/[&<>"\']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[ch])); }
 function heroValue(key) { return escAttr((heroConfigCache || heroDefaults)[key]); }
 function heroInput(label,key,type="text",hint="") { return `<label class="field"><span>${label}</span><input data-hero-field="${key}" type="${type}" value="${heroValue(key)}">${hint?`<small class="field-help">${hint}</small>`:""}</label>`; }
 function heroSelect(label,key,options) { return `<label class="field"><span>${label}</span><select data-hero-field="${key}">${options.map(([v,t])=>`<option value="${v}" ${heroValue(key)===v?"selected":""}>${t}</option>`).join("")}</select></label>`; }
 function heroCheck(label,key) { return `<label class="hero-check"><input data-hero-field="${key}" type="checkbox" ${(heroConfigCache||heroDefaults)[key]?"checked":""}> ${label}</label>`; }
 function renderHeroFields() {
- const c=heroConfigCache||heroDefaults;
  return `<div class="hero-config-form">
- <div class="navbar-field-group"><h4>01 · Konten Hero</h4><div class="form-grid">${heroInput("Eyebrow (opsional)","eyebrow")}${heroInput("Headline","headline")}${`<label class="field field--full"><span>Subheadline</span><textarea data-hero-field="subheadline" rows="3">${heroValue("subheadline")}</textarea></label>`}</div></div>
- <div class="navbar-field-group"><h4>02 · Layout & Gambar</h4><div class="form-grid">${heroSelect("Layout","layout",[["text-only","Text Only"],["text-image","Teks + gambar"],["background-image","Full Background"],["split-full-bleed","Split Full-Bleed"]])}${heroInput("URL Gambar","imageUrl","url","Masukkan URL gambar.")}${heroInput("Deskripsi gambar","imageAlt")}${heroSelect("Posisi gambar","imagePosition",[["right","Kanan"],["left","Kiri"],["top","Atas"],["background","Background"]])}</div></div>
- <div class="navbar-field-group"><h4>05 · CTA</h4>${heroCheck("Aktifkan CTA utama","primaryCtaEnabled")}<div class="form-grid">${heroInput("Label CTA utama","primaryCtaLabel")}${heroInput("Tujuan CTA utama","primaryCtaTarget")}</div>${heroCheck("Aktifkan CTA sekunder","secondaryCtaEnabled")}<div class="form-grid">${heroInput("Label CTA sekunder","secondaryCtaLabel")}${heroInput("Tujuan CTA sekunder","secondaryCtaTarget")}</div></div>
+ <div class="navbar-field-group"><h4>Konten Hero</h4><div class="form-grid">
+ ${heroInput("Eyebrow","eyebrow")}
+ ${heroInput("Headline","headline")}
+ <label class="field field--full"><span>Subheadline</span><textarea data-hero-field="subheadline" rows="3">${heroValue("subheadline")}</textarea></label>
+ </div></div>
+ <div class="navbar-field-group"><h4>Background</h4><div class="form-grid">
+ ${heroInput("URL Gambar Background","imageUrl","url","Masukkan URL gambar background Hero.")}
+ </div></div>
+ <div class="navbar-field-group"><h4>CTA</h4>
+ ${heroCheck("Tampilkan CTA 1","primaryCtaEnabled")}
+ <div class="form-grid">${heroInput("Label CTA 1","primaryCtaLabel")}${heroInput("Tujuan CTA 1","primaryCtaTarget")}</div>
+ ${heroCheck("Tampilkan CTA 2","secondaryCtaEnabled")}
+ <div class="form-grid">${heroInput("Label CTA 2","secondaryCtaLabel")}${heroInput("Tujuan CTA 2","secondaryCtaTarget")}</div>
+ </div>
+ <div class="navbar-field-group"><h4>Gradasi</h4>${heroCheck("Aktifkan gradasi","gradientEnabled")}<p class="field-help">Desktop: gradasi dari kanan ke kiri. Mobile: gradasi dari atas ke bawah.</p></div>
  </div>`;
 }
 function heroPreviewMarkup(c) { const bg=c.layout==="background-image"?`background-image:${c.imageUrl?`url(&quot;${escAttr(c.imageUrl)}&quot;)`:"none"};background-size:cover;background-position:center;`:""; const h=c.height==="compact"?"360px":c.height==="medium"?"480px":"600px"; return `<div class="hero-preview-inner" style="min-height:${h};background-color:${escAttr(c.backgroundColor)};${bg}color:${escAttr(c.textColor)};text-align:${escAttr(c.alignment)}"><div class="hero-preview-copy">${c.eyebrow?`<small style="color:${escAttr(c.eyebrowColor)}">${escAttr(c.eyebrow)}</small>`:""}<h2 style="color:${escAttr(c.headlineColor)}">${escAttr(c.headline)}</h2><p style="color:${escAttr(c.descriptionColor)}">${escAttr(c.subheadline)}</p><div>${c.primaryCtaEnabled?`<span style="background:${escAttr(c.accentColor)}">${escAttr(c.primaryCtaLabel)}</span>`:""}${c.secondaryCtaEnabled?`<span class="secondary">${escAttr(c.secondaryCtaLabel)}</span>`:""}</div></div>${c.layout!=="text-only"&&c.layout!=="background-image"&&c.imageUrl?`<img src="${escAttr(c.imageUrl)}" alt="${escAttr(c.imageAlt)}">`:""}</div>`; }
