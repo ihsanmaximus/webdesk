@@ -272,6 +272,7 @@ async function saveNavbarDraft() {
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Gagal menyimpan ke database.");
+    localStorage.removeItem("maxlab:maxlabtest:navbar:draft");
     status.textContent = "Tersimpan di database. Frontend akan mengambil data terbaru saat dibuka atau di-refresh.";
     button.textContent = "Saved ✓";
   } catch (error) { status.textContent = error.message; button.textContent = "Save"; }
