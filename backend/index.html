@@ -154,17 +154,32 @@ function sectionData(el){const content={};el.querySelectorAll('[data-field]').fo
 async function collect(status){const secs=[];for(const el of document.querySelectorAll('#contentSections .section')){const content=sectionData(el);if(el.dataset.key==='hero')content.title=document.getElementById('heroTitle').value.trim();if(el.dataset.key==='hero_image'){const input=el.querySelector('[data-image]');content.image=await getImage(input)||el.dataset.savedImage||null;content.alt=el.querySelector('[data-field="alt"]').value}if(el.dataset.key==='speakers'){const cards=[...document.querySelectorAll('#speakers [data-repeat]')];for(let i=0;i<cards.length;i++){const input=cards[i].querySelector('[data-item-image]');content.items[i].image=await getImage(input)||cards[i].dataset.savedImage||null}}secs.push({key:el.dataset.key,type:el.dataset.type,section_name:el.querySelector('[data-field="section_name"]')?.value||null,title:content.heading||null,subheading:content.subheading||null,date_label:content.date_label||null,visible:el.querySelector('.visible').checked,content})}
 const settings={start_date:document.getElementById('startDate').value,end_date:document.getElementById('endDate').value,format:document.getElementById('eventFormat').value,location:document.getElementById('location').value,organizer:document.getElementById('organizer').value};
 return {id:currentMinisiteId,title:title.value.trim(),slug:slug.value.trim(),description:document.getElementById('description').value,status,settings,seo:{title:document.getElementById('metaTitle').value,description:document.getElementById('metaDescription').value,canonical:document.getElementById('canonical').value,og_image:await getImage(document.getElementById('ogUpload'))},theme:{palette_id:selectedPalette,colors:palettes.find(p=>p.id===selectedPalette).colors,primary_color:palettes.find(p=>p.id===selectedPalette).colors[0]},sections:secs}}
-async function save(action){if(!title.value.trim()||!slug.value.trim()){alert('Judul Event dan slug wajib diisi.');switchView('general');return}if(action==='published'&&!confirm('Publish halaman ini? Setelah berhasil, halaman frontend akan dibuka.'))return;const previewWindow=action==='published'?window.open('about:blank','_blank'):null;const btn=action==='published'?document.getElementById('publish'):document.getElementById(action==='draft'?'saveDraft':'save');const original=btn.innerHTML;btn.disabled=true;btn.innerHTML=action==='published'?'Publishing...':'Saving...';try{const payload=await collect(action);const payloadText=JSON.stringify(payload);const payloadSize=new Blob([payloadText]).size;if(payloadSize>3800000)throw new Error('Ukuran data terlalu besar ('+(payloadSize/1024/1024).toFixed(1)+' MB). Gambar sudah dikompres otomatis; kurangi jumlah/ukuran gambar lalu coba lagi.');const r=await fetch('/api/admin/publish-minisite',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)});const data=await r.json();if(!r.ok)throw new Error(data.error||'Gagal menyimpan');currentMinisiteId=data.id||currentMinisiteId;document.getElementById('statusBadge').textContent=data.status.toUpperCase();if(action==='published'){const publicUrl='/'+data.slug;if(previewWindow&&!previewWindow.closed)previewWindow.location.href=publicUrl;else window.location.href=publicUrl}else{alert((action==='draft'?'Draft saved.':'Changes saved.')+'\nStatus: '+data.status.toUpperCase()+'\nSlug: '+data.slug)}}catch(e){if(previewWindow&&!previewWindow.closed)previewWindow.close();const reason=typeof e==='string'?e:(e?.message||e?.name||'Kesalahan tidak diketahui. Periksa file gambar dan koneksi, lalu coba lagi.');console.error('Webdesk save failed:',e);alert('Belum berhasil disimpan: '+reason)}finally{btn.disabled=false;btn.innerHTML=original}}
+async function save(action){if(!title.value.trim()||!slug.value.trim()){alert('Judul Event dan slug wajib diisi.');switchView('general');return}if(action==='published'&&!confirm('Publish halaman ini? Setelah berhasil, halaman frontend akan dibuka.'))return;const previewWindow=action==='published'?window.open('about:blank','_blank'):null;const btn=action==='published'?document.getElementById('publish'):document.getElementById(action==='draft'?'saveDraft':'save');const original=btn.innerHTML;btn.disabled=true;btn.innerHTML=action==='published'?'Publishing...':'Saving...';try{const payload=await collect(action);const payloadText=JSON.stringify(payload);const payloadSize=new Blob([payloadText]).size;if(payloadSize>3800000)throw new Error('Ukuran data terlalu besar ('+(payloadSize/1024/1024).toFixed(1)+' MB). Gambar sudah dikompres otomatis; kurangi jumlah/ukuran gambar lalu coba lagi.');const r=await fetch('/api/admin/publish-minisite',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)});const data=await r.json();if(!r.ok)throw new Error(data.error||'Gagal menyimpan');currentMinisiteId=data.id||currentMinisiteId;landingPagesCache=null;document.getElementById('statusBadge').textContent=data.status.toUpperCase();if(action==='published'){const publicUrl='/'+data.slug;if(previewWindow&&!previewWindow.closed)previewWindow.location.href=publicUrl;else window.location.href=publicUrl}else{alert((action==='draft'?'Draft saved.':'Changes saved.')+'\nStatus: '+data.status.toUpperCase()+'\nSlug: '+data.slug)}}catch(e){if(previewWindow&&!previewWindow.closed)previewWindow.close();const reason=typeof e==='string'?e:(e?.message||e?.name||'Kesalahan tidak diketahui. Periksa file gambar dan koneksi, lalu coba lagi.');console.error('Webdesk save failed:',e);alert('Belum berhasil disimpan: '+reason)}finally{btn.disabled=false;btn.innerHTML=original}}
 function startNewEvent(){const url=location.pathname+'?new='+Date.now()+'#general';const tab=window.open(url,'_blank');if(!tab)alert('Browser memblokir tab baru. Izinkan pop-up untuk webdesk.my.id, lalu klik Buat Landing Page lagi. Data di halaman ini tetap aman dan tidak diubah.')}
 document.getElementById('newEvent').onclick=startNewEvent;
-async function loadLandingPages(){
- const host=document.getElementById('landingPageList');host.innerHTML='<p class="muted">Memuat daftar landing page...</p>';
+let landingPagesCache=null;
+function renderLandingPages(items){
+ const host=document.getElementById('landingPageList');
+ if(!items?.length){host.innerHTML='<p class="muted">Belum ada landing page tersimpan.</p>';return}
+ host.innerHTML='<div class="lp-list">'+items.map(item=>'<div class="lp-row"><div class="lp-info"><strong>'+escapeHtml(item.title||'Tanpa Judul')+'</strong><span>/'+escapeHtml(item.slug)+'</span><small>'+escapeHtml(String(item.status||'draft').toUpperCase())+' · Diperbarui '+escapeHtml(item.updated_at?new Date(item.updated_at).toLocaleString('id-ID'):'—')+'</small></div><div class="lp-actions">'+(item.status==='published'?'<a class="btn primary lp-visit" href="/'+encodeURIComponent(item.slug)+'" target="_blank" rel="noopener">Visit ↗</a>':'<span class="btn secondary lp-visit" aria-disabled="true">Belum Publish</span>')+'<button class="btn secondary" type="button" data-edit="'+escapeHtml(item.id)+'">Edit</button><button class="btn danger" type="button" data-delete="'+escapeHtml(item.id)+'" data-title="'+escapeHtml(item.title||'Landing Page')+'">Delete</button></div></div>').join('')+'</div>';
+}
+async function preloadLandingPages(){
  try{
-  const r=await fetch('/api/admin/minisites',{headers:{Accept:'application/json'}});
+  const r=await fetch('/api/admin/minisites',{headers:{Accept:'application/json'},cache:'no-store'});
   const data=await r.json();if(!r.ok)throw new Error(data.error||'Gagal memuat daftar.');
-  if(!data.items?.length){host.innerHTML='<p class="muted">Belum ada landing page tersimpan.</p>';return}
-  host.innerHTML='<div class="lp-list">'+data.items.map(item=>'<div class="lp-row"><div class="lp-info"><strong>'+escapeHtml(item.title||'Tanpa Judul')+'</strong><span>/'+escapeHtml(item.slug)+'</span><small>'+escapeHtml(String(item.status||'draft').toUpperCase())+' · Diperbarui '+escapeHtml(item.updated_at?new Date(item.updated_at).toLocaleString('id-ID'):'—')+'</small></div><div class="lp-actions">'+(item.status==='published'?'<a class="btn primary lp-visit" href="/'+encodeURIComponent(item.slug)+'" target="_blank" rel="noopener">Visit ↗</a>':'<span class="btn secondary lp-visit" aria-disabled="true">Belum Publish</span>')+'<button class="btn secondary" type="button" data-edit="'+escapeHtml(item.id)+'">Edit</button><button class="btn danger" type="button" data-delete="'+escapeHtml(item.id)+'" data-title="'+escapeHtml(item.title||'Landing Page')+'">Delete</button></div></div>').join('')+'</div>';
- }catch(e){host.innerHTML='<p class="muted">'+escapeHtml(e.message||'Gagal memuat daftar.')+'</p>'}
+  landingPagesCache=Array.isArray(data.items)?data.items:[];
+ }catch(e){landingPagesCache=null;console.warn('Landing page list preload:',e)}
+}
+async function loadLandingPages(force=false){
+ const host=document.getElementById('landingPageList');
+ if(landingPagesCache!==null&&!force){renderLandingPages(landingPagesCache);return}
+ host.innerHTML='<p class="muted">Memuat daftar landing page...</p>';
+ try{
+  const r=await fetch('/api/admin/minisites',{headers:{Accept:'application/json'},cache:'no-store'});
+  const data=await r.json();if(!r.ok)throw new Error(data.error||'Gagal memuat daftar.');
+  landingPagesCache=Array.isArray(data.items)?data.items:[];
+  renderLandingPages(landingPagesCache);
+ }catch(e){landingPagesCache=null;host.innerHTML='<p class="muted">'+escapeHtml(e.message||'Gagal memuat daftar.')+'</p>'}
 }
 
 async function editLandingPage(id){
@@ -204,7 +219,7 @@ async function editLandingPage(id){
 }
 async function deleteLandingPage(id,titleText){
  if(!confirm('Hapus landing page "'+titleText+'" beserta seluruh data terkait? Tindakan ini tidak dapat dibatalkan.'))return;
- try{const r=await fetch('/api/admin/minisites?id='+encodeURIComponent(id),{method:'DELETE',headers:{Accept:'application/json'}});const data=await r.json();if(!r.ok)throw new Error(data.error||'Gagal menghapus landing page.');if(currentMinisiteId===id)currentMinisiteId=null;await loadLandingPages();alert('Landing Page berhasil dihapus.')}catch(e){alert(e.message||'Gagal menghapus landing page.')}
+ try{const r=await fetch('/api/admin/minisites?id='+encodeURIComponent(id),{method:'DELETE',headers:{Accept:'application/json'}});const data=await r.json();if(!r.ok)throw new Error(data.error||'Gagal menghapus landing page.');if(currentMinisiteId===id)currentMinisiteId=null;landingPagesCache=null;await loadLandingPages(true);alert('Landing Page berhasil dihapus.')}catch(e){alert(e.message||'Gagal menghapus landing page.')}
 }
 document.getElementById('landingPageList').addEventListener('click',e=>{
  const edit=e.target.closest('[data-edit]');if(edit)editLandingPage(edit.dataset.edit);
@@ -217,7 +232,7 @@ async function checkAdminSession(){
  try{
   const r=await fetch('/api/admin/auth',{cache:'no-store'});
   const data=await r.json();
-  if(r.ok&&data.authenticated){gate.classList.add('hidden');if(location.hash==='#list')loadLandingPages();return}
+  if(r.ok&&data.authenticated){gate.classList.add('hidden');preloadLandingPages().then(()=>{if(location.hash==='#list')loadLandingPages()});return}
  }catch(e){}
  gate.classList.remove('hidden');
 }
@@ -228,7 +243,7 @@ document.getElementById('authForm').addEventListener('submit',async e=>{
   const r=await fetch('/api/admin/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:document.getElementById('adminPassword').value})});
   const data=await r.json();if(!r.ok)throw new Error(data.error||'Login gagal.');
   document.getElementById('adminPassword').value='';document.getElementById('authGate').classList.add('hidden');
-  if(location.hash==='#list')loadLandingPages();
+  preloadLandingPages().then(()=>{if(location.hash==='#list')loadLandingPages()});
  }catch(err){error.textContent=err.message||'Login gagal.'}
  finally{button.disabled=false;button.textContent='Masuk'}
 });
@@ -239,7 +254,7 @@ document.getElementById('logoutBtn').addEventListener('click',async()=>{
 checkAdminSession();
 
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
-document.getElementById('refreshList').onclick=loadLandingPages;
+document.getElementById('refreshList').onclick=()=>loadLandingPages(true);
 document.querySelectorAll('[data-view="list"]').forEach(a=>a.addEventListener('click',()=>loadLandingPages()));
 document.getElementById('publish').onclick=()=>save('published');document.getElementById('save').onclick=()=>save('save');document.getElementById('saveDraft').onclick=()=>save('draft');
 if(location.hash&&titles[location.hash.slice(1)]){switchView(location.hash.slice(1));if(location.hash==='#list')loadLandingPages();}
