@@ -49,7 +49,7 @@ function renderHeroFields() {
  <label class="field field--full"><span>Subheadline</span><textarea data-hero-field="subheadline" rows="3">${heroValue("subheadline")}</textarea></label>
  </div></div>
  <div class="navbar-field-group"><h4>Background</h4><div class="form-grid">
- ${heroInput("URL Gambar Background","imageUrl","url","Masukkan URL gambar background Hero.")}
+ <label class="field field--full"><span>Upload Background</span><input id="hero-background-file" type="file" accept="image/jpeg,image/png,image/webp"><small class="field-help">Format JPG, PNG, WebP. Maksimal 10 MB.</small><div id="hero-upload-status" class="field-help"></div><img id="hero-background-preview" alt="Preview background Hero" style="display:none;max-width:100%;max-height:180px;object-fit:cover;border-radius:10px"></label>
  </div></div>
  <div class="navbar-field-group"><h4>CTA</h4>
  ${heroCheck("Tampilkan CTA 1","primaryCtaEnabled")}
@@ -221,6 +221,21 @@ function bindInteractions() {
   $("#navbar-local-draft")?.addEventListener("click", saveNavbarLocalDraft);
   $("#hero-local-draft")?.addEventListener("click", saveHeroLocalDraft);
   $("#hero-save-database")?.addEventListener("click", saveHeroDatabase);
+  const heroFile = $("#hero-background-file");
+  if (heroFile) heroFile.addEventListener("change", async () => {
+    const file = heroFile.files?.[0]; if (!file) return;
+    const status = $("#hero-upload-status"), preview = $("#hero-background-preview");
+    if (!["image/jpeg","image/png","image/webp"].includes(file.type) || file.size > 10*1024*1024) { status.textContent = "Pilih JPG, PNG, atau WebP maksimal 10 MB."; heroFile.value = ""; return; }
+    try {
+      status.textContent = "Mengunggah gambar...";
+      const base64 = await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(",")[1]);reader.onerror=()=>reject(new Error("File gagal dibaca."));reader.readAsDataURL(file);});
+      const response = await fetch("/api/maxlab/hero-upload",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({fileName:file.name,mimeType:file.type,data:base64})});
+      const result = await response.json(); if(!response.ok) throw new Error(result.error||"Upload gagal.");
+      heroConfigCache = {...(heroConfigCache||heroDefaults), imageUrl:result.publicUrl};
+      status.textContent = "Upload berhasil. Simpan dengan tombol Save.";
+      if(preview){preview.src=result.publicUrl;preview.style.display="block";}
+    } catch(error){status.textContent=error.message;}
+  });
 
   $("#navbar-save-database")?.addEventListener("click", saveNavbarDraft);
   $("#navbar-publish")?.addEventListener("click", publishNavbar);
