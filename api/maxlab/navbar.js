@@ -77,12 +77,14 @@ export default async function handler(req, res) {
     if (logoDataUrl && (!/^data:image\/(png|jpeg|webp|svg\+xml);base64,/.test(logoDataUrl) || logoDataUrl.length > 1500000)) {
       return json(res, 400, { error: "Logo harus PNG, JPG, WEBP, atau SVG dengan ukuran maksimal sekitar 1 MB." });
     }
+    // Keep labeled menu items even when the URL is not filled in yet.
+    // Use # as a safe default instead of silently dropping the menu.
     const menuItems = Array.isArray(body.menuItems) ? body.menuItems.slice(0, 20).map((item, index) => ({
       label: String(item.label || "").trim().slice(0, 80),
-      target_url: String(item.targetUrl || "").trim().slice(0, 500),
+      target_url: String(item.targetUrl || "").trim().slice(0, 500) || "#",
       sort_order: index,
       is_active: true
-    })).filter(item => item.label && item.target_url) : [];
+    })).filter(item => item.label) : [];
 
     const websites = await db(`maxlab_websites?select=id&slug=eq.${WEBSITE_SLUG}&limit=1`);
     if (!websites?.length) return json(res, 404, { error: "Website MaxLab Test belum terdaftar." });
