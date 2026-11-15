@@ -1314,6 +1314,7 @@
 @media(max-width:600px){.schedule-date-pill{font-size:1rem;padding:14px 20px;margin-bottom:24px}}
 @media(max-width:430px){.empty-title{height:26px}.empty-card{padding:18px}}
 </style>
+<link rel="stylesheet" href="/assets/css/global.css">
 </head>
 <body>
 <header class="navbar"><div class="container nav-container">
@@ -1403,9 +1404,23 @@
   const visible=k=>sections[k]?.is_visible!==false;
   document.title=m.seo_meta_title||m.title||'Workshop';
   const meta=$('meta[name="description"]');if(meta)meta.content=m.seo_meta_description||m.description||'';
-  document.documentElement.style.setProperty('--primary',m.theme_primary_color||'#0F172A');
-  document.documentElement.style.setProperty('--accent','#0284C7');
-  document.documentElement.style.setProperty('--accent-hover','#0369A1');
+  const theme=m.theme||{};
+  const paletteColors=Array.isArray(theme.colors)&&theme.colors.length>=4?theme.colors:['#142B4A','#285A9E','#69A8E8','#E7F2FC'];
+  const rootStyle=document.documentElement.style;
+  rootStyle.setProperty('--primary',paletteColors[0]);
+  rootStyle.setProperty('--accent',paletteColors[1]);
+  rootStyle.setProperty('--accent-hover',paletteColors[0]);
+  rootStyle.setProperty('--accent-light',paletteColors[3]);
+  rootStyle.setProperty('--theme-support',paletteColors[2]);
+  rootStyle.setProperty('--emerald',paletteColors[1]);
+  rootStyle.setProperty('--emerald-hover',paletteColors[0]);
+  rootStyle.setProperty('--bg-body',paletteColors[3]);
+  rootStyle.setProperty('--bg-card','#FFFFFF');
+  rootStyle.setProperty('--text-main',paletteColors[0]);
+  rootStyle.setProperty('--text-muted','#64748B');
+  rootStyle.setProperty('--border',paletteColors[2]);
+  rootStyle.setProperty('--theme-gradient',`linear-gradient(135deg,${paletteColors[0]} 0%,${paletteColors[1]} 100%)`);
+  rootStyle.setProperty('--theme-shadow',`0 14px 32px ${paletteColors[1]}2A`);
   const navbarConfig=sections.navbar?.content||{};
   const nav=$('.navbar');
   if(nav&&visible('navbar')){
