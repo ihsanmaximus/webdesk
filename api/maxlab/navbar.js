@@ -87,7 +87,7 @@ export default async function handler(req, res) {
     const websites = await db(`maxlab_websites?select=id&slug=eq.${WEBSITE_SLUG}&limit=1`);
     if (!websites?.length) return json(res, 404, { error: "Website MaxLab Test belum terdaftar." });
     const websiteId = websites[0].id;
-    const existing = await db(`maxlab_navbar_configs?select=id,logo_url&website_id=eq.${websiteId}&status=eq.draft&order=updated_at.desc&limit=1`);
+    const existing = await db(`maxlab_navbar_configs?select=id,logo_url&website_id=eq.${websiteId}&order=updated_at.desc&limit=1`);
     const payload = {
       website_id: websiteId,
       brand_name: brandName || null,
@@ -95,7 +95,7 @@ export default async function handler(req, res) {
       whatsapp_number: whatsappNumber || null,
       cta_label: ctaLabel || null,
       layout_config: {},
-      status: "draft",
+      status: "saved",
       updated_at: new Date().toISOString()
     };
     let config;
@@ -124,7 +124,7 @@ export default async function handler(req, res) {
         body: JSON.stringify(menuItems.map(item => ({ ...item, navbar_config_id: config.id })))
       });
     }
-    return json(res, 200, { success: true, message: "Draft Navbar berhasil disimpan.", configId: config.id, menuCount: menuItems.length });
+    return json(res, 200, { success: true, message: "Navbar berhasil disimpan ke database.", configId: config.id, menuCount: menuItems.length });
   } catch (error) {
     console.error("MaxLab save error", error);
     return json(res, error.status || 500, { error: error.message || "Gagal menyimpan konfigurasi Navbar." });
