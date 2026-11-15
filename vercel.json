@@ -20,10 +20,6 @@
       "destination": "/penawaran/rlc/index.html"
     },
     {
-      "source": "/rlc",
-      "destination": "/rlc/index.html"
-    },
-    {
       "source": "/live",
       "destination": "/rlc/index.html"
     },
