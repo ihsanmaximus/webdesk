@@ -1406,7 +1406,22 @@
   document.documentElement.style.setProperty('--primary',m.theme_primary_color||'#0F172A');
   document.documentElement.style.setProperty('--accent','#0284C7');
   document.documentElement.style.setProperty('--accent-hover','#0369A1');
-  const nav=$('.navbar');if(nav)nav.remove();
+  const navbarConfig=sections.navbar?.content||{};
+  const nav=$('.navbar');
+  if(nav&&visible('navbar')){
+   const brand=navbarConfig.brand||m.title||'';
+   const buttonLabel=navbarConfig.button_label||'Daftar Sekarang';
+   nav.innerHTML='';
+   const wrap=el('div','container nav-container');
+   const brandLink=el('a','brand');brandLink.href='#';
+   const logo=el('div','brand-logo',(brand.trim().charAt(0)||'W').toUpperCase());
+   const brandText=el('div','brand-text');brandText.append(el('span','',brand));
+   brandLink.append(logo,brandText);
+   const links=el('nav','nav-links');
+   [['Materi','#materi','materi_acara'],['Jadwal','#jadwal','schedule'],['Pembicara','#pembicara','speakers'],['Paket','#paket','pricing']].forEach(([label,href,key])=>{if(visible(key)){const a=el('a','',label);a.href=href;links.append(a)}});
+   const cta=el('a','btn btn-primary nav-cta',buttonLabel);cta.href='#daftar';
+   wrap.append(brandLink,links,cta);nav.append(wrap);
+  }else nav?.remove();
   const hero=$('.hero');
   if(hero&&visible('hero')){
    const c=$('.hero-content',hero);c.innerHTML='';
@@ -1519,7 +1534,16 @@
    }
   }else reg?.remove();
   const footer=$('.footer');if(footer&&visible('footer')){const grid=$('.footer-grid',footer);grid.innerHTML='';const left=el('div');left.append(el('h4','',m.footer_organization||''));if(m.footer_address)left.append(el('p','',m.footer_address));const right=el('div');if(m.footer_whatsapp)right.append(el('p','',m.footer_whatsapp));if(m.footer_email)right.append(el('p','',m.footer_email));grid.append(left,right)}else footer?.remove();
-  $('.mobile-sticky-cta')?.remove();
+  const stickyConfig=sections.sticky_cta?.content||{};
+  const sticky=$('.mobile-sticky-cta');
+  if(sticky&&visible('sticky_cta')){
+   sticky.innerHTML='';
+   const copy=el('div','sticky-price');
+   copy.append(el('span','',stickyConfig.text||'Pendaftaran masih dibuka'));
+   const buttons=el('div','sticky-buttons');
+   const button=el('a','btn btn-primary',stickyConfig.button_label||'Daftar Sekarang');button.href='#daftar';
+   buttons.append(button);sticky.append(copy,buttons);
+  }else sticky?.remove();
  }catch(e){showError('Tidak dapat memuat event','Terjadi gangguan koneksi atau layanan. Periksa koneksi internet Anda, lalu coba kembali.','NETWORK / API ERROR')}
 })();
 </script>
