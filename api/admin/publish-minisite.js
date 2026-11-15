@@ -41,14 +41,17 @@ export default async function handler(req,res){
   const nav=byKey.navbar?.content||{},hero=byKey.hero?.content||{},heroImg=byKey.hero_image?.content||{};
   const materials=byKey.materi_acara?.content?.items||[],agenda=byKey.schedule?.content?.items||[],speakers=byKey.speakers?.content?.items||[],pricing=byKey.pricing?.content?.items||[];
   const reg=byKey.registration?.content||{},footer=byKey.footer?.content||{},sticky=byKey.sticky_cta?.content||{};
-  const settings=b.settings||{},seo=b.seo||{},theme=b.theme||{},published=b.status==="published";
+  const settings=b.settings||{},seo=b.seo||{},theme=b.theme||{},action=b.status;
+  const existing=action==="save"?await db(`minisites?select=status,published_at&slug=eq.${encodeURIComponent(slug)}&limit=1`):[];
+  const finalStatus=action==="published"?"published":action==="draft"?"draft":(existing?.[0]?.status||"draft");
+  const published=finalStatus==="published";
   const heroImageUrl=await storeImage(heroImg.image,slug,"hero","hero-image");
   const ogImageUrl=await storeImage(seo.og_image,slug,"seo","og-image");
   for(let i=0;i<speakers.length;i++){
    speakers[i].image_url=await storeImage(speakers[i].image,slug,"speakers",`speaker-${String(i+1).padStart(2,"0")}`);
   }
   const sitePayload={
-   title,slug,status:published?"published":"draft",description:b.description||"",
+   title,slug,status:finalStatus,description:b.description||"",
    start_date:settings.start_date||null,end_date:settings.end_date||null,event_format:settings.format||null,location:settings.location||null,organizer:settings.organizer||null,
    navbar_brand:nav.brand||null,navbar_button_label:nav.button_label||null,
    hero_eyebrow:hero.eyebrow||null,hero_title:hero.title||null,hero_description:hero.description||null,hero_primary_cta:hero.primary_cta||null,hero_secondary_cta:hero.secondary_cta||null,
@@ -59,7 +62,7 @@ export default async function handler(req,res){
    sticky_cta_text:sticky.text||null,sticky_cta_button_label:sticky.button_label||null,
    seo_meta_title:seo.title||null,seo_meta_description:seo.description||null,seo_og_image_url:ogImageUrl,seo_canonical_url:seo.canonical||null,
    theme_primary_color:theme.primary_color||"#173b70",theme,seo,settings,
-   published_at:published?new Date().toISOString():null
+   published_at:published?(action==="published"?new Date().toISOString():(existing?.[0]?.published_at||new Date().toISOString())):null
   };
   const saved=await db("minisites?on_conflict=slug&select=id,slug,status",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=representation"},body:JSON.stringify(sitePayload)});
   const site=saved?.[0];if(!site?.id)throw new Error("Database tidak mengembalikan ID minisite.");
