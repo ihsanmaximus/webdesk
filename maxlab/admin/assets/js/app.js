@@ -49,7 +49,7 @@ function renderHeroFields() {
  <label class="field field--full"><span>Subheadline</span><textarea data-hero-field="subheadline" rows="3">${heroValue("subheadline")}</textarea></label>
  </div></div>
  <div class="navbar-field-group"><h4>Background</h4><div class="form-grid">
- <label class="field field--full"><span>Upload Background</span><input id="hero-background-file" type="file" accept="image/jpeg,image/png,image/webp"><small class="field-help">Format JPG, PNG, WebP. Maksimal 10 MB.</small><div id="hero-upload-status" class="field-help"></div><img id="hero-background-preview" alt="Preview background Hero" style="display:none;max-width:100%;max-height:180px;object-fit:cover;border-radius:10px"></label>
+ <label class="field field--full"><span>Upload Background</span><input id="hero-background-file" type="file" accept="image/jpeg,image/png,image/webp"><small class="field-help">Format JPG, PNG, WebP. Maksimal 3 MB.</small><div id="hero-upload-status" class="field-help"></div><img id="hero-background-preview" alt="Preview background Hero" style="display:none;max-width:100%;max-height:180px;object-fit:cover;border-radius:10px"></label>
  </div></div>
  <div class="navbar-field-group"><h4>CTA</h4>
  ${heroCheck("Tampilkan CTA 1","primaryCtaEnabled")}
@@ -225,7 +225,7 @@ function bindInteractions() {
   if (heroFile) heroFile.addEventListener("change", async () => {
     const file = heroFile.files?.[0]; if (!file) return;
     const status = $("#hero-upload-status"), preview = $("#hero-background-preview");
-    if (!["image/jpeg","image/png","image/webp"].includes(file.type) || file.size > 10*1024*1024) { status.textContent = "Pilih JPG, PNG, atau WebP maksimal 10 MB."; heroFile.value = ""; return; }
+    if (!["image/jpeg","image/png","image/webp"].includes(file.type) || file.size > 3*1024*1024) { status.textContent = "Pilih JPG, PNG, atau WebP maksimal 3 MB."; heroFile.value = ""; return; }
     try {
       status.textContent = "Mengunggah gambar...";
       const base64 = await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(",")[1]);reader.onerror=()=>reject(new Error("File gagal dibaca."));reader.readAsDataURL(file);});
