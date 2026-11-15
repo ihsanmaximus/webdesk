@@ -33,6 +33,32 @@ const backdrop = $("#sidebar-backdrop");
 const navItems = [...document.querySelectorAll(".nav-item")];
 let navbarFormCache = null;
 let navbarDataLoaded = false;
+let heroConfigCache = null;
+let heroConfigLoaded = false;
+const heroDefaults = { version:1, layout:"text-image", eyebrow:"", headline:"Bangun Sesuatu yang Luar Biasa", subheadline:"Perkenalkan bisnis Anda dengan pesan yang jelas, menarik, dan mudah diingat.", eyebrowColor:"#047857", headlineColor:"#172033", descriptionColor:"#172033", primaryCtaEnabled:true, primaryCtaLabel:"Hubungi Kami", primaryCtaTarget:"#contact", secondaryCtaEnabled:false, secondaryCtaLabel:"Pelajari Lebih Lanjut", secondaryCtaTarget:"#about", imageUrl:"", imageAlt:"Gambar utama website", imagePosition:"right", alignment:"left", height:"large", backgroundColor:"#FFFFFF", textColor:"#172033", accentColor:"#047857", gradientEnabled:true, gradientTheme:"dark", gradientPosition:"left" };
+function escAttr(value) { return String(value ?? "").replace(/[&<>"\']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[ch])); }
+function heroValue(key) { return escAttr((heroConfigCache || heroDefaults)[key]); }
+function heroInput(label,key,type="text",hint="") { return `<label class="field"><span>${label}</span><input data-hero-field="${key}" type="${type}" value="${heroValue(key)}">${hint?`<small class="field-help">${hint}</small>`:""}</label>`; }
+function heroSelect(label,key,options) { return `<label class="field"><span>${label}</span><select data-hero-field="${key}">${options.map(([v,t])=>`<option value="${v}" ${heroValue(key)===v?"selected":""}>${t}</option>`).join("")}</select></label>`; }
+function heroCheck(label,key) { return `<label class="hero-check"><input data-hero-field="${key}" type="checkbox" ${(heroConfigCache||heroDefaults)[key]?"checked":""}> ${label}</label>`; }
+function renderHeroFields() {
+ const c=heroConfigCache||heroDefaults;
+ return `<div class="hero-config-form">
+ <div class="navbar-field-group"><h4>01 · Konten Hero</h4><div class="form-grid">${heroInput("Eyebrow (opsional)","eyebrow")}${heroInput("Headline","headline")}${`<label class="field field--full"><span>Subheadline</span><textarea data-hero-field="subheadline" rows="3">${heroValue("subheadline")}</textarea></label>`}</div></div>
+ <div class="navbar-field-group"><h4>02 · Layout & Gambar</h4><div class="form-grid">${heroSelect("Layout","layout",[["text-only","Text Only"],["text-image","Teks + gambar"],["background-image","Full Background"],["split-full-bleed","Split Full-Bleed"]])}${heroInput("URL Gambar","imageUrl","url","Masukkan URL gambar. Integrasi Image Library menyusul setelah bucket gambar MaxLab tersedia.")}${heroInput("Deskripsi gambar","imageAlt")}${heroSelect("Posisi gambar","imagePosition",[["right","Kanan"],["left","Kiri"],["top","Atas"],["background","Background"]])}</div></div>
+ <div class="navbar-field-group"><h4>03 · Gradasi Hero</h4>${heroCheck("Aktifkan gradasi","gradientEnabled")}<div class="form-grid">${heroSelect("Warna gradasi","gradientTheme",[["dark","Dark (hitam)"],["light","Light (putih)"]])}${heroSelect("Posisi gradasi","gradientPosition",[["left","Kiri"],["right","Kanan"]])}</div></div>
+ <div class="navbar-field-group"><h4>04 · Alignment & Tinggi</h4><div class="form-grid">${heroSelect("Perataan teks","alignment",[["left","Kiri"],["center","Tengah"],["right","Kanan"]])}${heroSelect("Tinggi Hero","height",[["compact","Compact"],["medium","Medium"],["large","Large"]])}</div></div>
+ <div class="navbar-field-group"><h4>05 · CTA</h4>${heroCheck("Aktifkan CTA utama","primaryCtaEnabled")}<div class="form-grid">${heroInput("Label CTA utama","primaryCtaLabel")}${heroInput("Tujuan CTA utama","primaryCtaTarget")}</div>${heroCheck("Aktifkan CTA sekunder","secondaryCtaEnabled")}<div class="form-grid">${heroInput("Label CTA sekunder","secondaryCtaLabel")}${heroInput("Tujuan CTA sekunder","secondaryCtaTarget")}</div></div>
+ <div class="navbar-field-group"><h4>06 · Warna Tipografi</h4><div class="form-grid">${heroInput("Warna Eyebrow","eyebrowColor","color")}${heroInput("Warna Headline","headlineColor","color")}${heroInput("Warna Deskripsi","descriptionColor","color")}</div></div>
+ <div class="navbar-field-group"><h4>07 · Warna Hero</h4><div class="form-grid">${heroInput("Warna Latar","backgroundColor","color")}${heroInput("Warna Teks","textColor","color")}${heroInput("Warna Aksen / CTA","accentColor","color")}</div></div>
+ <div class="hero-preview-wrap"><div class="hero-preview-title">Live Preview</div><div id="hero-live-preview" class="hero-live-preview">${heroPreviewMarkup(c)}</div></div></div>`;
+}
+function heroPreviewMarkup(c) { const bg=c.layout==="background-image"?`background-image:${c.imageUrl?`url(&quot;${escAttr(c.imageUrl)}&quot;)`:"none"};background-size:cover;background-position:center;`:""; const h=c.height==="compact"?"360px":c.height==="medium"?"480px":"600px"; return `<div class="hero-preview-inner" style="min-height:${h};background-color:${escAttr(c.backgroundColor)};${bg}color:${escAttr(c.textColor)};text-align:${escAttr(c.alignment)}"><div class="hero-preview-copy">${c.eyebrow?`<small style="color:${escAttr(c.eyebrowColor)}">${escAttr(c.eyebrow)}</small>`:""}<h2 style="color:${escAttr(c.headlineColor)}">${escAttr(c.headline)}</h2><p style="color:${escAttr(c.descriptionColor)}">${escAttr(c.subheadline)}</p><div>${c.primaryCtaEnabled?`<span style="background:${escAttr(c.accentColor)}">${escAttr(c.primaryCtaLabel)}</span>`:""}${c.secondaryCtaEnabled?`<span class="secondary">${escAttr(c.secondaryCtaLabel)}</span>`:""}</div></div>${c.layout!=="text-only"&&c.layout!=="background-image"&&c.imageUrl?`<img src="${escAttr(c.imageUrl)}" alt="${escAttr(c.imageAlt)}">`:""}</div>`; }
+async function loadHeroConfig() { if(heroConfigLoaded)return; try { const r=await fetch("/api/maxlab/hero",{cache:"no-store"}); const d=await r.json(); if(!r.ok)throw new Error(d.error||"Gagal memuat Hero"); heroConfigCache={...heroDefaults,...(d.config||{})}; heroConfigLoaded=true; if(state.activePage==="sections"&&state.activeSection==="hero")render(); } catch(e) { const s=$("#hero-save-status"); if(s)s.textContent=e.message; } }
+function collectHeroForm() { const c={...(heroConfigCache||heroDefaults)}; document.querySelectorAll("[data-hero-field]").forEach(el=>{const k=el.dataset.heroField;c[k]=el.type==="checkbox"?el.checked:el.value;}); heroConfigCache=c; return c; }
+function refreshHeroPreview() { const p=$("#hero-live-preview"); if(p)p.innerHTML=heroPreviewMarkup(collectHeroForm()); }
+async function saveHeroLocalDraft() { const b=$("#hero-local-draft"),s=$("#hero-save-status");try{b.disabled=true;localStorage.setItem("maxlab:maxlabtest:hero:draft",JSON.stringify(collectHeroForm()));s.textContent="Draft Hero tersimpan di browser ini.";}catch(e){s.textContent=e.message;}finally{b.disabled=false;} }
+async function saveHeroDatabase() { const b=$("#hero-save-database"),s=$("#hero-save-status");try{b.disabled=true;b.textContent="Saving...";const config=collectHeroForm();const r=await fetch("/api/maxlab/hero",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({config})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Gagal menyimpan Hero.");heroConfigCache=d.config;heroConfigLoaded=true;localStorage.removeItem("maxlab:maxlabtest:hero:draft");s.textContent="Hero tersimpan di database. Frontend menampilkan data terbaru setelah refresh.";b.textContent="Saved ✓";}catch(e){s.textContent=e.message;b.textContent="Save";}finally{b.disabled=false;} }
 function captureNavbarForm() {
   const brand = $("#navbar-brand");
   if (!brand) return;
@@ -90,7 +116,8 @@ function renderGeneral() {
 }
 
 function renderSectionFields(section) {
-  if (section.id !== "navbar") return `<div class="section-fields-placeholder"><strong>Field ${section.name}</strong><p>Konfigurasi section ini belum dikerjakan. Saat ini pengerjaan dibatasi pada Navbar.</p></div>`;
+  if (section.id === "hero") return renderHeroFields();
+  if (section.id !== "navbar") return `<div class="section-fields-placeholder"><strong>Field ${section.name}</strong><p>Konfigurasi section ini belum dikerjakan. Saat ini pengerjaan dibatasi pada Navbar dan Hero.</p></div>`;
   return [
     '<div class="navbar-config-form">',
     '<div class="navbar-field-group"><h4>Identitas Brand</h4><div class="form-grid">',
@@ -129,7 +156,7 @@ function renderSections() {
     <div class="panel-heading"><div><h3>Konten Website</h3><p>Atur section yang ditampilkan dan urutannya. Buka setiap section untuk melihat konfigurasi field.</p></div><span class="state-chip">Draft</span></div>
     <div class="section-accordion-intro"><strong>Struktur Konten</strong><span>${state.sections.length} section</span><small>Centang untuk menampilkan. Gunakan ikon titik untuk drag and drop.</small></div>
     <div class="section-accordion" id="section-list">${rows}</div>
-    <div class="form-actions section-form-actions"><span id="navbar-save-status">Draft lokal belum disimpan.</span><div class="button-group"><button class="secondary-button" id="navbar-local-draft" type="button">Draft</button><button class="secondary-button" id="navbar-save-database" type="button">Save</button><button class="primary-button" id="navbar-publish" type="button">Publish</button></div></div>`;
+    <div class="form-actions section-form-actions"><span id="${state.activeSection === "hero" ? "hero-save-status" : "navbar-save-status"}">Draft lokal belum disimpan.</span><div class="button-group">${state.activeSection === "hero" ? `<button class="secondary-button" id="hero-local-draft" type="button">Draft</button><button class="secondary-button" id="hero-save-database" type="button">Save</button>` : `<button class="secondary-button" id="navbar-local-draft" type="button">Draft</button><button class="secondary-button" id="navbar-save-database" type="button">Save</button>`}<button class="primary-button" id="navbar-publish" type="button">Publish</button></div></div>`;
 }
 
 function renderSeo() {
@@ -161,6 +188,7 @@ function render() {
   navItems.forEach(item => item.classList.toggle("is-active", item.dataset.page === state.activePage));
   content.innerHTML = state.activePage === "general" ? renderGeneral() : state.activePage === "sections" ? renderSections() : renderSeo();
   bindInteractions();
+  if (state.activePage === "sections" && state.activeSection === "hero") { loadHeroConfig(); }
   if (state.activePage === "sections" && state.activeSection === "navbar") {
     if (navbarFormCache) restoreNavbarFormCache();
     else if (!navbarDataLoaded) loadNavbarDraftIntoForm();
@@ -184,6 +212,10 @@ function bindInteractions() {
   });
 
   $("#navbar-local-draft")?.addEventListener("click", saveNavbarLocalDraft);
+  $("#hero-local-draft")?.addEventListener("click", saveHeroLocalDraft);
+  $("#hero-save-database")?.addEventListener("click", saveHeroDatabase);
+  document.querySelectorAll("[data-hero-field]").forEach(el => el.addEventListener("input", refreshHeroPreview));
+  document.querySelectorAll("[data-hero-field]").forEach(el => el.addEventListener("change", refreshHeroPreview));
   $("#navbar-save-database")?.addEventListener("click", saveNavbarDraft);
   $("#navbar-publish")?.addEventListener("click", publishNavbar);
 
