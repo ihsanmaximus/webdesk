@@ -100,7 +100,7 @@ function renderSections() {
     <div class="panel-heading"><div><h3>Konten Website</h3><p>Atur section yang ditampilkan dan urutannya. Buka setiap section untuk melihat konfigurasi field.</p></div><span class="state-chip">Draft</span></div>
     <div class="section-accordion-intro"><strong>Struktur Konten</strong><span>${state.sections.length} section</span><small>Centang untuk menampilkan. Gunakan ikon titik untuk drag and drop.</small></div>
     <div class="section-accordion" id="section-list">${rows}</div>
-    <div class="form-actions section-form-actions"><span id="navbar-save-status">Perubahan disimpan ke Draft MaxLab.</span><div class="button-group"><button class="secondary-button" id="navbar-save-draft" type="button">Save Draft</button><button class="primary-button" type="button" disabled>Publish (belum aktif)</button></div></div>`;
+    <div class="form-actions section-form-actions"><span id="navbar-save-status">Draft lokal belum disimpan.</span><div class="button-group"><button class="secondary-button" id="navbar-local-draft" type="button">Draft</button><button class="secondary-button" id="navbar-save-database" type="button">Save</button><button class="primary-button" id="navbar-publish" type="button">Publish</button></div></div>`;
 }
 
 function renderSeo() {
@@ -149,11 +149,9 @@ function bindInteractions() {
     });
   });
 
-  const saveDraft = $("#navbar-save-draft");
-  if (saveDraft) saveDraft.addEventListener("click", saveNavbarDraft);
-
-  const saveDraft = $("#navbar-save-draft");
-  if (saveDraft) saveDraft.addEventListener("click", saveNavbarDraft);
+  $("#navbar-local-draft")?.addEventListener("click", saveNavbarLocalDraft);
+  $("#navbar-save-database")?.addEventListener("click", saveNavbarDraft);
+  $("#navbar-publish")?.addEventListener("click", publishNavbar);
 
   const navbarSection = document.querySelector('[data-section-id="navbar"]');
   if (navbarSection) loadNavbarDraftIntoForm();
@@ -230,126 +228,69 @@ $("#sidebar-close").addEventListener("click", () => { sidebar.classList.remove("
 backdrop.addEventListener("click", () => { sidebar.classList.remove("is-open"); backdrop.classList.remove("is-visible"); });
 
 render();
-async function saveNavbarDraft() {
-  const button = $("#navbar-save-draft");
-  const status = $("#navbar-save-status");
-  const logoInput = $("#navbar-logo");
-  const file = logoInput?.files?.[0];
-  const readFile = file ? new Promise((resolve, reject) => {
+function collectNavbarFormData() {
+  return {
+    brandName: $("#navbar-brand")?.value || "",
+    whatsappNumber: $("#navbar-whatsapp")?.value || "",
+    ctaLabel: $("#navbar-cta-label")?.value || "",
+    menuItems: [...document.querySelectorAll("#navbar-menu-list .navbar-menu-row")].map(row => ({
+      label: row.querySelectorAll("input")[0]?.value || "",
+      targetUrl: row.querySelectorAll("input")[1]?.value || ""
+    }))
+  };
+}
+async function readNavbarLogo() {
+  const file = $("#navbar-logo")?.files?.[0];
+  if (!file) return "";
+  return await new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result || ""));
     reader.onerror = () => reject(new Error("Logo gagal dibaca."));
     reader.readAsDataURL(file);
-  }) : Promise.resolve("");
-  try {
-    button.disabled = true;
-    button.textContent = "Menyimpan...";
-    status.textContent = "Mengirim data ke database MaxLab...";
-    const logoDataUrl = await readFile;
-    const menuItems = [...document.querySelectorAll("#navbar-menu-list .navbar-menu-row")].map(row => ({
-      label: row.querySelectorAll("input")[0]?.value || "",
-      targetUrl: row.querySelectorAll("input")[1]?.value || ""
-    }));
-    const response = await fetch("/api/maxlab/navbar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        brandName: $("#navbar-brand")?.value || "",
-        whatsappNumber: $("#navbar-whatsapp")?.value || "",
-        ctaLabel: $("#navbar-cta-label")?.value || "",
-        logoDataUrl,
-        menuItems
-      })
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "Gagal menyimpan.");
-    status.textContent = "Draft tersimpan. Buka MaxLab Test untuk memeriksa hasilnya.";
-    button.textContent = "Saved ✓";
-  } catch (error) {
-    status.textContent = error.message;
-    button.textContent = "Save Draft";
-  } finally {
-    button.disabled = false;
-  }
-}
-
-async function initMaxLabAdminAuth() {
-  const gate = document.getElementById("maxlab-auth-gate");
-  const form = document.getElementById("maxlab-auth-form");
-  const error = document.getElementById("maxlab-auth-error");
-  const password = document.getElementById("maxlab-admin-password");
-  const submit = document.getElementById("maxlab-auth-submit");
-  if (!gate || !form) return;
-  try {
-    const response = await fetch("/api/admin/auth", { cache: "no-store" });
-    const data = await response.json();
-    if (data.authenticated) gate.hidden = true;
-  } catch {}
-  form.addEventListener("submit", async event => {
-    event.preventDefault();
-    submit.disabled = true;
-    error.textContent = "";
-    try {
-      const response = await fetch("/api/admin/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: password.value })
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Login gagal.");
-      gate.hidden = true;
-    } catch (err) {
-      error.textContent = err.message;
-    } finally {
-      submit.disabled = false;
-    }
   });
 }
-initMaxLabAdminAuth();
-
-async function saveNavbarDraft() {
-  const button = $("#navbar-save-draft");
-  const status = $("#navbar-save-status");
-  const logoInput = $("#navbar-logo");
-  const file = logoInput?.files?.[0];
-  const readFile = file ? new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result || ""));
-    reader.onerror = () => reject(new Error("Logo gagal dibaca."));
-    reader.readAsDataURL(file);
-  }) : Promise.resolve("");
+async function saveNavbarLocalDraft() {
+  const button = $("#navbar-local-draft"), status = $("#navbar-save-status");
   try {
     button.disabled = true;
-    button.textContent = "Menyimpan...";
-    status.textContent = "Mengirim data ke database MaxLab...";
-    const logoDataUrl = await readFile;
-    const menuItems = [...document.querySelectorAll("#navbar-menu-list .navbar-menu-row")].map(row => ({
-      label: row.querySelectorAll("input")[0]?.value || "",
-      targetUrl: row.querySelectorAll("input")[1]?.value || ""
-    }));
+    const data = collectNavbarFormData();
+    data.logoDataUrl = await readNavbarLogo() || $("#navbar-logo-preview")?.src || "";
+    localStorage.setItem("maxlab:maxlabtest:navbar:draft", JSON.stringify(data));
+    status.textContent = "Draft tersimpan lokal di browser ini.";
+    button.textContent = "Draft ✓";
+  } catch (error) { status.textContent = "Draft gagal disimpan: " + error.message; }
+  finally { button.disabled = false; }
+}
+async function saveNavbarDraft() {
+  const button = $("#navbar-save-database"), status = $("#navbar-save-status");
+  try {
+    button.disabled = true; button.textContent = "Saving...";
+    const data = collectNavbarFormData();
+    data.logoDataUrl = await readNavbarLogo();
     const response = await fetch("/api/maxlab/navbar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        brandName: $("#navbar-brand")?.value || "",
-        whatsappNumber: $("#navbar-whatsapp")?.value || "",
-        ctaLabel: $("#navbar-cta-label")?.value || "",
-        logoDataUrl,
-        menuItems
-      })
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
     });
     const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "Gagal menyimpan.");
-    status.textContent = "Draft tersimpan. Buka MaxLab Test untuk memeriksa hasilnya.";
+    if (!response.ok) throw new Error(result.error || "Gagal menyimpan ke database.");
+    status.textContent = "Tersimpan di database sebagai Draft. Belum dipublikasikan.";
     button.textContent = "Saved ✓";
-  } catch (error) {
-    status.textContent = error.message;
-    button.textContent = "Save Draft";
-  } finally {
-    button.disabled = false;
-  }
+  } catch (error) { status.textContent = error.message; button.textContent = "Save"; }
+  finally { button.disabled = false; }
 }
-
+async function publishNavbar() {
+  const button = $("#navbar-publish"), status = $("#navbar-save-status");
+  try {
+    button.disabled = true; button.textContent = "Publishing...";
+    const response = await fetch("/api/maxlab/navbar", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "publish" })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Gagal memublikasikan.");
+    status.textContent = "Published. Frontend MaxLab Test merender konfigurasi ini.";
+    button.textContent = "Published ✓";
+  } catch (error) { status.textContent = error.message; button.textContent = "Publish"; }
+  finally { button.disabled = false; }
+}
 async function initMaxLabAdminAuth() {
   const gate = document.getElementById("maxlab-auth-gate");
   const form = document.getElementById("maxlab-auth-form");
@@ -413,7 +354,27 @@ async function loadNavbarDraftIntoForm() {
       list.dataset.loaded = "true";
     }
     const status = $("#navbar-save-status");
-    if (status) status.textContent = "Draft terakhir berhasil dimuat dari Supabase.";
+    const localRaw = localStorage.getItem("maxlab:maxlabtest:navbar:draft");
+    if (localRaw) {
+      const local = JSON.parse(localRaw);
+      if (brand) brand.value = local.brandName || "";
+      if (whatsapp) whatsapp.value = local.whatsappNumber || "";
+      if (cta) cta.value = local.ctaLabel || "";
+      if (local.logoDataUrl && preview) { preview.src = local.logoDataUrl; preview.hidden = false; }
+      if (list && Array.isArray(local.menuItems)) {
+        list.innerHTML = "";
+        local.menuItems.forEach(item => {
+          const row = document.createElement("div");
+          row.className = "navbar-menu-row";
+          row.innerHTML = '<label class="field"><span>Label Menu</span><input type="text" placeholder="Contoh: Home"></label><label class="field"><span>Target URL</span><input type="text" placeholder="#home"></label><button class="remove-menu-button" type="button" aria-label="Hapus menu">×</button>';
+          row.querySelectorAll("input")[0].value = item.label || "";
+          row.querySelectorAll("input")[1].value = item.targetUrl || "";
+          row.querySelector(".remove-menu-button").addEventListener("click", () => row.remove());
+          list.appendChild(row);
+        });
+      }
+      if (status) status.textContent = "Draft lokal dipulihkan dari browser ini.";
+    } else if (status) status.textContent = "Draft terakhir berhasil dimuat dari Supabase.";
   } catch (error) {
     const status = $("#navbar-save-status");
     if (status) status.textContent = "Belum dapat memuat draft: " + error.message;
