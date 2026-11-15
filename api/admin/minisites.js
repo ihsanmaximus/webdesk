@@ -7,7 +7,7 @@ export default async function handler(req,res){
  res.setHeader("Cache-Control","no-store");
  if(!["GET","DELETE"].includes(req.method)){res.setHeader("Allow","GET, DELETE");return res.status(405).json({error:"Method not allowed"});}
  if(!URL||!SERVICE_KEY||!ADMIN_TOKEN)return res.status(503).json({error:"Konfigurasi database/admin belum lengkap."});
- if(String(req.headers.authorization||"").replace(/^Bearer\\s+/i,"")!==ADMIN_TOKEN)return res.status(401).json({error:"Token admin tidak valid."});
+ if(String(req.headers.authorization||"").replace(/^Bearer\s+/i,"")!==ADMIN_TOKEN)return res.status(401).json({error:"Token admin tidak valid."});
  try{
   const id=String(req.query?.id||"").trim();
   const request=async(path,options={})=>{
