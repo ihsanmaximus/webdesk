@@ -57,6 +57,19 @@ export default async function handler(req, res) {
 
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+    if (body.action === "publish") {
+      const websites = await db(`maxlab_websites?select=id&slug=eq.${WEBSITE_SLUG}&limit=1`);
+      if (!websites?.length) return json(res, 404, { error: "Website MaxLab Test belum terdaftar." });
+      const latest = await db(`maxlab_navbar_configs?select=id&website_id=eq.${websites[0].id}&order=updated_at.desc&limit=1`);
+      if (!latest?.length) return json(res, 409, { error: "Belum ada konfigurasi yang disimpan. Tekan Save terlebih dahulu." });
+      const published = await db(`maxlab_navbar_configs?id=eq.${latest[0].id}&select=id,status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Prefer: "return=representation" },
+        body: JSON.stringify({ status: "published", updated_at: new Date().toISOString() })
+      });
+      if (!published?.length) throw new Error("Status Publish tidak berhasil diperbarui.");
+      return json(res, 200, { success: true, message: "Navbar berhasil dipublikasikan.", configId: latest[0].id });
+    }
     const brandName = String(body.brandName || "").trim().slice(0, 120);
     const whatsappNumber = String(body.whatsappNumber || "").replace(/[^0-9+]/g, "").slice(0, 24);
     const ctaLabel = String(body.ctaLabel || "").trim().slice(0, 80);
