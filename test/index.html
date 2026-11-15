@@ -14,12 +14,12 @@
        CSS VARIABLES & RESET (MOBILE-FIRST)
        ========================================== */
     :root {
-      --primary: #0F172A;       /* Slate 900 */
-      --accent: #0284C7;        /* Sky 600 */
-      --accent-hover: #0369A1;  /* Sky 700 */
-      --accent-light: #E0F2FE;  /* Sky 100 */
-      --emerald: #10B981;       /* WhatsApp / Success Green */
-      --emerald-hover: #059669;
+      --primary: var(--primary);       /* Slate 900 */
+      --accent: var(--accent);        /* Sky 600 */
+      --accent-hover: var(--accent-hover);  /* Sky 700 */
+      --accent-light: var(--accent-light);  /* Sky 100 */
+      --emerald: var(--emerald);       /* WhatsApp / Success Green */
+      --emerald-hover: var(--emerald-hover);
       --bg-body: #F8FAFC;
       --bg-card: #FFFFFF;
       --text-main: #1E293B;
@@ -242,7 +242,7 @@
        ========================================== */
     .hero {
       padding: 40px 0 64px;
-      background: radial-gradient(circle at top right, #E0F2FE 0%, transparent 45%),
+      background: radial-gradient(circle at top right, var(--accent-light) 0%, transparent 45%),
                   radial-gradient(circle at bottom left, #F1F5F9 0%, transparent 50%);
     }
 
@@ -377,7 +377,7 @@
     .benefit-card:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-md);
-      border-color: #BAE6FD;
+      border-color: var(--theme-support);
     }
 
     .benefit-icon {
@@ -714,7 +714,7 @@
 
     .register-info .badge {
       background: rgba(2, 132, 199, 0.25);
-      color: #38BDF8;
+      color: var(--theme-support);
     }
 
     .register-info .section-title {
@@ -747,7 +747,7 @@
       height: 28px;
       border-radius: 50%;
       background: rgba(16, 185, 129, 0.2);
-      color: #34D399;
+      color: var(--theme-support);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -850,7 +850,7 @@
     }
 
     .footer-links a:hover {
-      color: #38BDF8;
+      color: var(--theme-support);
     }
 
     .footer-bottom {
@@ -1418,7 +1418,7 @@
   rootStyle.setProperty('--bg-card','#FFFFFF');
   rootStyle.setProperty('--text-main',paletteColors[0]);
   rootStyle.setProperty('--text-muted','#64748B');
-  rootStyle.setProperty('--border',paletteColors[2]);
+  rootStyle.setProperty('--border',`color-mix(in srgb, ${paletteColors[2]} 32%, white)`);
   rootStyle.setProperty('--theme-gradient',`linear-gradient(135deg,${paletteColors[0]} 0%,${paletteColors[1]} 100%)`);
   rootStyle.setProperty('--theme-shadow',`0 14px 32px ${paletteColors[1]}2A`);
   const navbarConfig=sections.navbar?.content||{};
