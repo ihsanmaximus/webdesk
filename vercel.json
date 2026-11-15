@@ -8,6 +8,14 @@
   ],
   "rewrites": [
     {
+      "source": "/maxlab/admin",
+      "destination": "/maxlab/admin/index.html"
+    },
+    {
+      "source": "/maxlab/admin/",
+      "destination": "/maxlab/admin/index.html"
+    },
+    {
       "source": "/maxlab/:slug",
       "destination": "/api/maxlab/render?slug=:slug"
     },
