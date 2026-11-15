@@ -8,6 +8,14 @@
   ],
   "rewrites": [
     {
+      "source": "/maxlab/:slug",
+      "destination": "/api/maxlab/render?slug=:slug"
+    },
+    {
+      "source": "/maxlab/:slug/",
+      "destination": "/api/maxlab/render?slug=:slug"
+    },
+    {
       "source": "/",
       "destination": "/penawaran/rlc/index.html"
     },
