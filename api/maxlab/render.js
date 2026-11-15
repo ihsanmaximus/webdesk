@@ -96,7 +96,12 @@ export default async function handler(req, res) {
     const configs = await db(`maxlab_navbar_configs?select=*&website_id=eq.${website.id}&order=updated_at.desc&limit=1`);
     const config = configs?.[0] || null;
     const menuItems = config ? await db(`maxlab_navbar_menu_items?select=id,label,target_url,sort_order,is_active&navbar_config_id=eq.${config.id}&order=sort_order.asc`) : [];
-    return res.status(200).send(pageHtml(website, config, menuItems || []));
+
+    // Load the saved Hero configuration for this website and pass it to the renderer.
+    const heroRows = await db(`maxlab_hero_configs?select=config&website_id=eq.${website.id}&limit=1`);
+    const heroConfig = heroRows?.[0]?.config || null;
+
+    return res.status(200).send(pageHtml(website, config, menuItems || [], heroConfig));
   } catch (error) {
     console.error("MaxLab SSR render error", error);
     return res.status(500).send("Gagal merender halaman website.");
