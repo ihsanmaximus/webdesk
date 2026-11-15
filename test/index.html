@@ -1367,13 +1367,39 @@
 
 <script>
 (async function(){
- const slug=new URLSearchParams(location.search).get('slug')||'hospital-triage-workshop';
- const api='/api/minisites/'+encodeURIComponent(slug);
- const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+ const pathParts=location.pathname.split('/').filter(Boolean);
+ const reservedPaths=new Set(['api','backend','test','event','minisite','paket','rlc','live','penawaran','supabase','experiments']);
+ const isDirectTemplate=pathParts.length===2&&pathParts[0]==='test'&&pathParts[1]==='index.html';
+ const slug=isDirectTemplate
+  ? new URLSearchParams(location.search).get('slug')
+  : (pathParts.length===1 ? decodeURIComponent(pathParts[0]) : '');
+ const api='/api/minisites/'+encodeURIComponent(slug||'');
+ const $=(s,r=document)=>r.querySelector(s), $=(s,r=document)=>[...r.querySelectorAll(s)];
  const el=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n};
+ const showError=(title,message,code='')=>{
+  document.title=title+' | Webdesk';
+  document.body.innerHTML='';
+  const main=document.createElement('main');
+  main.style.cssText='min-height:100vh;display:grid;place-items:center;padding:32px;background:#f8fafc;font-family:Plus Jakarta Sans, sans-serif;color:#0f172a';
+  const card=document.createElement('section');
+  card.style.cssText='width:min(100%,560px);padding:36px;border:1px solid #e2e8f0;border-radius:20px;background:#fff;box-shadow:0 10px 30px rgba(15,23,42,.06);text-align:center';
+  const status=document.createElement('div');status.textContent=code||'WEBDESK';status.style.cssText='font-size:12px;font-weight:800;letter-spacing:.12em;color:#0284c7;margin-bottom:16px';
+  const heading=document.createElement('h1');heading.textContent=title;heading.style.cssText='font-size:26px;line-height:1.25;margin:0 0 12px';
+  const detail=document.createElement('p');detail.textContent=message;detail.style.cssText='font-size:15px;line-height:1.7;color:#64748b;margin:0';
+  const back=document.createElement('a');back.href='/';back.textContent='Kembali ke halaman utama';back.style.cssText='display:inline-flex;margin-top:24px;padding:12px 18px;border-radius:8px;background:#0284c7;color:#fff;text-decoration:none;font-weight:700';
+  card.append(status,heading,detail,back);main.append(card);document.body.append(main);
+ };
+ if(!slug||!(/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))||reservedPaths.has(slug)||slug.length>80){
+  showError('Alamat event tidak valid','Periksa kembali alamat yang Anda buka. URL ini bukan alamat microsite event yang valid.','400 · INVALID SLUG');
+  return;
+ }
  try{
-  const response=await fetch(api,{cache:'no-store'});if(!response.ok)throw new Error('Workshop belum dipublikasikan.');
-  const data=await response.json(),m=data.minisite||{},sections=Object.fromEntries((data.sections||[]).map(s=>[s.section_key,s]));
+  const response=await fetch(api,{cache:'no-store'});
+  if(response.status===404){showError('Event tidak ditemukan','Microsite dengan alamat "'+slug+'" tidak ditemukan atau belum tersedia untuk publik.','404 · NOT FOUND');return;}
+  if(!response.ok){showError('Layanan sedang bermasalah','Server tidak dapat memuat data event saat ini. Silakan coba beberapa saat lagi.','500 · SERVER ERROR');return;}
+  const data=await response.json(),m=data.minisite||{};
+  if(!m.slug||m.slug!==slug){showError('Data event tidak cocok','Server mengembalikan data yang tidak sesuai dengan alamat yang diminta. Demi keamanan, konten tidak ditampilkan.','409 · SLUG MISMATCH');return;}
+  const sections=Object.fromEntries((data.sections||[]).map(s=>[s.section_key,s]));
   const visible=k=>sections[k]?.is_visible!==false;
   document.title=m.seo_meta_title||m.title||'Workshop';
   const meta=$('meta[name="description"]');if(meta)meta.content=m.seo_meta_description||m.description||'';
@@ -1486,15 +1512,15 @@
    if(!root.children.length)pricing.remove();
   }else pricing?.remove();
   const reg=$('#daftar');if(reg&&visible('registration')){
-   const info=$('.register-info',reg);if(info){info.innerHTML='';info.append(el('span','badge','Workshop Registration'),el('h2','section-title',m.registration_heading||'Join the Hospital Triage Workshop'),el('p','',m.registration_description||''))}
+   const info=$('.register-info',reg);if(info){info.innerHTML='';info.append(el('span','badge','Pendaftaran Event'),el('h2','section-title',m.registration_heading||'Pendaftaran Event'),el('p','',m.registration_description||''))}
    const card=$('.form-card',reg);if(card){
-    card.innerHTML='<h3>Workshop Registration</h3><p>Complete the form to reserve your place.</p><form id="workshopRegister"><div class="form-group"><label>Full Name</label><input class="form-control" name="full_name" required></div><div class="form-group"><label>WhatsApp</label><input class="form-control" name="whatsapp" required></div><div class="form-group"><label>Email</label><input class="form-control" type="email" name="email"></div><div class="form-group"><label>Education / Profession</label><input class="form-control" name="education"></div><div class="form-group"><label>Package</label><select class="form-control" name="selected_package">'+(data.pricing||[]).map(x=>'<option>'+x.name+'</option>').join('')+'</select></div><button class="btn btn-wa btn-full" type="submit">'+(m.registration_button_label||'Submit Registration')+'</button><p id="registerMessage" class="form-note"></p></form>';
+    card.innerHTML='<h3>Formulir Pendaftaran</h3><p>Lengkapi data berikut untuk mendaftar.</p><form id="workshopRegister"><div class="form-group"><label>Full Name</label><input class="form-control" name="full_name" required></div><div class="form-group"><label>WhatsApp</label><input class="form-control" name="whatsapp" required></div><div class="form-group"><label>Email</label><input class="form-control" type="email" name="email"></div><div class="form-group"><label>Education / Profession</label><input class="form-control" name="education"></div><div class="form-group"><label>Package</label><select class="form-control" name="selected_package">'+(data.pricing||[]).map(x=>'<option>'+x.name+'</option>').join('')+'</select></div><button class="btn btn-wa btn-full" type="submit">'+(m.registration_button_label||'Submit Registration')+'</button><p id="registerMessage" class="form-note"></p></form>';
     $('#workshopRegister').onsubmit=async e=>{e.preventDefault();const form=Object.fromEntries(new FormData(e.target));const rr=await fetch(api,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(form)});const result=await rr.json();$('#registerMessage').textContent=rr.ok?'Registration received. Thank you!':(result.error||'Registration failed.')};
    }
   }else reg?.remove();
   const footer=$('.footer');if(footer&&visible('footer')){const grid=$('.footer-grid',footer);grid.innerHTML='';const left=el('div');left.append(el('h4','',m.footer_organization||''));if(m.footer_address)left.append(el('p','',m.footer_address));const right=el('div');if(m.footer_whatsapp)right.append(el('p','',m.footer_whatsapp));if(m.footer_email)right.append(el('p','',m.footer_email));grid.append(left,right)}else footer?.remove();
   $('.mobile-sticky-cta')?.remove();
- }catch(e){document.body.innerHTML='<main style="font:16px sans-serif;padding:32px"><h1>Workshop not available</h1><p>'+e.message+'</p></main>'}
+ }catch(e){showError('Tidak dapat memuat event','Terjadi gangguan koneksi atau layanan. Periksa koneksi internet Anda, lalu coba kembali.','NETWORK / API ERROR')}
 })();
 </script>
 </body></html>
