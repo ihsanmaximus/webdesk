@@ -25,7 +25,13 @@ export default async function handler(req, res) {
     if (req.method === "GET") { const rows = await db(`maxlab_services_configs?select=config,status,updated_at&website_id=eq.${websiteId}&limit=1`); return json(res, 200, { config: rows?.[0] ? normalize(rows[0].config) : null, status: rows?.[0]?.status || null, updatedAt: rows?.[0]?.updated_at || null }); }
     if (req.method !== "POST") { res.setHeader("Allow", "GET, POST"); return json(res, 405, { error: "Method not allowed." }); }
     if (!isAdminAuthorized(req)) return json(res, 401, { error: "Sesi admin tidak valid. Silakan login kembali." });
-    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {}); const config = normalize(body.config || body);
+    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+    if (body.action === "publish") {
+      const published = await db(`maxlab_services_configs?website_id=eq.${websiteId}&select=id,status`, { method: "PATCH", headers: { "Content-Type": "application/json", Prefer: "return=representation" }, body: JSON.stringify({ status: "published", updated_at: new Date().toISOString() }) });
+      if (!published?.length) return json(res, 409, { error: "Simpan konfigurasi Services terlebih dahulu." });
+      return json(res, 200, { success: true, status: "published" });
+    }
+    const config = normalize(body.config || body);
     const saved = await db("maxlab_services_configs?on_conflict=website_id&select=updated_at", { method: "POST", headers: { "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=representation" }, body: JSON.stringify({ website_id: websiteId, config, status: "saved", updated_at: new Date().toISOString() }) });
     if (!saved?.length) throw new Error("Konfigurasi Services tidak berhasil disimpan.");
     return json(res, 200, { success: true, config, updatedAt: saved[0].updated_at });
