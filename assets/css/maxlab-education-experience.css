@@ -1,0 +1,547 @@
+/* =========================================
+   MAXIMUS COMPONENT
+   EDUCATION & EXPERIENCE
+   Version 1.0
+   Ownership: ee-*
+========================================= */
+
+
+/* =========================================
+   01. DESKTOP
+========================================= */
+
+.ee-section {
+  --ee-primary: #0d477e;
+  --ee-accent: #3686c9;
+  --ee-text: #25364a;
+  --ee-muted: #738398;
+  --ee-border: #e2eaf1;
+  --ee-surface: #ffffff;
+  --ee-gap: 28px;
+
+  padding: 100px 0;
+  background: #f5f9fc;
+}
+
+.ee-heading {
+  max-width: 680px;
+  margin-bottom: 42px;
+}
+
+.ee-eyebrow {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: var(--ee-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.ee-description {
+  margin-top: 12px;
+  color: var(--ee-muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+
+/* MAIN GRID */
+
+.ee-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 35fr) minmax(0, 65fr);
+  gap: var(--ee-gap);
+  align-items: stretch;
+}
+
+
+/* CARD */
+
+.ee-card {
+  min-width: 0;
+  padding: 32px;
+  background: var(--ee-surface);
+  border: 1px solid var(--ee-border);
+  border-radius: 16px;
+}
+
+.ee-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.ee-card-heading h3 {
+  margin: 0;
+  color: var(--ee-primary);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.ee-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  background: #eaf4fc;
+  color: var(--ee-primary);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* TIMELINE */
+
+.ee-timeline {
+  position: relative;
+  padding-left: 22px;
+}
+
+.ee-timeline::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 7px;
+  bottom: 8px;
+  width: 1px;
+  background: var(--ee-border);
+}
+
+.ee-entry {
+  position: relative;
+  padding-bottom: 28px;
+}
+
+.ee-entry:last-child {
+  padding-bottom: 0;
+}
+
+.ee-dot {
+  position: absolute;
+  left: -22px;
+  top: 5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ee-accent);
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px #dcecf8;
+}
+
+.ee-label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--ee-accent);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+
+.ee-entry h4 {
+  margin: 0 0 6px;
+  color: var(--ee-text);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+.ee-entry p {
+  margin: 0 0 4px;
+  color: var(--ee-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.ee-entry strong {
+  color: var(--ee-primary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.ee-period {
+  display: inline-block;
+  margin-top: 4px;
+  color: var(--ee-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ee-current {
+  color: #27835e;
+}
+
+
+/* ORGANIZATION */
+
+.ee-organization {
+  grid-column: 1 / -1;
+}
+
+.ee-org-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ee-org-item {
+  min-width: 0;
+  padding: 22px;
+  background: #f5f9fc;
+  border: 1px solid var(--ee-border);
+  border-radius: 12px;
+}
+
+.ee-org-role {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--ee-accent);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.ee-org-item h4 {
+  margin: 0 0 6px;
+  color: var(--ee-primary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.ee-org-item p {
+  margin: 0;
+  color: var(--ee-muted);
+  font-size: 12px;
+}
+
+
+/* =========================================
+   02. TABLET
+========================================= */
+
+@media (min-width: 768px) and (max-width: 1024px) {
+
+  .ee-section {
+    padding: 75px 0;
+  }
+
+  .ee-layout {
+    grid-template-columns: minmax(0, 40fr) minmax(0, 60fr);
+    gap: 20px;
+  }
+
+  .ee-card {
+    padding: 24px;
+  }
+
+  .ee-org-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+/* =========================================
+   03. MOBILE
+========================================= */
+
+@media (max-width: 767px) {
+
+  .ee-section {
+    padding: 65px 0;
+  }
+
+  .ee-heading {
+    margin-bottom: 28px;
+  }
+
+  .ee-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .ee-card {
+    padding: 22px;
+    border-radius: 14px;
+  }
+
+  .ee-card-heading {
+    margin-bottom: 25px;
+  }
+
+  .ee-card-heading h3 {
+    font-size: 18px;
+  }
+
+  .ee-org-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .ee-org-item {
+    padding: 18px;
+  }
+
+}
+
+
+/* DATE INLINE REFINEMENT */
+.ee-career .ee-entry h4 {
+  display: inline;
+  margin: 0;
+}
+
+.ee-career .ee-period {
+  display: inline-block;
+  margin: 0 0 0 7px;
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
+
+/* EE EDUCATION PHOTO */
+.ee-education-photo {
+  display: block;
+  width: 100%;
+  height: clamp(180px, 20vw, 250px);
+  margin-bottom: 28px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 12px;
+}
+
+@media (max-width: 767px) {
+  .ee-education-photo {
+    height: 200px;
+    margin-bottom: 24px;
+  }
+}
+
+/* EE EDUCATION PHOTO */
+
+
+/* =========================================
+   EDUCATION PHOTO — SEPARATE FULL IMAGE CARD
+========================================= */
+
+.ee-photo-card {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--ee-border);
+  border-radius: 16px;
+  background: var(--ee-surface);
+}
+
+.ee-photo-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: inherit;
+}
+
+.ee-education {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.ee-career {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+@media (max-width: 1024px) and (min-width: 768px) {
+  .ee-photo-card {
+    border-radius: 14px;
+  }
+
+  .ee-photo-image {
+    min-height: 190px;
+  }
+}
+
+@media (max-width: 767px) {
+  .ee-photo-card,
+  .ee-education,
+  .ee-career {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .ee-photo-image {
+    height: 220px;
+    min-height: 0;
+  }
+}
+
+/* GRID FIX: PHOTO + EDUCATION LEFT, CAREER RIGHT */
+
+/* GRID FIX: PHOTO + EDUCATION LEFT, CAREER RIGHT */
+
+@media (min-width: 768px) {
+  .ee-section .ee-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 35fr) minmax(0, 65fr);
+    grid-template-rows: auto auto;
+    align-items: stretch;
+  }
+
+  .ee-section .ee-layout > .ee-photo-card {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .ee-section .ee-layout > .ee-education {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .ee-section .ee-layout > .ee-career {
+    grid-column: 2;
+    grid-row: 1 / 3;
+  }
+
+  .ee-section .ee-layout > .ee-organization {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+}
+
+@media (max-width: 767px) {
+  .ee-section .ee-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ee-section .ee-layout > .ee-photo-card,
+  .ee-section .ee-layout > .ee-education,
+  .ee-section .ee-layout > .ee-career,
+  .ee-section .ee-layout > .ee-organization {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+
+/* =========================================
+   FINAL GRID — PHOTO + EDUCATION LEFT
+   CAREER RIGHT
+========================================= */
+
+@media (min-width: 768px) {
+  .ee-section .ee-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 35fr) minmax(0, 65fr);
+    grid-template-rows: auto auto;
+    align-items: stretch;
+  }
+
+  .ee-section .ee-layout > .ee-photo-card {
+    grid-column: 1;
+    grid-row: 1;
+    padding: 0;
+    overflow: hidden;
+    min-width: 0;
+    border: 1px solid var(--ee-border);
+    border-radius: 16px;
+    background: var(--ee-surface);
+  }
+
+  .ee-section .ee-layout > .ee-photo-card img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 220px;
+    object-fit: cover;
+    border-radius: inherit;
+  }
+
+  .ee-section .ee-layout > .ee-education {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .ee-section .ee-layout > .ee-career {
+    grid-column: 2;
+    grid-row: 1 / 3;
+  }
+
+  .ee-section .ee-layout > .ee-organization {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+}
+
+@media (max-width: 767px) {
+  .ee-section .ee-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ee-section .ee-layout > .ee-photo-card,
+  .ee-section .ee-layout > .ee-education,
+  .ee-section .ee-layout > .ee-career,
+  .ee-section .ee-layout > .ee-organization {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .ee-section .ee-layout > .ee-photo-card img {
+    display: block;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: inherit;
+  }
+}
+
+
+/* =========================================
+   FINAL GRID — WITHOUT PHOTO CARD
+========================================= */
+
+@media (min-width: 768px) {
+  .ee-section .ee-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 35fr) minmax(0, 65fr);
+    grid-template-rows: auto auto;
+    align-items: stretch;
+  }
+
+  .ee-section .ee-layout > .ee-education {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .ee-section .ee-layout > .ee-career {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .ee-section .ee-layout > .ee-organization {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 767px) {
+  .ee-section .ee-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ee-section .ee-layout > .ee-education,
+  .ee-section .ee-layout > .ee-career,
+  .ee-section .ee-layout > .ee-organization {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
