@@ -1,0 +1,15 @@
+/* Services visual reference: ihsanmaximus/dokter-faisal/assets/css/services.css */
+.services{padding:80px 0}
+.services-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;list-style:none;margin:0;padding:0}
+.services-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:170px;padding:22px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);color:var(--text);text-align:center;text-decoration:none;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.services-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);border-color:var(--primary-light);color:var(--text)}
+.services-icon{width:48px;height:48px;flex:0 0 48px;color:var(--primary)}
+.services-icon svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.services-body{flex:1;min-width:0}
+.services-name{font-family:"Montserrat",sans-serif;font-size:var(--fs-sm);font-weight:500;line-height:1.35;color:var(--primary-dark)}
+.services-desc,.services-arrow{display:none}
+@media(max-width:1201px){.services{padding:64px 0}.services-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.services-card{min-height:155px;padding:20px 12px}}
+@media(max-width:767px){.services{padding:40px 0}.services-grid{grid-template-columns:1fr;gap:12px}.services-card{flex-direction:row;justify-content:flex-start;align-items:center;gap:18px;min-height:112px;padding:18px 20px;text-align:left;border-radius:22px}.services-icon{width:48px;height:48px;flex-basis:48px}.services-body{flex:1}.services-name{font-size:var(--fs-h4);font-weight:500;line-height:1.35}.services-desc{display:block;margin-top:5px;font-size:var(--fs-sm);line-height:1.45;color:var(--text-2)}.services-arrow{display:block;width:20px;height:20px;flex:0 0 20px;color:var(--primary-light)}}
+@media(max-width:380px){.services-card{gap:12px;padding:16px}.services-icon{width:40px;height:40px;flex-basis:40px}.services-arrow{width:18px;height:18px;flex-basis:18px}}
+.services-card:focus-visible{outline:3px solid var(--primary-light);outline-offset:4px}
+@media(prefers-reduced-motion:reduce){.services-card{transition:none}}
