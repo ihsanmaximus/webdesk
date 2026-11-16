@@ -16,28 +16,23 @@ async function db(path) {
   return data;
 }
 function heroHtml(config) {
-  if (!config) return "";
+  if (!config || !String(config.headline || "").trim() || !String(config.subheadline || "").trim()) return "";
   const c = config;
   const image = c.imageUrl ? esc(c.imageUrl) : "";
   const heightClass = c.height === "compact" ? "hero-height-compact" : c.height === "medium" ? "hero-height-medium" : "hero-height-tall";
   const layoutClass = c.layout || "background-image";
   const safeTarget = value => /^(#|https:\/\/|http:\/\/|mailto:|tel:)/i.test(String(value || "")) ? esc(value) : "#";
-  const buttons = `${c.primaryCtaEnabled ? `<a class="hero-cta primary" href="${safeTarget(c.primaryCtaTarget || "#contact")}">${esc(c.primaryCtaLabel || "Hubungi Kami")}</a>` : ""}${c.secondaryCtaEnabled ? `<a class="hero-cta secondary" href="${safeTarget(c.secondaryCtaTarget || "#about")}">${esc(c.secondaryCtaLabel || "Pelajari Lebih Lanjut")}</a>` : ""}`;
-  const pointDefaults = [
-    { icon: "people", text: "Kesehatan Anak Menyeluruh" },
-    { icon: "shield", text: "Pendekatan Tepat & Aman" },
-    { icon: "heart", text: "Ramah Anak & Keluarga" }
-  ];
+  const buttons = `${c.primaryCtaEnabled && c.primaryCtaLabel && c.primaryCtaTarget ? `<a class="hero-cta primary" href="${safeTarget(c.primaryCtaTarget)}">${esc(c.primaryCtaLabel)}</a>` : ""}${c.secondaryCtaEnabled && c.secondaryCtaLabel && c.secondaryCtaTarget ? `<a class="hero-cta secondary" href="${safeTarget(c.secondaryCtaTarget)}">${esc(c.secondaryCtaLabel)}</a>` : ""}`;
   const pointIcons = {
     people: '<circle cx="12" cy="6" r="3"/><circle cx="5" cy="10" r="2"/><circle cx="19" cy="10" r="2"/><path d="M6 21v-5a6 6 0 0 1 12 0v5M2 18v-3M22 18v-3"/>',
     shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
     heart: '<path d="M12 21C5 15 3 11.5 3 8.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 1.5C21 11.5 19 15 12 21z"/>'
   };
-  const points = (Array.isArray(c.points) && c.points.length ? c.points : pointDefaults).slice(0, 3);
-  const pointsHtml = `<ul class="hero-points">${points.map((point, index) => {
-    const icon = pointIcons[point.icon] || pointIcons[pointDefaults[index]?.icon || "people"];
-    return `<li class="hero-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icon}</svg><span>${esc(point.text || pointDefaults[index]?.text || "")}</span></li>`;
-  }).join("")}</ul>`;
+  const points = (Array.isArray(c.points) ? c.points : []).filter(point => String(point?.text || "").trim()).slice(0, 3);
+  const pointsHtml = points.length ? `<ul class="hero-points">${points.map(point => {
+    const icon = pointIcons[point.icon] || "";
+    return `<li class="hero-point">${icon ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icon}</svg>` : ""}<span>${esc(point.text)}</span></li>`;
+  }).join("")}</ul>` : "";
   const copy = `<div class="hero-copy">${c.eyebrow ? `<p class="hero-eyebrow">${esc(c.eyebrow)}</p>` : ""}<h1>${esc(c.headline)}</h1><p class="hero-description">${esc(c.subheadline)}</p><div class="hero-actions">${buttons}</div>${pointsHtml}</div>`;
   let layout = copy;
   if (c.layout === "text-image" && image) layout = `<div class="hero-two-col">${c.imagePosition === "left" ? `<img class="hero-image" src="${image}" alt="${esc(c.imageAlt)}">` : ""}${copy}${c.imagePosition !== "left" ? `<img class="hero-image" src="${image}" alt="${esc(c.imageAlt)}">` : ""}</div>`;
@@ -48,12 +43,12 @@ function heroHtml(config) {
   return `<section class="hero-section ${esc(layoutClass)} ${heightClass}${c.gradientEnabled ? "" : " no-gradient"}" style="${cssVars}">${gradient}<div class="hero-inner">${layout}</div></section>`;
 }
 function aboutHtml(config, slug) {
-  if (!config) return "";
+  if (!config || !String(config.section_name || "").trim() || !String(config.title || "").trim() || !String(config.description || "").trim() || !String(config.read_more_label || "").trim()) return "";
   const image = "https://raw.githubusercontent.com/ihsanmaximus/dokter-faisal/main/assets/images/about-teddy.jpg";
   return '<section class="about-section" id="about"><div class="container about-inner"><div><div class="section-head"><h2 class="section-title">' + esc(config.section_name || "Tentang") + '</h2></div><h3 class="about-copy-title">' + esc(config.title || "") + '</h3><p class="about-description">' + esc(config.description || "") + '</p><a class="about-read-more" href="/maxlab/' + esc(slug) + '/profil">' + esc(config.read_more_label || "Profil Lengkap") + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div><img class="about-photo" src="' + image + '" alt="" loading="lazy"></div></section>';
 }
 function profileHtml(config) {
-  const title = esc(config?.profile_title || "Profil Lengkap");
+  const title = esc(config?.profile_title || "");
   const paragraphs = String(config?.profile_content || "").split(/\r?\n\s*\r?\n/).map(p => p.trim()).filter(Boolean);
   const content = paragraphs.map(p => "<p>" + esc(p).replace(/\r?\n/g, "<br>") + "</p>").join("");
   return '<!doctype html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + title + '</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/assets/css/maxlab-about.css?v=1"></head><body><main class="about-profile-page"><article class="about-profile-inner"><h1>' + title + '</h1><div class="about-profile-content">' + content + '</div></article></main></body></html>';
@@ -122,7 +117,7 @@ export default async function handler(req, res) {
     const heroConfig = heroRows?.[0]?.config || null;
     const aboutRows = await db(`maxlab_about_configs?select=*&website_id=eq.${website.id}&limit=1`);
     const aboutConfig = aboutRows?.[0] || null;
-    if (String(req.query?.view || "") === "profile") return res.status(200).send(profileHtml(aboutConfig));
+    if (String(req.query?.view || "") === "profile") { if (!aboutConfig || !String(aboutConfig.profile_title || "").trim() || !String(aboutConfig.profile_content || "").trim()) return res.status(404).send("Halaman profil belum tersedia."); return res.status(200).send(profileHtml(aboutConfig)); }
 
     return res.status(200).send(pageHtml(website, config, menuItems || [], heroConfig, aboutConfig));
   } catch (error) {
