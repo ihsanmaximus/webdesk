@@ -23,7 +23,22 @@ function heroHtml(config) {
   const layoutClass = c.layout || "background-image";
   const safeTarget = value => /^(#|https:\/\/|http:\/\/|mailto:|tel:)/i.test(String(value || "")) ? esc(value) : "#";
   const buttons = `${c.primaryCtaEnabled ? `<a class="hero-cta primary" href="${safeTarget(c.primaryCtaTarget || "#contact")}">${esc(c.primaryCtaLabel || "Hubungi Kami")}</a>` : ""}${c.secondaryCtaEnabled ? `<a class="hero-cta secondary" href="${safeTarget(c.secondaryCtaTarget || "#about")}">${esc(c.secondaryCtaLabel || "Pelajari Lebih Lanjut")}</a>` : ""}`;
-  const copy = `<div class="hero-copy">${c.eyebrow ? `<p class="hero-eyebrow">${esc(c.eyebrow)}</p>` : ""}<h1>${esc(c.headline)}</h1><p class="hero-description">${esc(c.subheadline)}</p><div class="hero-actions">${buttons}</div></div>`;
+  const pointDefaults = [
+    { icon: "people", text: "Kesehatan Anak Menyeluruh" },
+    { icon: "shield", text: "Pendekatan Tepat & Aman" },
+    { icon: "heart", text: "Ramah Anak & Keluarga" }
+  ];
+  const pointIcons = {
+    people: '<circle cx="12" cy="6" r="3"/><circle cx="5" cy="10" r="2"/><circle cx="19" cy="10" r="2"/><path d="M6 21v-5a6 6 0 0 1 12 0v5M2 18v-3M22 18v-3"/>',
+    shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+    heart: '<path d="M12 21C5 15 3 11.5 3 8.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 1.5C21 11.5 19 15 12 21z"/>'
+  };
+  const points = (Array.isArray(c.points) && c.points.length ? c.points : pointDefaults).slice(0, 3);
+  const pointsHtml = `<ul class="hero-points">${points.map((point, index) => {
+    const icon = pointIcons[point.icon] || pointIcons[pointDefaults[index]?.icon || "people"];
+    return `<li class="hero-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icon}</svg><span>${esc(point.text || pointDefaults[index]?.text || "")}</span></li>`;
+  }).join("")}</ul>`;
+  const copy = `<div class="hero-copy">${c.eyebrow ? `<p class="hero-eyebrow">${esc(c.eyebrow)}</p>` : ""}<h1>${esc(c.headline)}</h1><p class="hero-description">${esc(c.subheadline)}</p><div class="hero-actions">${buttons}</div>${pointsHtml}</div>`;
   let layout = copy;
   if (c.layout === "text-image" && image) layout = `<div class="hero-two-col">${c.imagePosition === "left" ? `<img class="hero-image" src="${image}" alt="${esc(c.imageAlt)}">` : ""}${copy}${c.imagePosition !== "left" ? `<img class="hero-image" src="${image}" alt="${esc(c.imageAlt)}">` : ""}</div>`;
   if (c.layout === "split-full-bleed") layout = `<div class="hero-split">${c.imagePosition === "left" && image ? `<img class="hero-image" src="${image}" alt="${esc(c.imageAlt)}">` : ""}${copy}${c.imagePosition !== "left" && image ? `<img class="hero-image" src="${image}" alt="${esc(c.imageAlt)}">` : ""}</div>`;
@@ -44,7 +59,10 @@ function pageHtml(website, config, menuItems, heroConfig) {
   return `<!doctype html>
 <html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow"><title>${esc(brand)}</title>
-<link rel="stylesheet" href="/assets/css/maxlab-hero.css?v=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/maxlab-hero.css?v=2">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
 /* Navbar color and controls aligned to Dokter Faisal reference: white surface, blue identity. */
