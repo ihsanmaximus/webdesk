@@ -172,7 +172,7 @@ export default async function handler(req, res) {
     const aboutRows = await db(`maxlab_about_configs?select=*&website_id=eq.${website.id}&limit=1`);
     const aboutConfig = aboutRows?.[0] || null;
     const experienceRows = await db(`maxlab_experience_configs?select=config,status&website_id=eq.${website.id}&limit=1`);
-    const experienceConfig = experienceRows?.[0]?.status === "published" ? experienceRows[0].config : null;
+    const experienceConfig = experienceRows?.[0]?.config || null;
     if (String(req.query?.view || "") === "profile") { if (!aboutConfig || !String(aboutConfig.profile_title || "").trim() || !String(aboutConfig.profile_content || "").trim()) return res.status(404).send("Halaman profil belum tersedia."); return res.status(200).send(profileHtml(aboutConfig)); }
 
     return res.status(200).send(pageHtml(website, config, menuItems || [], heroConfig, aboutConfig, experienceConfig));
