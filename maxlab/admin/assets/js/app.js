@@ -147,7 +147,8 @@ async function loadAboutConfig(){if(aboutConfigLoaded)return;try{const r=await f
 async function saveAboutLocalDraft(){const b=$("#about-local-draft"),status=$("#about-save-status");try{b.disabled=true;localStorage.setItem("maxlab:maxlabtest:about:draft",JSON.stringify(collectAboutForm()));status.textContent="Draft About tersimpan di browser ini.";}catch(e){status.textContent=e.message;}finally{b.disabled=false;}}
 async function saveAboutDatabase(){const b=$("#about-save-database"),status=$("#about-save-status");try{b.disabled=true;b.textContent="Saving...";const config=collectAboutForm();const r=await fetch("/api/maxlab/about",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({config})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Gagal menyimpan About.");aboutConfigCache=d.config;aboutConfigLoaded=true;localStorage.removeItem("maxlab:maxlabtest:about:draft");status.textContent="About tersimpan di database. Frontend mengambil data terbaru saat refresh.";b.textContent="Saved ✓";}catch(e){status.textContent=e.message;b.textContent="Save";}finally{b.disabled=false;}}
 async function publishAbout(){const status=$("#about-save-status");try{const r=await fetch("/api/maxlab/about",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"publish"})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Gagal publish About.");status.textContent="About berhasil dipublikasikan.";}catch(e){status.textContent=e.message;}}
-\nfunction renderSectionFields(section) {
+
+function renderSectionFields(section) {
   if (section.id === "hero") return renderHeroFields();
   if (section.id !== "navbar") return `<div class="section-fields-placeholder"><strong>Field ${section.name}</strong><p>Konfigurasi section ini belum dikerjakan. Saat ini pengerjaan dibatasi pada Navbar dan Hero.</p></div>`;
   return [
@@ -220,7 +221,8 @@ function render() {
   navItems.forEach(item => item.classList.toggle("is-active", item.dataset.page === state.activePage));
   content.innerHTML = state.activePage === "general" ? renderGeneral() : state.activePage === "sections" ? renderSections() : renderSeo();
   bindInteractions();
-  if (state.activePage === "sections" && state.activeSection === "hero") { loadHeroConfig(); }\n  if (state.activePage === "sections" && state.activeSection === "about") { loadAboutConfig(); }
+  if (state.activePage === "sections" && state.activeSection === "hero") { loadHeroConfig(); }
+  if (state.activePage === "sections" && state.activeSection === "about") { loadAboutConfig(); }
   if (state.activePage === "sections" && state.activeSection === "navbar") {
     if (navbarFormCache) restoreNavbarFormCache();
     else if (!navbarDataLoaded) loadNavbarDraftIntoForm();
@@ -245,7 +247,10 @@ function bindInteractions() {
 
   $("#navbar-local-draft")?.addEventListener("click", saveNavbarLocalDraft);
   $("#hero-local-draft")?.addEventListener("click", saveHeroLocalDraft);
-  $("#hero-save-database")?.addEventListener("click", saveHeroDatabase);\n  $("#about-local-draft")?.addEventListener("click", saveAboutLocalDraft);\n  $("#about-save-database")?.addEventListener("click", saveAboutDatabase);\n  $("#about-publish")?.addEventListener("click", publishAbout);
+  $("#hero-save-database")?.addEventListener("click", saveHeroDatabase);
+  $("#about-local-draft")?.addEventListener("click", saveAboutLocalDraft);
+  $("#about-save-database")?.addEventListener("click", saveAboutDatabase);
+  $("#about-publish")?.addEventListener("click", publishAbout);
   const heroFile = $("#hero-background-file");
   if (heroFile) heroFile.addEventListener("change", async () => {
     const file = heroFile.files?.[0]; if (!file) return;
@@ -411,7 +416,7 @@ async function initMaxLabAdminAuth() {
   const submit = document.getElementById("maxlab-auth-submit");
   if (!gate || !form) return;
   try {
-    const response = await fetch("/api/admin/auth", { cache: "no-store" });
+    const response = await fetch("/api/admin/auth", { cache: "no-store", credentials: "same-origin" });
     const data = await response.json();
     if (data.authenticated) gate.hidden = true;
   } catch {}
@@ -422,11 +427,15 @@ async function initMaxLabAdminAuth() {
     try {
       const response = await fetch("/api/admin/auth", {
         method: "POST",
+        credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: password.value })
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Login gagal.");
+      const check = await fetch("/api/admin/auth", { cache: "no-store", credentials: "same-origin" });
+      const session = await check.json();
+      if (!check.ok || !session.authenticated) throw new Error("Login diterima, tetapi sesi belum tersimpan. Periksa izin cookie browser lalu coba lagi.");
       gate.hidden = true;
     } catch (err) {
       error.textContent = err.message;
