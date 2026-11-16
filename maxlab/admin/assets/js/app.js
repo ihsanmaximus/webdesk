@@ -165,7 +165,12 @@ const experienceDefaults = {
   work: [{ position:"", institution:"", period:"", current:false }],
   experience: [{ role:"", organization:"", detail:"" }]
 };
-let experienceConfig = JSON.parse(JSON.stringify(experienceDefaults));
+let experienceConfig = (() => { try { return { ...experienceDefaults, ...JSON.parse(localStorage.getItem("maxlab:maxlabtest:experience:draft") || "{}") }; } catch { return JSON.parse(JSON.stringify(experienceDefaults)); } })();
+function saveExperienceDraft() {
+  const status = $("#experience-save-status");
+  try { localStorage.setItem("maxlab:maxlabtest:experience:draft", JSON.stringify(experienceConfig)); if (status) status.textContent = "Rancangan field Experience tersimpan lokal. Belum masuk database."; }
+  catch (error) { if (status) status.textContent = "Gagal menyimpan rancangan: " + error.message; }
+}
 function experienceText(label, group, index, key, value, full=false) {
   return '<label class="field ' + (full ? 'field--full' : '') + '"><span>' + label + '</span><input type="text" data-experience-group="' + group + '" data-experience-index="' + index + '" data-experience-key="' + key + '" value="' + escAttr(value || '') + '"></label>';
 }
@@ -244,7 +249,7 @@ function renderSections() {
     <div class="panel-heading"><div><h3>Konten Website</h3><p>Atur section yang ditampilkan dan urutannya. Buka setiap section untuk melihat konfigurasi field.</p></div><span class="state-chip">Draft</span></div>
     <div class="section-accordion-intro"><strong>Struktur Konten</strong><span>${state.sections.length} section</span><small>Centang untuk menampilkan. Gunakan ikon titik untuk drag and drop.</small></div>
     <div class="section-accordion" id="section-list">${rows}</div>
-    <div class="form-actions section-form-actions"><span id="${state.activeSection === "hero" ? "hero-save-status" : state.activeSection === "about" ? "about-save-status" : "navbar-save-status"}">Draft lokal belum disimpan.</span><div class="button-group">${state.activeSection === "hero" ? `<button class="secondary-button" id="hero-local-draft" type="button">Draft</button><button class="secondary-button" id="hero-save-database" type="button">Save</button>` : state.activeSection === "about" ? `<button class="secondary-button" id="about-local-draft" type="button">Draft</button><button class="secondary-button" id="about-save-database" type="button">Save</button>` : `<button class="secondary-button" id="navbar-local-draft" type="button">Draft</button><button class="secondary-button" id="navbar-save-database" type="button">Save</button>`}${state.activeSection === "about" ? `<button class="primary-button" id="about-publish" type="button">Publish</button>` : `<button class="primary-button" id="navbar-publish" type="button">Publish</button>`}</div></div>`;
+    <div class="form-actions section-form-actions"><span id="${state.activeSection === "hero" ? "hero-save-status" : state.activeSection === "about" ? "about-save-status" : state.activeSection === "experience" ? "experience-save-status" : "navbar-save-status"}">Draft lokal belum disimpan.</span><div class="button-group">${state.activeSection === "hero" ? `<button class="secondary-button" id="hero-local-draft" type="button">Draft</button><button class="secondary-button" id="hero-save-database" type="button">Save</button>` : state.activeSection === "about" ? `<button class="secondary-button" id="about-local-draft" type="button">Draft</button><button class="secondary-button" id="about-save-database" type="button">Save</button>` : state.activeSection === "experience" ? `<button class="secondary-button" id="experience-local-draft" type="button">Draft</button><button class="secondary-button" id="experience-save" type="button">Save</button>` : `<button class="secondary-button" id="navbar-local-draft" type="button">Draft</button><button class="secondary-button" id="navbar-save-database" type="button">Save</button>`}${state.activeSection === "about" ? `<button class="primary-button" id="about-publish" type="button">Publish</button>` : `<button class="primary-button" id="navbar-publish" type="button">Publish</button>`}</div></div>`;
 }
 
 function renderSeo() {
@@ -306,6 +311,8 @@ function bindInteractions() {
   $("#about-local-draft")?.addEventListener("click", saveAboutLocalDraft);
   $("#about-save-database")?.addEventListener("click", saveAboutDatabase);
   $("#about-publish")?.addEventListener("click", publishAbout);
+  $("#experience-local-draft")?.addEventListener("click", saveExperienceDraft);
+  $("#experience-save")?.addEventListener("click", saveExperienceDraft);
   document.querySelectorAll("[data-experience-group]").forEach(input => input.addEventListener("input", () => {
     const { experienceGroup: group, experienceIndex: index, experienceKey: key } = input.dataset;
     experienceConfig[group][Number(index)][key] = input.type === "checkbox" ? input.checked : input.value;
