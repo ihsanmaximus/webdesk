@@ -175,6 +175,26 @@ let experienceConfig = (() => {
     return { ...experienceDefaults, ...saved };
   } catch { return JSON.parse(JSON.stringify(experienceDefaults)); }
 })();
+let experienceConfigLoaded = false;
+async function loadExperienceConfig() {
+  if (experienceConfigLoaded) return;
+  try {
+    const response = await fetch("/api/maxlab/experience", { cache: "no-store" });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Gagal memuat Experience dari database.");
+    const local = localStorage.getItem("maxlab:maxlabtest:experience:draft");
+    experienceConfig = {
+      ...experienceDefaults,
+      ...(data.config || {}),
+      ...(local ? JSON.parse(local) : {})
+    };
+    experienceConfigLoaded = true;
+    if (state.activePage === "sections" && state.activeSection === "experience") render();
+  } catch (error) {
+    const status = $("#experience-save-status");
+    if (status) status.textContent = error.message;
+  }
+}
 function saveExperienceDraft() {
   const status = $("#experience-save-status");
   try {
@@ -183,6 +203,31 @@ function saveExperienceDraft() {
     if (status) status.textContent = "Draft Experience tersimpan lokal di browser ini. Belum masuk database.";
   } catch (error) {
     if (status) status.textContent = "Gagal menyimpan rancangan: " + error.message;
+  }
+}
+async function saveExperienceDatabase() {
+  const button = $("#experience-save");
+  const status = $("#experience-save-status");
+  try {
+    if (button) { button.disabled = true; button.textContent = "Saving..."; }
+    const config = collectExperienceForm();
+    const response = await fetch("/api/maxlab/experience", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ config })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Gagal menyimpan Experience ke database.");
+    experienceConfig = { ...experienceDefaults, ...data.config };
+    experienceConfigLoaded = true;
+    localStorage.removeItem("maxlab:maxlabtest:experience:draft");
+    if (status) status.textContent = "Experience berhasil disimpan ke database.";
+    if (button) button.textContent = "Saved ✓";
+  } catch (error) {
+    if (status) status.textContent = error.message;
+    if (button) button.textContent = "Save";
+  } finally {
+    if (button) button.disabled = false;
   }
 }
 function collectExperienceForm() {
@@ -325,6 +370,7 @@ function render() {
   bindInteractions();
   if (state.activePage === "sections" && state.activeSection === "hero") { loadHeroConfig(); }
   if (state.activePage === "sections" && state.activeSection === "about") { loadAboutConfig(); }
+  if (state.activePage === "sections" && state.activeSection === "experience") { loadExperienceConfig(); }
   if (state.activePage === "sections" && state.activeSection === "navbar") {
     if (navbarFormCache) restoreNavbarFormCache();
     else if (!navbarDataLoaded) loadNavbarDraftIntoForm();
@@ -355,7 +401,7 @@ function bindInteractions() {
   $("#about-save-database")?.addEventListener("click", saveAboutDatabase);
   $("#about-publish")?.addEventListener("click", publishAbout);
   $("#experience-local-draft")?.addEventListener("click", saveExperienceDraft);
-  $("#experience-save")?.addEventListener("click", saveExperienceDraft);
+  $("#experience-save")?.addEventListener("click", saveExperienceDatabase);
   document.querySelectorAll("[data-experience-meta]").forEach(input => input.addEventListener("input", () => {
     experienceConfig[input.dataset.experienceMeta] = input.value;
   }));
