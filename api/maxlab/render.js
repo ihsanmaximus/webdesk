@@ -43,9 +43,9 @@ function heroHtml(config) {
   return `<section class="hero-section ${esc(layoutClass)} ${heightClass}${c.gradientEnabled ? "" : " no-gradient"}" style="${cssVars}">${gradient}<div class="hero-inner">${layout}</div></section>`;
 }
 function aboutHtml(config, slug) {
-  if (!config || config.status !== "published" || !String(config.section_name || "").trim() || !String(config.title || "").trim() || !String(config.description || "").trim() || !String(config.read_more_label || "").trim()) return "";
-  const image = "https://raw.githubusercontent.com/ihsanmaximus/dokter-faisal/main/assets/images/about-teddy.jpg";
-  return '<section class="about-section" id="about"><div class="container about-inner"><div><div class="section-head"><h2 class="section-title">' + esc(config.section_name || "Tentang") + '</h2></div><h3 class="about-copy-title">' + esc(config.title || "") + '</h3><p class="about-description">' + esc(config.description || "") + '</p><a class="about-read-more" href="/maxlab/' + esc(slug) + '/profil">' + esc(config.read_more_label || "Profil Lengkap") + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div><img class="about-photo" src="' + image + '" alt="" loading="lazy"></div></section>';
+  if (!config || !String(config.section_name || "").trim() || !String(config.title || "").trim() || !String(config.description || "").trim() || !String(config.read_more_label || "").trim()) return "";
+  const image = config.image_url ? esc(config.image_url) : "";
+  return '<section class="about-section" id="about"><div class="container about-inner"><div><div class="section-head"><h2 class="section-title">' + esc(config.section_name) + '</h2></div><h3 class="about-copy-title">' + esc(config.title) + '</h3><p class="about-description">' + esc(config.description) + '</p><a class="about-read-more" href="/maxlab/' + esc(slug) + '/profil">' + esc(config.read_more_label) + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>' + (image ? '<img class="about-photo" src="' + image + '" alt="" loading="lazy">' : '') + '</div></section>';
 }
 function profileHtml(config) {
   const title = esc(config?.profile_title || "");
@@ -117,7 +117,7 @@ export default async function handler(req, res) {
     const heroConfig = heroRows?.[0]?.config || null;
     const aboutRows = await db(`maxlab_about_configs?select=*&website_id=eq.${website.id}&limit=1`);
     const aboutConfig = aboutRows?.[0] || null;
-    if (String(req.query?.view || "") === "profile") { if (!aboutConfig || aboutConfig.status !== "published" || !String(aboutConfig.profile_title || "").trim() || !String(aboutConfig.profile_content || "").trim()) return res.status(404).send("Halaman profil belum tersedia."); return res.status(200).send(profileHtml(aboutConfig)); }
+    if (String(req.query?.view || "") === "profile") { if (!aboutConfig || !String(aboutConfig.profile_title || "").trim() || !String(aboutConfig.profile_content || "").trim()) return res.status(404).send("Halaman profil belum tersedia."); return res.status(200).send(profileHtml(aboutConfig)); }
 
     return res.status(200).send(pageHtml(website, config, menuItems || [], heroConfig, aboutConfig));
   } catch (error) {
