@@ -161,6 +161,31 @@ async function saveAboutLocalDraft(){const b=$("#about-local-draft"),status=$("#
 async function saveAboutDatabase(){const b=$("#about-save-database"),status=$("#about-save-status");try{b.disabled=true;b.textContent="Saving...";const config=collectAboutForm();const r=await fetch("/api/maxlab/about",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({config})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Gagal menyimpan About");aboutConfigCache={...aboutDefaults,...d.config};aboutConfigLoaded=true;localStorage.removeItem("maxlab:maxlabtest:about:draft");status.textContent="About berhasil disimpan ke database.";b.textContent="Saved ✓";}catch(e){status.textContent=e.message;b.textContent="Save";}finally{b.disabled=false;}}
 function publishAbout(){const status=$("#about-save-status");const page=window.open("/maxlab/maxlabtest/","_blank");if(page)status.textContent="Frontend dibuka di tab baru. Data yang sudah di-Save akan tampil setelah halaman dimuat ulang.";else status.textContent="Browser memblokir tab baru. Izinkan pop-up untuk Webdesk lalu tekan Publish lagi."; }
 
+const servicesIconLibrary = [
+  {id:"heart-pulse",label:"Kesehatan",svg:"<svg viewBox=\"0 0 24 24\"><path d=\"M20 8c0 6-8 11-8 11S4 14 4 8a4 4 0 0 1 8-2 4 4 0 0 1 8 2Z\"/><path d=\"M4 12h4l2-3 3 6 2-3h5\"/></svg>"},
+  {id:"shield-check",label:"Perlindungan",svg:"<svg viewBox=\"0 0 24 24\"><path d=\"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z\"/><path d=\"m8 12 3 3 5-6\"/></svg>"},
+  {id:"users",label:"Pendampingan",svg:"<svg viewBox=\"0 0 24 24\"><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M2 21v-2a7 7 0 0 1 14 0v2M17 4a4 4 0 0 1 0 7m1 3a5 5 0 0 1 4 5v2\"/></svg>"},
+  {id:"stethoscope",label:"Pemeriksaan",svg:"<svg viewBox=\"0 0 24 24\"><path d=\"M6 3v5a4 4 0 0 0 8 0V3M4 3h4M12 3h4M10 12v2a5 5 0 0 0 10 0v-1\"/><circle cx=\"20\" cy=\"10\" r=\"2\"/></svg>"},
+  {id:"award",label:"Berkualitas",svg:"<svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"8\" r=\"6\"/><path d=\"m8 13-1 9 5-3 5 3-1-9\"/></svg>"},
+  {id:"clock",label:"Tepat waktu",svg:"<svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/></svg>"},
+  {id:"hand-heart",label:"Kepedulian",svg:"<svg viewBox=\"0 0 24 24\"><path d=\"M12 21S4 16 4 10a4 4 0 0 1 8-2 4 4 0 0 1 8 2c0 6-8 11-8 11Z\"/></svg>"},
+  {id:"clipboard-check",label:"Terencana",svg:"<svg viewBox=\"0 0 24 24\"><rect x=\"5\" y=\"4\" width=\"14\" height=\"18\" rx=\"2\"/><path d=\"M9 4h6M8 13l3 3 5-6\"/></svg>"},
+  {id:"baby",label:"Anak",svg:"<svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9 10h.01M15 10h.01M9 15q3 3 6 0\"/></svg>"},
+  {id:"apple",label:"Nutrisi",svg:"<svg viewBox=\"0 0 24 24\"><path d=\"M12 7c-2-4 1-5 4-5M12 7C4 4 2 9 3 15s5 8 9 5c4 3 8 1 9-5s-2-11-9-8Z\"/></svg>"},
+  {id:"activity",label:"Aktivitas",svg:"<svg viewBox=\"0 0 24 24\"><path d=\"M3 12h4l3-8 4 16 3-8h4\"/></svg>"},
+  {id:"star",label:"Unggulan",svg:"<svg viewBox=\"0 0 24 24\"><path d=\"m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6Z\"/></svg>"}
+];
+const servicesDefaults = {sectionName:"",headline:"",subheadline:"",items:Array.from({length:6},()=>({title:"",description:"",icon:""}))};
+let servicesConfig = (()=>{try{const d=JSON.parse(localStorage.getItem("maxlab:maxlabtest:services:draft")||"{}");const items=Array.isArray(d.items)?d.items.slice(0,6):[];while(items.length<6)items.push({title:"",description:"",icon:""});return {...servicesDefaults,...d,items};}catch{return JSON.parse(JSON.stringify(servicesDefaults));}})();
+function collectServicesForm(){document.querySelectorAll("[data-services-meta]").forEach(i=>servicesConfig[i.dataset.servicesMeta]=i.value);document.querySelectorAll("[data-services-index][data-services-key]").forEach(i=>servicesConfig.items[Number(i.dataset.servicesIndex)][i.dataset.servicesKey]=i.value);return servicesConfig;}
+function renderServicesFields(){
+ const cards=servicesConfig.items.map((item,index)=>{
+  const chosen=servicesIconLibrary.find(icon=>icon.id===item.icon);
+  const options=servicesIconLibrary.map(icon=>"<button type=\"button\" class=\"services-icon-option "+(item.icon===icon.id?"is-selected":"")+"\" data-services-icon=\""+icon.id+"\" data-services-index=\""+index+"\" aria-pressed=\""+(item.icon===icon.id?"true":"false")+"\">"+icon.svg+"<span>"+icon.label+"</span></button>").join("");
+  return "<article class=\"services-field-card\"><div class=\"services-field-card__heading\"><strong>Keunggulan "+String(index+1).padStart(2,"0")+"</strong><span>Item "+(index+1)+" dari 6</span></div><div class=\"form-grid\"><label class=\"field field--full\"><span>Judul</span><input data-services-index=\""+index+"\" data-services-key=\"title\" value=\""+escAttr(item.title||"")+"\" placeholder=\"Judul keunggulan\"></label><label class=\"field field--full\"><span>Deskripsi</span><textarea rows=\"3\" data-services-index=\""+index+"\" data-services-key=\"description\" placeholder=\"Jelaskan nilai lebih layanan\">"+escAttr(item.description||"")+"</textarea></label></div><div class=\"services-icon-picker\"><span class=\"services-icon-picker__label\">Pilih ikon SVG</span><div class=\"services-icon-picker__selected\">"+(chosen?chosen.svg+"<span>"+chosen.label+"</span>":"<span>Belum memilih ikon</span>")+"</div><div class=\"services-icon-library\">"+options+"</div></div></article>";
+ }).join("");
+ return "<div class=\"services-config\"><div class=\"services-section-meta\"><div class=\"form-grid\"><label class=\"field\"><span>Nama Section</span><input data-services-meta=\"sectionName\" value=\""+escAttr(servicesConfig.sectionName||"")+"\" placeholder=\"Nama section\"></label><label class=\"field\"><span>Headline</span><input data-services-meta=\"headline\" value=\""+escAttr(servicesConfig.headline||"")+"\" placeholder=\"Headline\"></label><label class=\"field field--full\"><span>Subheadline</span><textarea rows=\"3\" data-services-meta=\"subheadline\" placeholder=\"Subheadline\">"+escAttr(servicesConfig.subheadline||"")+"</textarea></label></div></div><div class=\"services-items-heading\"><div><h4>6 Keunggulan</h4><p>Setiap item berisi judul, deskripsi, dan satu ikon SVG.</p></div><span class=\"services-grid-note\">Desktop 3 × 2</span></div><div class=\"services-fields-grid\">"+cards+"</div></div>";
+}
 const experienceDefaults = {
   sectionName: "",
   headline: "",
@@ -287,6 +312,7 @@ function renderSectionFields(section) {
   if (section.id === "hero") return renderHeroFields();
   if (section.id === "about") return renderAboutFields();
   if (section.id === "experience") return renderExperienceFields();
+  if (section.id === "services") return renderServicesFields();
   if (section.id !== "navbar") return `<div class="section-fields-placeholder"><strong>Field ${section.name}</strong><p>Konfigurasi section ini belum dikerjakan. Konfigurasi section ini belum dikerjakan.</p></div>`;
   return [
     '<div class="navbar-config-form">',
