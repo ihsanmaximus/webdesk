@@ -1,0 +1,86 @@
+/* GLOBAL — Design System: tokens, reset, shared primitives (.btn, .container, .section-head)
+   Identity: blue (trust) + white / light blue (clean base) + yellow accent (cheerful, child-friendly). */
+:root{
+  /* Blue — primary identity */
+  --primary:#0b5cad; --primary-light:#4a9be0; --primary-dark:#083a73;
+  --primary-hover:#0a4f96; --primary-active:#083f7a; --primary-selected:#dcecfb;
+  /* Light blue — base surfaces */
+  --secondary:#d9ecfb; --secondary-light:#eef6fd; --sky:#bfe0f7;
+  /* Yellow — accent (use sparingly: highlights, decorative, focus on kids' warmth) */
+  --accent:#ffc83d; --accent-soft:#fff3cc; --accent-dark:#b98600;
+  /* Neutrals */
+  --bg:#f5f9fd; --surface:#fff; --surface-muted:#eaf3fb;
+  --text:#14305a; --text-2:#51668a; --border:#d5e4f3;
+  --disabled-bg:#e3eaf2; --disabled-text:#8a9ab0;
+  /* Status */
+  --success:#1f9d63; --warning:#d98a00; --error:#d64545;
+  --shadow:0 6px 20px rgba(8,58,115,.08); --shadow-hover:0 10px 28px rgba(8,58,115,.16);
+  /* Typography — Nunito: rounded, clean, friendly. Max weight 700 for headings. */
+  --font:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --fw-regular:400; --fw-medium:500; --fw-semibold:600; --fw-bold:700;
+  --fs-display:3.25rem; --fs-h1:2.5rem; --fs-h2:2rem; --fs-h3:1.25rem; --fs-h4:1.0625rem;
+  --fs-lg:1.25rem; --fs-body:1.0625rem; --fs-sm:.9375rem; --fs-caption:.8125rem; --fs-label:.875rem;
+  --lh-tight:1.15; --lh-heading:1.2; --lh-body:1.65; --ls-heading:-.01em; --ls-label:.02em;
+  --radius:16px; --radius-lg:24px; --header-h:72px;
+}
+@media (max-width:1024px){:root{--fs-display:2.75rem;--fs-h1:2.25rem;--fs-h2:1.75rem}}
+@media (max-width:767px){:root{--fs-display:2.125rem;--fs-h1:1.875rem;--fs-h2:1.5rem;--fs-h3:1.125rem;--fs-lg:1.125rem;--fs-body:1.0625rem;--header-h:64px}}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:var(--header-h)}
+body{margin:0;font-family:var(--font);font-size:var(--fs-body);font-weight:var(--fw-regular);line-height:var(--lh-body);color:var(--text);background:var(--bg);overflow-x:hidden}
+img{max-width:100%;display:block}
+h1,h2,h3,h4,p{margin:0}
+h1,h2,h3,h4{letter-spacing:var(--ls-heading)}
+a{color:var(--primary);text-decoration:none}
+a:hover{color:var(--primary-hover)}
+:focus-visible{outline:3px solid var(--primary-light);outline-offset:2px}
+.container{width:min(1120px,100% - 48px);margin-inline:auto}
+.section-head{margin-bottom:32px}
+.section-head::before{content:"";display:block;width:36px;height:4px;border-radius:4px;background:var(--primary-light);margin-bottom:14px}
+.section-title{font-size:var(--fs-h2);font-weight:var(--fw-semibold);line-height:var(--lh-tight);color:var(--text)}
+.section-lead{color:var(--text-2);margin-top:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 28px;border-radius:999px;font:var(--fw-semibold) var(--fs-body)/1 var(--font);border:2px solid var(--primary);cursor:pointer;transition:.2s}
+.btn svg{width:20px;height:20px;flex:none}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-hover);border-color:var(--primary-hover);color:#fff}
+.btn-primary:active{background:var(--primary-active);border-color:var(--primary-active)}
+.btn-outline{background:transparent;color:var(--primary)}
+.btn-outline:hover{background:var(--secondary-light);color:var(--primary-dark)}
+.btn[disabled]{background:var(--disabled-bg);border-color:var(--disabled-bg);color:var(--disabled-text);cursor:not-allowed}
+.link-arrow{font-weight:var(--fw-semibold);display:inline-flex;gap:8px;align-items:center}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* =========================================
+   GLOBAL TITLE TYPOGRAPHY
+   CORMORANT GARAMOND
+========================================= */
+
+h1,
+h2,
+h3,
+h4,
+.header-name,
+.footer-name {
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+}
+
+/* RESTORE ORIGINAL FONT — SELECTED TITLES */
+
+.services-name,
+.articles-title,
+.about-title {
+  font-family: "Montserrat", sans-serif !important;
+}
+
+/* ARTICLE TITLE — RESTORE MONTSERRAT, LIGHTER WEIGHT */
+
+.articles-title {
+  font-family: "Montserrat", sans-serif !important;
+  font-weight: 500 !important;
+}
+
+/* ABOUT TITLE — MONTSERRAT REGULAR */
+.about-title {
+  font-family: "Montserrat", sans-serif !important;
+  font-weight: 400 !important;
+}
