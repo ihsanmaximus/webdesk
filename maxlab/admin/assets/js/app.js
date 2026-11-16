@@ -7,7 +7,7 @@ const sectionSeed = [
   { id: "portfolio", name: "Portfolio", enabled: true, description: "Karya dan pengalaman." },
   { id: "testimonials", name: "Testimonials", enabled: true, description: "Ulasan dan kepercayaan." },
   { id: "faq", name: "FAQ", enabled: true, description: "Pertanyaan yang sering diajukan." },
-  { id: "contact", name: "Contact / CTA", enabled: true, description: "Kontak dan ajakan bertindak." },
+  { id: "contact", name: "CTA", enabled: true, description: "Ajakan bertindak." },
   { id: "footer", name: "Footer", enabled: true, description: "Informasi penutup website." }
 ];
 
@@ -19,7 +19,8 @@ const state = {
 
 const meta = {
   general: ["General Setup", "WEBSITE SETTINGS", "Atur identitas dan pengaturan dasar website."],
-  sections: ["Section Configurator", "SECTION MANAGEMENT", "Atur konten setiap section, status tampil, dan urutan section."],
+  structure: ["Website Structure", "SECTION ORDER", "Atur urutan blok section dan status tampil."],
+  sections: ["Configurator", "SECTION SETTINGS", "Atur konten section yang dipilih."],
   seo: ["SEO", "SEARCH ENGINE OPTIMIZATION", "Atur metadata halaman dan tampilan Open Graph saat tautan dibagikan."]
 };
 
@@ -225,30 +226,26 @@ function renderSectionFields(section) {
     '</div></div></div>'
   ].join("");
 }
-function renderSections() {
-  const rows = state.sections.map(section => {
-    const opened = state.activeSection === section.id;
-    return `
-      <article class="accordion-item ${opened ? "is-open" : ""} ${section.enabled ? "" : "is-disabled"}" data-section-id="${section.id}">
-        <div class="accordion-heading">
-          <span class="drag-handle" title="Geser untuk mengubah urutan" aria-label="Geser section">⠿</span>
-          <button class="accordion-trigger" type="button" data-accordion-toggle="${section.id}" aria-expanded="${opened}">
-            <strong>${section.name}</strong><span class="accordion-chevron">${opened ? "−" : "+"}</span>
-          </button>
-          <label class="accordion-visibility"><input type="checkbox" data-toggle-section="${section.id}" ${section.enabled ? "checked" : ""}><span class="visibility-check"></span><small>Tampilkan</small></label>
-        </div>
-        ${opened ? `
-          <div class="accordion-body">
-            <p class="accordion-description">${section.description}</p>
-            ${renderSectionFields(section)}
-          </div>` : ""}
-      </article>`;
-  }).join("");
-
+function renderWebsiteStructure() {
+  const rows = state.sections.map(section => `
+    <article class="accordion-item ${section.enabled ? "" : "is-disabled"}" data-section-id="${section.id}">
+      <div class="accordion-heading">
+        <span class="drag-handle" title="Geser untuk mengubah urutan" aria-label="Geser section">⠿</span>
+        <div class="accordion-trigger"><strong>${section.name}</strong></div>
+        <label class="accordion-visibility"><input type="checkbox" data-toggle-section="${section.id}" ${section.enabled ? "checked" : ""}><span class="visibility-check"></span><small>Tampilkan</small></label>
+      </div>
+    </article>`).join("");
   return `
-    <div class="panel-heading"><div><h3>Konten Website</h3><p>Atur section yang ditampilkan dan urutannya. Buka setiap section untuk melihat konfigurasi field.</p></div><span class="state-chip">Draft</span></div>
-    <div class="section-accordion-intro"><strong>Struktur Konten</strong><span>${state.sections.length} section</span><small>Centang untuk menampilkan. Gunakan ikon titik untuk drag and drop.</small></div>
-    <div class="section-accordion" id="section-list">${rows}</div>
+    <div class="panel-heading"><div><h3>Website Structure</h3><p>Atur urutan blok Section. Geser ke atas atau ke bawah dan pilih blok yang ditampilkan.</p></div></div>
+    <div class="section-accordion-intro"><strong>Urutan Section</strong><span>${state.sections.length} blok</span></div>
+    <div class="section-accordion" id="section-list">${rows}</div>`;
+}
+
+function renderSections() {
+  const section = state.sections.find(item => item.id === state.activeSection) || state.sections[0];
+  return `
+    <div class="panel-heading"><div><h3>${section.name}</h3><p>${section.description}</p></div></div>
+    <div class="accordion-body configurator-section-body">${renderSectionFields(section)}</div>
     <div class="form-actions section-form-actions"><span id="${state.activeSection === "hero" ? "hero-save-status" : state.activeSection === "about" ? "about-save-status" : state.activeSection === "experience" ? "experience-save-status" : "navbar-save-status"}">Draft lokal belum disimpan.</span><div class="button-group">${state.activeSection === "hero" ? `<button class="secondary-button" id="hero-local-draft" type="button">Draft</button><button class="secondary-button" id="hero-save-database" type="button">Save</button>` : state.activeSection === "about" ? `<button class="secondary-button" id="about-local-draft" type="button">Draft</button><button class="secondary-button" id="about-save-database" type="button">Save</button>` : state.activeSection === "experience" ? `<button class="secondary-button" id="experience-local-draft" type="button">Draft</button><button class="secondary-button" id="experience-save" type="button">Save</button>` : `<button class="secondary-button" id="navbar-local-draft" type="button">Draft</button><button class="secondary-button" id="navbar-save-database" type="button">Save</button>`}${state.activeSection === "about" ? `<button class="primary-button" id="about-publish" type="button">Publish</button>` : `<button class="primary-button" id="navbar-publish" type="button">Publish</button>`}</div></div>`;
 }
 
@@ -278,8 +275,8 @@ function render() {
   heading.textContent = pageTitle;
   eyebrow.textContent = pageEyebrow;
   description.textContent = pageDescription;
-  navItems.forEach(item => item.classList.toggle("is-active", item.dataset.page === state.activePage));
-  content.innerHTML = state.activePage === "general" ? renderGeneral() : state.activePage === "sections" ? renderSections() : renderSeo();
+  navItems.forEach(item => item.classList.toggle("is-active", item.dataset.page === state.activePage && (!item.dataset.section || item.dataset.section === state.activeSection)));
+  content.innerHTML = state.activePage === "general" ? renderGeneral() : state.activePage === "structure" ? renderWebsiteStructure() : state.activePage === "sections" ? renderSections() : renderSeo();
   bindInteractions();
   if (state.activePage === "sections" && state.activeSection === "hero") { loadHeroConfig(); }
   if (state.activePage === "sections" && state.activeSection === "about") { loadAboutConfig(); }
@@ -431,6 +428,7 @@ function bindInteractions() {
 
 navItems.forEach(item => item.addEventListener("click", () => {
   state.activePage = item.dataset.page;
+  if (item.dataset.section) state.activeSection = item.dataset.section;
   sidebar.classList.remove("is-open");
   backdrop.classList.remove("is-visible");
   render();
