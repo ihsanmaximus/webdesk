@@ -193,6 +193,20 @@ async function loadServicesConfig() {
     if (state.activePage === "sections" && state.activeSection === "services") render();
   } catch (error) { const status = $("#services-save-status"); if (status) status.textContent = error.message; }
 }
+async function publishServices() {
+  const button = $("#services-publish"); const status = $("#services-save-status");
+  try {
+    if (button) { button.disabled = true; button.textContent = "Publishing..."; }
+    const response = await fetch("/api/maxlab/services", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "publish" }) });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Gagal memublikasikan Services.");
+    if (status) status.textContent = "Services berhasil dipublikasikan. Membuka halaman website untuk uji visual.";
+    const page = window.open("/maxlab/maxlabtest/", "_blank");
+    if (!page && status) status.textContent = "Services sudah dipublikasikan. Browser memblokir tab baru; buka /maxlab/maxlabtest/ untuk melihat hasil.";
+    if (button) button.textContent = "Published ✓";
+  } catch (error) { if (status) status.textContent = error.message; if (button) button.textContent = "Publish"; }
+  finally { if (button) button.disabled = false; }
+}
 async function saveServicesDatabase() {
   const button = $("#services-save-database"); const status = $("#services-save-status");
   try {
@@ -386,7 +400,7 @@ function renderSections() {
   const statusId = state.activeSection === "hero" ? "hero-save-status" : state.activeSection === "about" ? "about-save-status" : state.activeSection === "experience" ? "experience-save-status" : state.activeSection === "services" ? "services-save-status" : "navbar-save-status";
   const draftButton = state.activeSection === "hero" ? '<button class="secondary-button" id="hero-local-draft" type="button">Draft</button>' : state.activeSection === "about" ? '<button class="secondary-button" id="about-local-draft" type="button">Draft</button>' : state.activeSection === "experience" ? '<button class="secondary-button" id="experience-local-draft" type="button">Draft</button>' : state.activeSection === "services" ? '<button class="secondary-button" id="services-local-draft" type="button">Draft</button>' : '<button class="secondary-button" id="navbar-local-draft" type="button">Draft</button>';
   const saveButton = state.activeSection === "hero" ? '<button class="secondary-button" id="hero-save-database" type="button">Save</button>' : state.activeSection === "about" ? '<button class="secondary-button" id="about-save-database" type="button">Save</button>' : state.activeSection === "experience" ? '<button class="secondary-button" id="experience-save" type="button">Save</button>' : state.activeSection === "services" ? '<button class="secondary-button" id="services-save-database" type="button">Save</button>' : '<button class="secondary-button" id="navbar-save-database" type="button">Save</button>';
-  const publishButton = state.activeSection === "services" ? '<button class="primary-button" type="button" disabled>Publish</button>' : state.activeSection === "about" ? '<button class="primary-button" id="about-publish" type="button">Publish</button>' : '<button class="primary-button" id="navbar-publish" type="button">Publish</button>';
+  const publishButton = state.activeSection === "services" ? '<button class="primary-button" id="services-publish" type="button">Publish</button>' : state.activeSection === "about" ? '<button class="primary-button" id="about-publish" type="button">Publish</button>' : '<button class="primary-button" id="navbar-publish" type="button">Publish</button>';
   return `
     <div class="panel-heading section-config-header">
       <div class="section-config-title"><h3>${section.name}</h3><p>${section.description}</p><span class="section-save-status" id="${statusId}">Draft lokal belum disimpan.</span></div>
@@ -460,6 +474,7 @@ function bindInteractions() {
   $("#experience-save")?.addEventListener("click", saveExperienceDatabase);
   $("#services-local-draft")?.addEventListener("click", () => { collectServicesForm(); localStorage.setItem("maxlab:maxlabtest:services:draft", JSON.stringify(servicesConfig)); const status=$("#services-save-status"); if(status) status.textContent="Draft Services tersimpan lokal di browser ini. Belum masuk database."; });
   $("#services-save-database")?.addEventListener("click", saveServicesDatabase);
+  $("#services-publish")?.addEventListener("click", publishServices);
   document.querySelectorAll("[data-services-meta]").forEach(input => input.addEventListener("input", () => { servicesConfig[input.dataset.servicesMeta]=input.value; }));
   document.querySelectorAll("[data-services-index][data-services-key]").forEach(input => input.addEventListener("input", () => { servicesConfig.items[Number(input.dataset.servicesIndex)][input.dataset.servicesKey]=input.value; }));
   document.querySelectorAll("[data-services-icon]").forEach(button => button.addEventListener("click", () => { const index=Number(button.dataset.servicesIndex); servicesConfig.items[index].icon=button.dataset.servicesIcon; const card=button.closest(".services-field-card"); card.querySelectorAll("[data-services-icon]").forEach(option=>{const active=option===button;option.classList.toggle("is-selected",active);option.setAttribute("aria-pressed",active?"true":"false");}); const chosen=servicesIconLibrary.find(icon=>icon.id===button.dataset.servicesIcon); card.querySelector(".services-icon-picker__selected").innerHTML=chosen.svg+"<span>"+chosen.label+"</span>"; }));
