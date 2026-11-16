@@ -213,6 +213,6 @@ export default async function handler(req, res) {
     return res.status(200).send(pageHtml(website, config, menuItems || [], heroConfig, aboutConfig, experienceConfig, servicesConfig));
   } catch (error) {
     console.error("MaxLab SSR render error", error);
-    return res.status(500).send("Gagal merender halaman website.");
+    return res.status(500).send("Gagal merender halaman website. Detail: " + String(error?.message || error).slice(0, 500));
   }
 }
