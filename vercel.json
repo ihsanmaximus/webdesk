@@ -1,20 +1,22 @@
 {
   "redirects": [
     {
+      "source": "/maxlab/admin",
+      "destination": "/maxlab/admin/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/maxlab/admin/",
+      "destination": "/maxlab/admin/index.html",
+      "permanent": false
+    },
+    {
       "source": "/rlc",
       "destination": "/rlc/",
       "permanent": true
     }
   ],
   "rewrites": [
-    {
-      "source": "/maxlab/admin",
-      "destination": "/maxlab/admin/index.html"
-    },
-    {
-      "source": "/maxlab/admin/",
-      "destination": "/maxlab/admin/index.html"
-    },
     {
       "source": "/maxlab/:slug/profil",
       "destination": "/api/maxlab/render?slug=:slug&view=profile"
