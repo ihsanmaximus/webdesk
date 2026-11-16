@@ -45,7 +45,7 @@ function heroHtml(config) {
 function aboutHtml(config, slug) {
   if (!config || !String(config.section_name || "").trim() || !String(config.title || "").trim() || !String(config.description || "").trim() || !String(config.read_more_label || "").trim()) return "";
   const image = config.image_url ? esc(config.image_url) : "";
-  return '<section class="about" id="about"><div class="container about-inner"><div><div class="section-head"><h2 class="section-title">' + esc(config.section_name) + '</h2></div><h3 class="about-title">' + esc(config.title) + '</h3><p class="about-text">' + esc(config.description) + '</p><a class="link-arrow" href="/maxlab/' + esc(slug) + '/profil">' + esc(config.read_more_label) + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>' + (image ? '<img class="about-photo" src="' + image + '" alt="" loading="lazy">' : '') + '</div></section>';
+  return '<section class="about" id="about"><div class="container about-inner"><div><div class="section-head"><h2 class="section-title">' + esc(config.section_name) + '</h2></div><h3 class="about-title">' + esc(config.title) + '</h3><p class="about-text">' + esc(config.description) + '</p><a class="link-arrow" href="/maxlab/' + esc(slug) + '/profil">' + esc(config.read_more_label) + ' <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>' + (image ? '<img class="about-photo" src="' + image + '" alt="" loading="lazy">' : '') + '</div></section>';
 }
 function profileHtml(config) {
   const title = esc(config?.profile_title || "");
