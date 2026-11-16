@@ -135,8 +135,7 @@ function profileHtml(config) {
   const title = esc(config?.profile_title || "");
   const paragraphs = String(config?.profile_content || "").split(/\r?\n\s*\r?\n/).map(p => p.trim()).filter(Boolean);
   const content = paragraphs.map(p => "<p>" + esc(p).replace(/\r?\n/g, "<br>") + "</p>").join("");
-  return '<!doctype html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + title + '</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-education-experience.css?v=1">
-<link rel="stylesheet" href="/assets/css/maxlab-services.css?v=1"></head><body><main class="about-profile-page"><article class="about-profile-inner"><h1>' + title + '</h1><div class="about-profile-content">' + content + '</div></article></main></body></html>';
+  return '<!doctype html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + title + '</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-education-experience.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-services.css?v=1"></head><body><main class="about-profile-page"><article class="about-profile-inner"><h1>' + title + '</h1><div class="about-profile-content">' + content + '</div></article></main></body></html>';
 }
 function pageHtml(website, config, menuItems, heroConfig, aboutConfig, experienceConfig, servicesConfig) {
   const brand = config?.brand_name || website.name || "Website";
@@ -154,8 +153,7 @@ function pageHtml(website, config, menuItems, heroConfig, aboutConfig, experienc
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-hero.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=2">
-<link rel="stylesheet" href="/assets/css/maxlab-education-experience.css?v=1">
-<style>
+<link rel="stylesheet" href="/assets/css/maxlab-education-experience.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-services.css?v=1">\n<style>
 *{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
 /* Navbar color and controls aligned to Dokter Faisal reference: white surface, blue identity. */
 .site-nav{position:sticky;top:0;z-index:20;min-height:76px;padding:12px clamp(18px,5vw,72px);display:flex;align-items:center;justify-content:space-between;gap:24px;background:#fff;border-bottom:1px solid #d5e4f3;color:#14305a}
