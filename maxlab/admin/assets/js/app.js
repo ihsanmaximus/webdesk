@@ -2,7 +2,7 @@ const sectionSeed = [
   { id: "navbar", name: "Navbar", enabled: true, description: "Navigasi dan identitas brand." },
   { id: "hero", name: "Hero", enabled: true, description: "Bagian pembuka halaman." },
   { id: "about", name: "About", enabled: true, description: "Profil singkat dan tautan ke halaman profil lengkap." },
-  { id: "benefit", name: "Benefit", enabled: true, description: "Manfaat dan keunggulan utama." },
+  { id: "experience", name: "Experience", enabled: true, description: "Pendidikan, pekerjaan, dan pengalaman profesional." },
   { id: "services", name: "Services", enabled: true, description: "Layanan atau informasi utama." },
   { id: "portfolio", name: "Portfolio", enabled: true, description: "Karya dan pengalaman." },
   { id: "testimonials", name: "Testimonials", enabled: true, description: "Ulasan dan kepercayaan." },
@@ -160,10 +160,52 @@ async function saveAboutLocalDraft(){const b=$("#about-local-draft"),status=$("#
 async function saveAboutDatabase(){const b=$("#about-save-database"),status=$("#about-save-status");try{b.disabled=true;b.textContent="Saving...";const config=collectAboutForm();const r=await fetch("/api/maxlab/about",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({config})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Gagal menyimpan About");aboutConfigCache={...aboutDefaults,...d.config};aboutConfigLoaded=true;localStorage.removeItem("maxlab:maxlabtest:about:draft");status.textContent="About berhasil disimpan ke database.";b.textContent="Saved ✓";}catch(e){status.textContent=e.message;b.textContent="Save";}finally{b.disabled=false;}}
 function publishAbout(){const status=$("#about-save-status");const page=window.open("/maxlab/maxlabtest/","_blank");if(page)status.textContent="Frontend dibuka di tab baru. Data yang sudah di-Save akan tampil setelah halaman dimuat ulang.";else status.textContent="Browser memblokir tab baru. Izinkan pop-up untuk Webdesk lalu tekan Publish lagi."; }
 
+const experienceDefaults = {
+  education: [{ label:"", degree:"", faculty:"", institution:"" }],
+  work: [{ position:"", institution:"", period:"", current:false }],
+  experience: [{ role:"", organization:"", detail:"" }]
+};
+let experienceConfig = JSON.parse(JSON.stringify(experienceDefaults));
+function experienceText(label, group, index, key, value, full=false) {
+  return '<label class="field ' + (full ? 'field--full' : '') + '"><span>' + label + '</span><input type="text" data-experience-group="' + group + '" data-experience-index="' + index + '" data-experience-key="' + key + '" value="' + escAttr(value || '') + '"></label>';
+}
+function experienceGroup(title, group, fields, rows) {
+  const items = rows.map((row, index) => '<div class="experience-entry-fields">' +
+    fields.map(field => field.type === "checkbox"
+      ? '<label class="experience-current-field"><input type="checkbox" data-experience-group="' + group + '" data-experience-index="' + index + '" data-experience-key="' + field.key + '" ' + (row[field.key] ? 'checked' : '') + '> ' + field.label + '</label>'
+      : experienceText(field.label, group, index, field.key, row[field.key], !!field.full)
+    ).join('') +
+    (rows.length > 1 ? '<button type="button" class="secondary-button experience-remove" data-experience-remove="' + group + '" data-experience-index="' + index + '">Hapus entri</button>' : '') +
+    '</div>').join('');
+  return '<details class="experience-subaccordion"><summary>' + title + '</summary><div class="experience-subaccordion-body">' + items +
+    '<button type="button" class="secondary-button experience-add" data-experience-add="' + group + '">+ Tambah ' + title + '</button></div></details>';
+}
+function renderExperienceFields() {
+  return '<div class="experience-config">' +
+    experienceGroup('01 Pendidikan', 'education', [
+      {label:'Label Pendidikan',key:'label'},
+      {label:'Gelar / Jenjang Pendidikan',key:'degree'},
+      {label:'Fakultas / Program Studi',key:'faculty'},
+      {label:'Universitas / Institusi',key:'institution',full:true}
+    ], experienceConfig.education) +
+    experienceGroup('02 Pekerjaan', 'work', [
+      {label:'Jabatan / Posisi',key:'position'},
+      {label:'Nama Institusi / Tempat Kerja',key:'institution',full:true},
+      {label:'Periode',key:'period'},
+      {label:'Masih menjabat',key:'current',type:'checkbox'}
+    ], experienceConfig.work) +
+    experienceGroup('03 Pengalaman', 'experience', [
+      {label:'Peran / Jabatan',key:'role'},
+      {label:'Nama Organisasi',key:'organization',full:true},
+      {label:'Keterangan / Cabang',key:'detail',full:true}
+    ], experienceConfig.experience) +
+    '</div>';
+}
 function renderSectionFields(section) {
   if (section.id === "hero") return renderHeroFields();
   if (section.id === "about") return renderAboutFields();
-  if (section.id !== "navbar") return `<div class="section-fields-placeholder"><strong>Field ${section.name}</strong><p>Konfigurasi section ini belum dikerjakan. Saat ini pengerjaan dibatasi pada Navbar dan Hero.</p></div>`;
+  if (section.id === "experience") return renderExperienceFields();
+  if (section.id !== "navbar") return `<div class="section-fields-placeholder"><strong>Field ${section.name}</strong><p>Konfigurasi section ini belum dikerjakan. Konfigurasi section ini belum dikerjakan.</p></div>`;
   return [
     '<div class="navbar-config-form">',
     '<div class="navbar-field-group"><h4>Identitas Brand</h4><div class="form-grid">',
@@ -264,6 +306,21 @@ function bindInteractions() {
   $("#about-local-draft")?.addEventListener("click", saveAboutLocalDraft);
   $("#about-save-database")?.addEventListener("click", saveAboutDatabase);
   $("#about-publish")?.addEventListener("click", publishAbout);
+  document.querySelectorAll("[data-experience-group]").forEach(input => input.addEventListener("input", () => {
+    const { experienceGroup: group, experienceIndex: index, experienceKey: key } = input.dataset;
+    experienceConfig[group][Number(index)][key] = input.type === "checkbox" ? input.checked : input.value;
+  }));
+  document.querySelectorAll("[data-experience-add]").forEach(button => button.addEventListener("click", () => {
+    const group = button.dataset.experienceAdd;
+    const blank = group === "education" ? {label:"",degree:"",faculty:"",institution:""} : group === "work" ? {position:"",institution:"",period:"",current:false} : {role:"",organization:"",detail:""};
+    experienceConfig[group].push(blank);
+    render();
+  }));
+  document.querySelectorAll("[data-experience-remove]").forEach(button => button.addEventListener("click", () => {
+    const group = button.dataset.experienceRemove;
+    experienceConfig[group].splice(Number(button.dataset.experienceIndex), 1);
+    render();
+  }));
   const aboutFile = $("#about-image-file");
   if (aboutFile) aboutFile.addEventListener("change", async () => {
     const file = aboutFile.files?.[0]; if (!file) return;
