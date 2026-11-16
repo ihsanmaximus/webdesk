@@ -47,13 +47,67 @@ function aboutHtml(config, slug) {
   const image = config.image_url ? esc(config.image_url) : "";
   return '<section class="about" id="about"><div class="container about-inner"><div><div class="section-head"><h2 class="section-title">' + esc(config.section_name) + '</h2></div><h3 class="about-title">' + esc(config.title) + '</h3><p class="about-text">' + esc(config.description) + '</p><a class="link-arrow" href="/maxlab/' + esc(slug) + '/profil">' + esc(config.read_more_label) + ' <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>' + (image ? '<img class="about-photo" src="' + image + '" alt="" loading="lazy">' : '') + '</div></section>';
 }
+
+function experienceHtml(config) {
+  if (!config || typeof config !== "object") return "";
+  const education = Array.isArray(config.education) ? config.education : [];
+  const work = Array.isArray(config.work) ? config.work : [];
+  const experience = Array.isArray(config.experience) ? config.experience : [];
+  const hasContent = [config.sectionName, config.headline, config.subheadline].some(value => String(value || "").trim()) ||
+    education.some(item => [item.label, item.degree, item.faculty, item.institution].some(value => String(value || "").trim())) ||
+    work.some(item => [item.position, item.institution, item.period].some(value => String(value || "").trim())) ||
+    experience.some(item => [item.role, item.organization, item.detail].some(value => String(value || "").trim()));
+  if (!hasContent) return "";
+
+  const educationItems = education.filter(item =>
+    [item.label, item.degree, item.faculty, item.institution].some(value => String(value || "").trim())
+  ).map(item => `<article class="ee-entry">
+    ${item.label ? `<span class="ee-label">${esc(item.label)}</span>` : ""}
+    ${item.degree ? `<h4>${esc(item.degree)}</h4>` : ""}
+    ${item.faculty ? `<p>${esc(item.faculty)}</p>` : ""}
+    ${item.institution ? `<strong>${esc(item.institution)}</strong>` : ""}
+  </article>`).join("");
+
+  const workItems = work.filter(item =>
+    [item.position, item.institution, item.period].some(value => String(value || "").trim()) || item.current
+  ).map(item => `<article class="ee-entry">
+    ${item.position ? `<h4>${esc(item.position)}</h4>` : ""}
+    ${item.period ? `<span class="ee-period">${esc(item.period)}</span>` : ""}
+    ${item.institution ? `<p>${esc(item.institution)}</p>` : ""}
+    ${item.current ? '<span class="ee-current">Masih menjabat</span>' : ""}
+  </article>`).join("");
+
+  const experienceItems = experience.filter(item =>
+    [item.role, item.organization, item.detail].some(value => String(value || "").trim())
+  ).map(item => `<article class="ee-org-item">
+    ${item.role ? `<span class="ee-org-role">${esc(item.role)}</span>` : ""}
+    ${item.organization ? `<h4>${esc(item.organization)}</h4>` : ""}
+    ${item.detail ? `<p>${esc(item.detail)}</p>` : ""}
+  </article>`).join("");
+
+  return `<section class="ee-section" id="experience">
+    <div class="container">
+      <div class="ee-heading">
+        ${config.sectionName ? `<span class="ee-eyebrow">${esc(config.sectionName)}</span>` : ""}
+        ${config.headline ? `<h2>${esc(config.headline)}</h2>` : ""}
+        ${config.subheadline ? `<p class="ee-description">${esc(config.subheadline)}</p>` : ""}
+      </div>
+      <div class="ee-layout">
+        ${educationItems ? `<section class="ee-card ee-education"><div class="ee-card-heading"><span class="ee-icon" aria-hidden="true">01</span><h3>Pendidikan</h3></div><div class="ee-timeline">${educationItems}</div></section>` : ""}
+        ${workItems ? `<section class="ee-card ee-career"><div class="ee-card-heading"><span class="ee-icon" aria-hidden="true">02</span><h3>Pekerjaan</h3></div><div class="ee-timeline">${workItems}</div></section>` : ""}
+        ${experienceItems ? `<section class="ee-organization"><div class="ee-card-heading"><span class="ee-icon" aria-hidden="true">03</span><h3>Pengalaman</h3></div><div class="ee-org-grid">${experienceItems}</div></section>` : ""}
+      </div>
+    </div>
+  </section>`;
+}
+
 function profileHtml(config) {
   const title = esc(config?.profile_title || "");
   const paragraphs = String(config?.profile_content || "").split(/\r?\n\s*\r?\n/).map(p => p.trim()).filter(Boolean);
   const content = paragraphs.map(p => "<p>" + esc(p).replace(/\r?\n/g, "<br>") + "</p>").join("");
-  return '<!doctype html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + title + '</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=2"></head><body><main class="about-profile-page"><article class="about-profile-inner"><h1>' + title + '</h1><div class="about-profile-content">' + content + '</div></article></main></body></html>';
+  return '<!doctype html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + title + '</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-education-experience.css?v=1"></head><body><main class="about-profile-page"><article class="about-profile-inner"><h1>' + title + '</h1><div class="about-profile-content">' + content + '</div></article></main></body></html>';
 }
-function pageHtml(website, config, menuItems, heroConfig, aboutConfig) {
+function pageHtml(website, config, menuItems, heroConfig, aboutConfig, experienceConfig) {
   const brand = config?.brand_name || website.name || "Website";
   const logo = config?.logo_url ? `<img src="${esc(config.logo_url)}" alt="">` : "";
   const menus = (menuItems || []).filter(item => item.is_active !== false).map(item =>
@@ -91,6 +145,7 @@ function pageHtml(website, config, menuItems, heroConfig, aboutConfig) {
 <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Buka menu"><span></span><span></span><span></span></button></header>
 ${heroHtml(heroConfig)}
 ${aboutHtml(aboutConfig, website.slug)}
+${experienceHtml(experienceConfig)}
 <script>(function(){const b=document.getElementById("nav-toggle"),m=document.getElementById("site-menu");if(!b||!m)return;function setOpen(v){m.classList.toggle("is-open",v);b.setAttribute("aria-expanded",String(v));b.setAttribute("aria-label",v?"Tutup menu":"Buka menu")}b.addEventListener("click",()=>setOpen(!m.classList.contains("is-open")));m.addEventListener("click",e=>{if(e.target.closest("a"))setOpen(false)});document.addEventListener("keydown",e=>{if(e.key==="Escape")setOpen(false)});window.addEventListener("resize",()=>{if(window.innerWidth>767)setOpen(false)})})();</script>
 </body></html>`;
 }
@@ -116,9 +171,11 @@ export default async function handler(req, res) {
     const heroConfig = heroRows?.[0]?.config || null;
     const aboutRows = await db(`maxlab_about_configs?select=*&website_id=eq.${website.id}&limit=1`);
     const aboutConfig = aboutRows?.[0] || null;
+    const experienceRows = await db(`maxlab_experience_configs?select=config,status&website_id=eq.${website.id}&limit=1`);
+    const experienceConfig = experienceRows?.[0]?.status === "published" ? experienceRows[0].config : null;
     if (String(req.query?.view || "") === "profile") { if (!aboutConfig || !String(aboutConfig.profile_title || "").trim() || !String(aboutConfig.profile_content || "").trim()) return res.status(404).send("Halaman profil belum tersedia."); return res.status(200).send(profileHtml(aboutConfig)); }
 
-    return res.status(200).send(pageHtml(website, config, menuItems || [], heroConfig, aboutConfig));
+    return res.status(200).send(pageHtml(website, config, menuItems || [], heroConfig, aboutConfig, experienceConfig));
   } catch (error) {
     console.error("MaxLab SSR render error", error);
     return res.status(500).send("Gagal merender halaman website.");
