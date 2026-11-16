@@ -95,7 +95,7 @@ function experienceHtml(config) {
       <div class="ee-layout">
         ${educationItems ? `<section class="ee-card ee-education"><div class="ee-card-heading"><span class="ee-icon" aria-hidden="true">01</span><h3>Pendidikan</h3></div><div class="ee-timeline">${educationItems}</div></section>` : ""}
         ${workItems ? `<section class="ee-card ee-career"><div class="ee-card-heading"><span class="ee-icon" aria-hidden="true">02</span><h3>Pekerjaan</h3></div><div class="ee-timeline">${workItems}</div></section>` : ""}
-        ${experienceItems ? `<section class="ee-organization"><div class="ee-card-heading"><span class="ee-icon" aria-hidden="true">03</span><h3>Pengalaman</h3></div><div class="ee-org-grid">${experienceItems}</div></section>` : ""}
+        ${experienceItems ? `<section class="ee-card ee-organization"><div class="ee-card-heading"><span class="ee-icon" aria-hidden="true">03</span><h3>Pengalaman</h3></div><div class="ee-org-grid">${experienceItems}</div></section>` : ""}
       </div>
     </div>
   </section>`;
