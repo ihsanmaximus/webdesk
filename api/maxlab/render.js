@@ -101,13 +101,44 @@ function experienceHtml(config) {
   </section>`;
 }
 
+const serviceIcons = {
+ "heart-pulse": '<path d="M20 8c0 6-8 11-8 11S4 14 4 8a4 4 0 0 1 8-2 4 4 0 0 1 8 2Z"/><path d="M4 12h4l2-3 3 6 2-3h5"/>',
+ "shield-check": '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m8 12 3 3 5-6"/>',
+ "users": '<circle cx="9" cy="7" r="4"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M17 4a4 4 0 0 1 0 7m1 3a5 5 0 0 1 4 5v2"/>',
+ "stethoscope": '<path d="M6 3v5a4 4 0 0 0 8 0V3M4 3h4M12 3h4M10 12v2a5 5 0 0 0 10 0v-1"/><circle cx="20" cy="10" r="2"/>',
+ "award": '<circle cx="12" cy="8" r="6"/><path d="m8 13-1 9 5-3 5 3-1-9"/>',
+ "clock": '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ "hand-heart": '<path d="M12 21S4 16 4 10a4 4 0 0 1 8-2 4 4 0 0 1 8 2c0 6-8 11-8 11Z"/>',
+ "clipboard-check": '<rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 4h6M8 13l3 3 5-6"/>',
+ "baby": '<circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M9 15q3 3 6 0"/>',
+ "apple": '<path d="M12 7c-2-4 1-5 4-5M12 7C4 4 2 9 3 15s5 8 9 5c4 3 8 1 9-5s-2-11-9-8Z"/>',
+ "activity": '<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+ "star": '<path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6Z"/>'
+};
+function servicesHtml(config) {
+ if (!config || typeof config !== "object") return "";
+ const items = (Array.isArray(config.items) ? config.items : []).slice(0,6).filter(item => [item.title,item.description].some(value => String(value || "").trim()) || serviceIcons[item.icon]);
+ const hasHeading = [config.sectionName,config.headline,config.subheadline].some(value => String(value || "").trim());
+ if (!hasHeading && !items.length) return "";
+ const cards = items.map(item => {
+  const icon = serviceIcons[item.icon] || "";
+  return '<li><article class="services-card">' +
+   (icon ? '<span class="services-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + icon + '</svg></span>' : "") +
+   '<div class="services-body">' + (item.title ? '<h3 class="services-name">' + esc(item.title) + '</h3>' : "") + (item.description ? '<p class="services-desc">' + esc(item.description) + '</p>' : "") + '</div>' +
+   '<svg class="services-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></article></li>';
+ }).join("");
+ return '<section class="services" id="services"><div class="container">' +
+  (hasHeading ? '<div class="section-head">' + (config.sectionName ? '<p class="section-lead">' + esc(config.sectionName) + '</p>' : "") + (config.headline ? '<h2 class="section-title">' + esc(config.headline) + '</h2>' : "") + (config.subheadline ? '<p class="section-lead">' + esc(config.subheadline) + '</p>' : "") + '</div>' : "") +
+  (cards ? '<ul class="services-grid">' + cards + '</ul>' : "") + '</div></section>';
+}
 function profileHtml(config) {
   const title = esc(config?.profile_title || "");
   const paragraphs = String(config?.profile_content || "").split(/\r?\n\s*\r?\n/).map(p => p.trim()).filter(Boolean);
   const content = paragraphs.map(p => "<p>" + esc(p).replace(/\r?\n/g, "<br>") + "</p>").join("");
-  return '<!doctype html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + title + '</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-education-experience.css?v=1"></head><body><main class="about-profile-page"><article class="about-profile-inner"><h1>' + title + '</h1><div class="about-profile-content">' + content + '</div></article></main></body></html>';
+  return '<!doctype html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + title + '</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-education-experience.css?v=1">
+<link rel="stylesheet" href="/assets/css/maxlab-services.css?v=1"></head><body><main class="about-profile-page"><article class="about-profile-inner"><h1>' + title + '</h1><div class="about-profile-content">' + content + '</div></article></main></body></html>';
 }
-function pageHtml(website, config, menuItems, heroConfig, aboutConfig, experienceConfig) {
+function pageHtml(website, config, menuItems, heroConfig, aboutConfig, experienceConfig, servicesConfig) {
   const brand = config?.brand_name || website.name || "Website";
   const logo = config?.logo_url ? `<img src="${esc(config.logo_url)}" alt="">` : "";
   const menus = (menuItems || []).filter(item => item.is_active !== false).map(item =>
@@ -147,6 +178,7 @@ function pageHtml(website, config, menuItems, heroConfig, aboutConfig, experienc
 ${heroHtml(heroConfig)}
 ${aboutHtml(aboutConfig, website.slug)}
 ${experienceHtml(experienceConfig)}
+${servicesHtml(servicesConfig)}
 <script>(function(){const b=document.getElementById("nav-toggle"),m=document.getElementById("site-menu");if(!b||!m)return;function setOpen(v){m.classList.toggle("is-open",v);b.setAttribute("aria-expanded",String(v));b.setAttribute("aria-label",v?"Tutup menu":"Buka menu")}b.addEventListener("click",()=>setOpen(!m.classList.contains("is-open")));m.addEventListener("click",e=>{if(e.target.closest("a"))setOpen(false)});document.addEventListener("keydown",e=>{if(e.key==="Escape")setOpen(false)});window.addEventListener("resize",()=>{if(window.innerWidth>767)setOpen(false)})})();</script>
 </body></html>`;
 }
@@ -174,9 +206,11 @@ export default async function handler(req, res) {
     const aboutConfig = aboutRows?.[0] || null;
     const experienceRows = await db(`maxlab_experience_configs?select=config,status&website_id=eq.${website.id}&limit=1`);
     const experienceConfig = experienceRows?.[0]?.config || null;
+    const servicesRows = await db(`maxlab_services_configs?select=config,status&website_id=eq.${website.id}&limit=1`);
+    const servicesConfig = servicesRows?.[0]?.config || null;
     if (String(req.query?.view || "") === "profile") { if (!aboutConfig || !String(aboutConfig.profile_title || "").trim() || !String(aboutConfig.profile_content || "").trim()) return res.status(404).send("Halaman profil belum tersedia."); return res.status(200).send(profileHtml(aboutConfig)); }
 
-    return res.status(200).send(pageHtml(website, config, menuItems || [], heroConfig, aboutConfig, experienceConfig));
+    return res.status(200).send(pageHtml(website, config, menuItems || [], heroConfig, aboutConfig, experienceConfig, servicesConfig));
   } catch (error) {
     console.error("MaxLab SSR render error", error);
     return res.status(500).send("Gagal merender halaman website.");
