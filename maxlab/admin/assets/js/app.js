@@ -227,7 +227,15 @@ function renderSectionFields(section) {
   ].join("");
 }
 function renderWebsiteStructure() {
-  const rows = state.sections.map(section => `
+  const structureItems = [];
+  state.sections.forEach(section => {
+    if (section.id === "contact") return;
+    if (section.id === "faq") {
+      const cta = state.sections.find(item => item.id === "contact");
+      structureItems.push({ id: "faq-cta", name: "FAQ & CTA", enabled: section.enabled && (cta ? cta.enabled : true), description: "FAQ dan ajakan bertindak dalam satu blok." });
+    } else structureItems.push(section);
+  });
+  const rows = structureItems.map(section => `
     <article class="accordion-item ${section.enabled ? "" : "is-disabled"}" data-section-id="${section.id}">
       <div class="accordion-heading">
         <span class="drag-handle" title="Geser untuk mengubah urutan" aria-label="Geser section">⠿</span>
@@ -237,7 +245,7 @@ function renderWebsiteStructure() {
     </article>`).join("");
   return `
     <div class="panel-heading"><div><h3>Website Structure</h3><p>Atur urutan blok Section. Geser ke atas atau ke bawah dan pilih blok yang ditampilkan.</p></div></div>
-    <div class="section-accordion-intro"><strong>Urutan Section</strong><span>${state.sections.length} blok</span></div>
+    <div class="section-accordion-intro"><strong>Urutan Section</strong><span>${structureItems.length} blok</span></div>
     <div class="section-accordion" id="section-list">${rows}</div>`;
 }
 
@@ -297,7 +305,8 @@ function bindInteractions() {
   document.querySelectorAll("[data-toggle-section]").forEach(input => {
     input.addEventListener("change", () => {
       const section = state.sections.find(item => item.id === input.dataset.toggleSection);
-      if (section) section.enabled = input.checked;
+      if (input.dataset.toggleSection === "faq-cta") state.sections.filter(item => item.id === "faq" || item.id === "contact").forEach(item => item.enabled = input.checked);
+      else if (section) section.enabled = input.checked;
       render();
     });
   });
@@ -415,7 +424,8 @@ function bindInteractions() {
         if (!draggedElement) return;
         draggedElement.classList.remove("is-dragging");
         const order = [...list.querySelectorAll(".accordion-item")].map(el => el.dataset.sectionId);
-        state.sections.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+        const expandedOrder = order.flatMap(id => id === "faq-cta" ? ["faq", "contact"] : [id]);
+        state.sections.sort((a, b) => expandedOrder.indexOf(a.id) - expandedOrder.indexOf(b.id));
         draggedId = null;
         draggedElement = null;
         render();
