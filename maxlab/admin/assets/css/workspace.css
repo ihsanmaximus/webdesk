@@ -52,3 +52,66 @@
   .work-area { padding: 26px 16px; }
   .work-panel { padding: 18px; }
 }
+
+
+/* Experience: nested configurator accordions */
+.experience-config {
+  margin: 4px 0 0 18px;
+  padding-left: 16px;
+  border-left: 2px solid #e3eaf2;
+  display: grid;
+  gap: 12px;
+}
+.experience-subaccordion {
+  overflow: hidden;
+  border: 1px solid #dfe7ef;
+  border-radius: 10px;
+  background: #fff;
+}
+.experience-subaccordion > summary {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 12px 16px;
+  color: #365d7d;
+  background: #f6f9fc;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+.experience-subaccordion > summary::-webkit-details-marker { display: none; }
+.experience-subaccordion > summary::after {
+  content: "+";
+  margin-left: auto;
+  color: #527a9c;
+  font-size: 20px;
+  line-height: 1;
+}
+.experience-subaccordion[open] > summary::after { content: "−"; }
+.experience-subaccordion-body {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+.experience-entry-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 14px;
+  border: 1px dashed #dce5ed;
+  border-radius: 9px;
+}
+.experience-entry-fields .field--full { grid-column: 1 / -1; }
+.experience-current-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #526477;
+  font-size: 13px;
+}
+.experience-remove { justify-self: start; }
+@media (max-width: 767px) {
+  .experience-config { margin-left: 8px; padding-left: 10px; }
+  .experience-entry-fields { grid-template-columns: minmax(0, 1fr); }
+  .experience-entry-fields .field--full { grid-column: auto; }
+}
