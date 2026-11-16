@@ -381,3 +381,36 @@
 .experience-entry-fields {
   border: 1px solid #cbd7e3;
 }
+
+
+
+/* Services configurator fields */
+.services-config { display:grid; gap:22px; }
+.services-section-meta { padding:18px; border:1px solid #cbd8e6; border-radius:12px; background:#fff; }
+.services-items-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.services-items-heading h4 { margin:0 0 5px; color:#1d3553; font-size:16px; }
+.services-items-heading p { margin:0; color:#718096; font-size:13px; }
+.services-grid-note { flex:0 0 auto; padding:7px 11px; border-radius:8px; color:#24558a; background:#eaf3fc; font-size:12px; font-weight:700; }
+.services-fields-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; align-items:start; }
+.services-field-card { min-width:0; padding:16px; border:1px solid #d5e0eb; border-radius:12px; background:#fff; }
+.services-field-card__heading { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:14px; color:#1e4268; }
+.services-field-card__heading strong { font-size:14px; }
+.services-field-card__heading span { color:#8291a4; font-size:11px; }
+.services-icon-picker { display:grid; gap:10px; margin-top:14px; }
+.services-icon-picker__label { color:#42566e; font-size:12px; font-weight:700; }
+.services-icon-picker__selected { display:flex; align-items:center; gap:9px; min-height:40px; padding:8px 10px; border:1px solid #dce5ee; border-radius:8px; color:#315d88; background:#f7fafd; font-size:12px; font-weight:600; }
+.services-icon-picker__selected svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.services-icon-library { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; }
+.services-icon-option { display:grid; justify-items:center; align-content:center; gap:5px; min-width:0; min-height:64px; padding:8px 4px; border:1px solid #dce5ee; border-radius:8px; color:#63758a; background:#fff; cursor:pointer; }
+.services-icon-option svg { width:23px; height:23px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.services-icon-option span { overflow:hidden; max-width:100%; color:inherit; font-size:10px; text-align:center; text-overflow:ellipsis; white-space:nowrap; }
+.services-icon-option:hover { border-color:#79a9d4; color:#205a91; background:#f4f9fe; }
+.services-icon-option.is-selected { border-color:#2873b9; color:#174d80; background:#eaf4fd; box-shadow:inset 0 0 0 1px #2873b9; }
+@media (min-width:761px) and (max-width:1100px) { .services-fields-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width:760px) {
+ .services-fields-grid { grid-template-columns:minmax(0,1fr); }
+ .services-section-meta { padding:14px; }
+ .services-field-card { padding:14px; }
+ .services-items-heading { align-items:flex-start; }
+ .services-icon-library { grid-template-columns:repeat(4,minmax(0,1fr)); }
+}
