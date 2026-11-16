@@ -162,15 +162,40 @@ async function saveAboutDatabase(){const b=$("#about-save-database"),status=$("#
 function publishAbout(){const status=$("#about-save-status");const page=window.open("/maxlab/maxlabtest/","_blank");if(page)status.textContent="Frontend dibuka di tab baru. Data yang sudah di-Save akan tampil setelah halaman dimuat ulang.";else status.textContent="Browser memblokir tab baru. Izinkan pop-up untuk Webdesk lalu tekan Publish lagi."; }
 
 const experienceDefaults = {
+  sectionName: "",
+  headline: "",
+  subheadline: "",
   education: [{ label:"", degree:"", faculty:"", institution:"" }],
   work: [{ position:"", institution:"", period:"", current:false }],
   experience: [{ role:"", organization:"", detail:"" }]
 };
-let experienceConfig = (() => { try { return { ...experienceDefaults, ...JSON.parse(localStorage.getItem("maxlab:maxlabtest:experience:draft") || "{}") }; } catch { return JSON.parse(JSON.stringify(experienceDefaults)); } })();
+let experienceConfig = (() => {
+  try {
+    const saved = JSON.parse(localStorage.getItem("maxlab:maxlabtest:experience:draft") || "{}");
+    return { ...experienceDefaults, ...saved };
+  } catch { return JSON.parse(JSON.stringify(experienceDefaults)); }
+})();
 function saveExperienceDraft() {
   const status = $("#experience-save-status");
-  try { localStorage.setItem("maxlab:maxlabtest:experience:draft", JSON.stringify(experienceConfig)); if (status) status.textContent = "Rancangan field Experience tersimpan lokal. Belum masuk database."; }
-  catch (error) { if (status) status.textContent = "Gagal menyimpan rancangan: " + error.message; }
+  try {
+    collectExperienceForm();
+    localStorage.setItem("maxlab:maxlabtest:experience:draft", JSON.stringify(experienceConfig));
+    if (status) status.textContent = "Draft Experience tersimpan lokal di browser ini. Belum masuk database.";
+  } catch (error) {
+    if (status) status.textContent = "Gagal menyimpan rancangan: " + error.message;
+  }
+}
+function collectExperienceForm() {
+  document.querySelectorAll("[data-experience-meta]").forEach(input => {
+    experienceConfig[input.dataset.experienceMeta] = input.value;
+  });
+  document.querySelectorAll("[data-experience-group]").forEach(input => {
+    const { experienceGroup: group, experienceIndex: index, experienceKey: key } = input.dataset;
+    if (experienceConfig[group]?.[Number(index)]) {
+      experienceConfig[group][Number(index)][key] = input.type === "checkbox" ? input.checked : input.value;
+    }
+  });
+  return experienceConfig;
 }
 function experienceText(label, group, index, key, value, full=false) {
   return '<label class="field ' + (full ? 'field--full' : '') + '"><span>' + label + '</span><input type="text" data-experience-group="' + group + '" data-experience-index="' + index + '" data-experience-key="' + key + '" value="' + escAttr(value || '') + '"></label>';
@@ -188,6 +213,12 @@ function experienceGroup(title, group, fields, rows) {
 }
 function renderExperienceFields() {
   return '<div class="experience-config">' +
+    '<div class="experience-section-meta">' +
+    '<div class="form-grid">' +
+    '<label class="field"><span>Nama Section</span><input type="text" data-experience-meta="sectionName" value="' + escAttr(experienceConfig.sectionName || '') + '"></label>' +
+    '<label class="field"><span>Headline</span><input type="text" data-experience-meta="headline" value="' + escAttr(experienceConfig.headline || '') + '"></label>' +
+    '<label class="field field--full"><span>Subheadline</span><textarea rows="3" data-experience-meta="subheadline">' + escAttr(experienceConfig.subheadline || '') + '</textarea></label>' +
+    '</div></div>' +
     experienceGroup('01 Pendidikan', 'education', [
       {label:'Label Pendidikan',key:'label'},
       {label:'Gelar / Jenjang Pendidikan',key:'degree'},
@@ -325,6 +356,9 @@ function bindInteractions() {
   $("#about-publish")?.addEventListener("click", publishAbout);
   $("#experience-local-draft")?.addEventListener("click", saveExperienceDraft);
   $("#experience-save")?.addEventListener("click", saveExperienceDraft);
+  document.querySelectorAll("[data-experience-meta]").forEach(input => input.addEventListener("input", () => {
+    experienceConfig[input.dataset.experienceMeta] = input.value;
+  }));
   document.querySelectorAll("[data-experience-group]").forEach(input => input.addEventListener("input", () => {
     const { experienceGroup: group, experienceIndex: index, experienceKey: key } = input.dataset;
     experienceConfig[group][Number(index)][key] = input.type === "checkbox" ? input.checked : input.value;
