@@ -176,7 +176,37 @@ const servicesIconLibrary = [
   {id:"star",label:"Unggulan",svg:"<svg viewBox=\"0 0 24 24\"><path d=\"m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6Z\"/></svg>"}
 ];
 const servicesDefaults = {sectionName:"",headline:"",subheadline:"",items:Array.from({length:6},()=>({title:"",description:"",icon:""}))};
-let servicesConfig = (()=>{try{const d=JSON.parse(localStorage.getItem("maxlab:maxlabtest:services:draft")||"{}");const items=Array.isArray(d.items)?d.items.slice(0,6):[];while(items.length<6)items.push({title:"",description:"",icon:""});return {...servicesDefaults,...d,items};}catch{return JSON.parse(JSON.stringify(servicesDefaults));}})();
+let servicesConfig = JSON.parse(JSON.stringify(servicesDefaults));
+let servicesConfigLoaded = false;
+async function loadServicesConfig() {
+  if (servicesConfigLoaded) return;
+  try {
+    const response = await fetch("/api/maxlab/services", { cache: "no-store" });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Gagal memuat Services.");
+    const local = localStorage.getItem("maxlab:maxlabtest:services:draft");
+    const source = { ...servicesDefaults, ...(data.config || {}), ...(local ? JSON.parse(local) : {}) };
+    const items = Array.isArray(source.items) ? source.items.slice(0, 6) : [];
+    while (items.length < 6) items.push({ title: "", description: "", icon: "" });
+    servicesConfig = { ...source, items };
+    servicesConfigLoaded = true;
+    if (state.activePage === "sections" && state.activeSection === "services") render();
+  } catch (error) { const status = $("#services-save-status"); if (status) status.textContent = error.message; }
+}
+async function saveServicesDatabase() {
+  const button = $("#services-save-database"); const status = $("#services-save-status");
+  try {
+    if (button) { button.disabled = true; button.textContent = "Saving..."; }
+    const config = collectServicesForm();
+    const response = await fetch("/api/maxlab/services", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ config }) });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Gagal menyimpan Services ke database.");
+    servicesConfig = data.config; servicesConfigLoaded = true; localStorage.removeItem("maxlab:maxlabtest:services:draft");
+    if (status) status.textContent = "Services berhasil disimpan ke database.";
+    if (button) button.textContent = "Saved ✓";
+  } catch (error) { if (status) status.textContent = error.message; if (button) button.textContent = "Save"; }
+  finally { if (button) button.disabled = false; }
+}
 function collectServicesForm(){document.querySelectorAll("[data-services-meta]").forEach(i=>servicesConfig[i.dataset.servicesMeta]=i.value);document.querySelectorAll("[data-services-index][data-services-key]").forEach(i=>servicesConfig.items[Number(i.dataset.servicesIndex)][i.dataset.servicesKey]=i.value);return servicesConfig;}
 function renderServicesFields(){
  const cards=servicesConfig.items.map((item,index)=>{
@@ -312,7 +342,7 @@ function renderSectionFields(section) {
   if (section.id === "hero") return renderHeroFields();
   if (section.id === "about") return renderAboutFields();
   if (section.id === "experience") return renderExperienceFields();
-  if (section.id === "services") return renderServicesFields();
+  if (section.id === "services") { if (!servicesConfigLoaded) loadServicesConfig(); return renderServicesFields(); }
   if (section.id !== "navbar") return `<div class="section-fields-placeholder"><strong>Field ${section.name}</strong><p>Konfigurasi section ini belum dikerjakan. Konfigurasi section ini belum dikerjakan.</p></div>`;
   return [
     '<div class="navbar-config-form">',
@@ -355,7 +385,7 @@ function renderSections() {
   const section = state.sections.find(item => item.id === state.activeSection) || state.sections[0];
   const statusId = state.activeSection === "hero" ? "hero-save-status" : state.activeSection === "about" ? "about-save-status" : state.activeSection === "experience" ? "experience-save-status" : state.activeSection === "services" ? "services-save-status" : "navbar-save-status";
   const draftButton = state.activeSection === "hero" ? '<button class="secondary-button" id="hero-local-draft" type="button">Draft</button>' : state.activeSection === "about" ? '<button class="secondary-button" id="about-local-draft" type="button">Draft</button>' : state.activeSection === "experience" ? '<button class="secondary-button" id="experience-local-draft" type="button">Draft</button>' : state.activeSection === "services" ? '<button class="secondary-button" id="services-local-draft" type="button">Draft</button>' : '<button class="secondary-button" id="navbar-local-draft" type="button">Draft</button>';
-  const saveButton = state.activeSection === "hero" ? '<button class="secondary-button" id="hero-save-database" type="button">Save</button>' : state.activeSection === "about" ? '<button class="secondary-button" id="about-save-database" type="button">Save</button>' : state.activeSection === "experience" ? '<button class="secondary-button" id="experience-save" type="button">Save</button>' : state.activeSection === "services" ? '<button class="secondary-button" type="button" disabled>Save (database belum dibuat)</button>' : '<button class="secondary-button" id="navbar-save-database" type="button">Save</button>';
+  const saveButton = state.activeSection === "hero" ? '<button class="secondary-button" id="hero-save-database" type="button">Save</button>' : state.activeSection === "about" ? '<button class="secondary-button" id="about-save-database" type="button">Save</button>' : state.activeSection === "experience" ? '<button class="secondary-button" id="experience-save" type="button">Save</button>' : state.activeSection === "services" ? '<button class="secondary-button" id="services-save-database" type="button">Save</button>' : '<button class="secondary-button" id="navbar-save-database" type="button">Save</button>';
   const publishButton = state.activeSection === "services" ? '<button class="primary-button" type="button" disabled>Publish</button>' : state.activeSection === "about" ? '<button class="primary-button" id="about-publish" type="button">Publish</button>' : '<button class="primary-button" id="navbar-publish" type="button">Publish</button>';
   return `
     <div class="panel-heading section-config-header">
@@ -429,6 +459,7 @@ function bindInteractions() {
   $("#experience-local-draft")?.addEventListener("click", saveExperienceDraft);
   $("#experience-save")?.addEventListener("click", saveExperienceDatabase);
   $("#services-local-draft")?.addEventListener("click", () => { collectServicesForm(); localStorage.setItem("maxlab:maxlabtest:services:draft", JSON.stringify(servicesConfig)); const status=$("#services-save-status"); if(status) status.textContent="Draft Services tersimpan lokal di browser ini. Belum masuk database."; });
+  $("#services-save-database")?.addEventListener("click", saveServicesDatabase);
   document.querySelectorAll("[data-services-meta]").forEach(input => input.addEventListener("input", () => { servicesConfig[input.dataset.servicesMeta]=input.value; }));
   document.querySelectorAll("[data-services-index][data-services-key]").forEach(input => input.addEventListener("input", () => { servicesConfig.items[Number(input.dataset.servicesIndex)][input.dataset.servicesKey]=input.value; }));
   document.querySelectorAll("[data-services-icon]").forEach(button => button.addEventListener("click", () => { const index=Number(button.dataset.servicesIndex); servicesConfig.items[index].icon=button.dataset.servicesIcon; const card=button.closest(".services-field-card"); card.querySelectorAll("[data-services-icon]").forEach(option=>{const active=option===button;option.classList.toggle("is-selected",active);option.setAttribute("aria-pressed",active?"true":"false");}); const chosen=servicesIconLibrary.find(icon=>icon.id===button.dataset.servicesIcon); card.querySelector(".services-icon-picker__selected").innerHTML=chosen.svg+"<span>"+chosen.label+"</span>"; }));
