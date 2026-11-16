@@ -38,9 +38,15 @@ let heroConfigCache = null;
 let heroConfigLoaded = false;
 let aboutConfigCache = null;
 let aboutConfigLoaded = false;
-const aboutDefaults = { sectionName:"Tentang Dokter", title:"Mengenal dr. Faisal Husien, M.Sc, Sp. A", description:"Dokter Spesialis Anak (Sp.A) yang fokus pada pelayanan kesehatan anak, mulai dari pencegahan, diagnosis, hingga penanganan berbagai masalah kesehatan anak.", readMoreLabel:"Profil Lengkap", profileTitle:"Profil Lengkap dr. Faisal Husien", profileContent:"" };
-const heroDefaults = { version:1, layout:"background-image", eyebrow:"", headline:"Bangun Sesuatu yang Luar Biasa", subheadline:"Perkenalkan bisnis Anda dengan pesan yang jelas, menarik, dan mudah diingat.", primaryCtaEnabled:true, primaryCtaLabel:"Hubungi Kami", primaryCtaTarget:"#contact", secondaryCtaEnabled:false, secondaryCtaLabel:"Pelajari Lebih Lanjut", secondaryCtaTarget:"#about", imageUrl:"", imageAlt:"Background Hero", gradientEnabled:true };
+const aboutDefaults = { sectionName:"", title:"", description:"", readMoreLabel:"", profileTitle:"", profileContent:"" };
+const heroDefaults = { version:1, layout:"background-image", eyebrow:"", headline:"", subheadline:"", primaryCtaEnabled:true, primaryCtaLabel:"", primaryCtaTarget:"", secondaryCtaEnabled:false, secondaryCtaLabel:"", secondaryCtaTarget:"", imageUrl:"", imageAlt:"", gradientEnabled:true };
 function escAttr(value) { return String(value ?? "").replace(/[&<>"\']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[ch])); }
+function sanitizeHeroPlaceholders(config) {
+ const c={...config};
+ const stale={headline:["Bangun Sesuatu yang Luar Biasa"],subheadline:["Perkenalkan bisnis Anda dengan pesan yang jelas, menarik, dan mudah diingat."],primaryCtaLabel:["Hubungi Kami"],primaryCtaTarget:["#contact"],secondaryCtaLabel:["Pelajari Lebih Lanjut"],secondaryCtaTarget:["#about"],imageAlt:["Background Hero"]};
+ Object.entries(stale).forEach(([key,values])=>{if(values.includes(String(c[key]??"")))c[key]="";});
+ return c;
+}
 function heroValue(key) { return escAttr((heroConfigCache || heroDefaults)[key]); }
 function heroInput(label,key,type="text",hint="") { return `<label class="field"><span>${label}</span><input data-hero-field="${key}" type="${type}" value="${heroValue(key)}">${hint?`<small class="field-help">${hint}</small>`:""}</label>`; }
 function heroSelect(label,key,options) { return `<label class="field"><span>${label}</span><select data-hero-field="${key}">${options.map(([v,t])=>`<option value="${v}" ${heroValue(key)===v?"selected":""}>${t}</option>`).join("")}</select></label>`; }
@@ -65,7 +71,7 @@ function renderHeroFields() {
  </div>`;
 }
 function heroPreviewMarkup(c) { const bg=c.layout==="background-image"?`background-image:${c.imageUrl?`url(&quot;${escAttr(c.imageUrl)}&quot;)`:"none"};background-size:cover;background-position:center;`:""; const h=c.height==="compact"?"360px":c.height==="medium"?"480px":"600px"; return `<div class="hero-preview-inner" style="min-height:${h};background-color:${escAttr(c.backgroundColor)};${bg}color:${escAttr(c.textColor)};text-align:${escAttr(c.alignment)}"><div class="hero-preview-copy">${c.eyebrow?`<small style="color:${escAttr(c.eyebrowColor)}">${escAttr(c.eyebrow)}</small>`:""}<h2 style="color:${escAttr(c.headlineColor)}">${escAttr(c.headline)}</h2><p style="color:${escAttr(c.descriptionColor)}">${escAttr(c.subheadline)}</p><div>${c.primaryCtaEnabled?`<span style="background:${escAttr(c.accentColor)}">${escAttr(c.primaryCtaLabel)}</span>`:""}${c.secondaryCtaEnabled?`<span class="secondary">${escAttr(c.secondaryCtaLabel)}</span>`:""}</div></div>${c.layout!=="text-only"&&c.layout!=="background-image"&&c.imageUrl?`<img src="${escAttr(c.imageUrl)}" alt="${escAttr(c.imageAlt)}">`:""}</div>`; }
-async function loadHeroConfig() { if(heroConfigLoaded)return; try { const r=await fetch("/api/maxlab/hero",{cache:"no-store"}); const d=await r.json(); if(!r.ok)throw new Error(d.error||"Gagal memuat Hero"); const local=localStorage.getItem("maxlab:maxlabtest:hero:draft"); heroConfigCache={...heroDefaults,...(local?JSON.parse(local):(d.config||{}))}; heroConfigLoaded=true; if(state.activePage==="sections"&&state.activeSection==="hero")render(); } catch(e) { const s=$("#hero-save-status"); if(s)s.textContent=e.message; } }
+async function loadHeroConfig() { if(heroConfigLoaded)return; try { const r=await fetch("/api/maxlab/hero",{cache:"no-store"}); const d=await r.json(); if(!r.ok)throw new Error(d.error||"Gagal memuat Hero"); const local=localStorage.getItem("maxlab:maxlabtest:hero:draft"); heroConfigCache=sanitizeHeroPlaceholders({...heroDefaults,...(local?JSON.parse(local):(d.config||{}))}); heroConfigLoaded=true; if(state.activePage==="sections"&&state.activeSection==="hero")render(); } catch(e) { const s=$("#hero-save-status"); if(s)s.textContent=e.message; } }
 function collectHeroForm() { const c={...(heroConfigCache||heroDefaults)}; document.querySelectorAll("[data-hero-field]").forEach(el=>{const k=el.dataset.heroField;c[k]=el.type==="checkbox"?el.checked:el.value;}); heroConfigCache=c; return c; }
 function refreshHeroPreview() { const p=$("#hero-live-preview"); if(p)p.innerHTML=heroPreviewMarkup(collectHeroForm()); }
 async function saveHeroLocalDraft() { const b=$("#hero-local-draft"),s=$("#hero-save-status");try{b.disabled=true;localStorage.setItem("maxlab:maxlabtest:hero:draft",JSON.stringify(collectHeroForm()));s.textContent="Draft Hero tersimpan di browser ini.";}catch(e){s.textContent=e.message;}finally{b.disabled=false;} }
@@ -126,30 +132,25 @@ function renderGeneral() {
     <div class="form-actions"><span>Database belum dibuat. Form ini merupakan rancangan antarmuka.</span><button class="primary-button" disabled>Save General Setup</button></div>`;
 }
 
-function aboutInput(label,key,value,full=false){return `<label class="field ${full?"field--full":""}"><span>${label}</span><input data-about-field="${key}" type="text" value="${escAttr(value??"")}"></label>`;}
+function aboutInput(label,key,value,full=false){return '<label class="field ' + (full?"field--full":"") + '"><span>' + label + '</span><input data-about-field="' + key + '" type="text" value="' + escAttr(value??"") + '"></label>';}
 function renderAboutFields(){
  const c=aboutConfigCache||aboutDefaults;
- return `<div class="navbar-config-form">
- <div class="navbar-field-group"><h4>Konten Section About</h4><div class="form-grid">
- ${aboutInput("Nama Section","sectionName",c.sectionName)}
- ${aboutInput("Judul","title",c.title,true)}
- <label class="field field--full"><span>Deskripsi</span><textarea data-about-field="description" rows="4">${escAttr(c.description)}</textarea></label>
- ${aboutInput("Label Read More","readMoreLabel",c.readMoreLabel)}
- </div></div>
- <div class="navbar-field-group"><h4>Halaman Profil Lengkap</h4><div class="form-grid">
- ${aboutInput("Judul Halaman Profil","profileTitle",c.profileTitle,true)}
- <label class="field field--full"><span>Isi Profil</span><textarea data-about-field="profileContent" rows="10" placeholder="Tulis isi profil lengkap di sini...">${escAttr(c.profileContent)}</textarea><small class="field-help">Untuk tahap ini hanya judul dan isi. Pengaturan tambahan dibuat pada tahap berikutnya.</small></label>
- </div><p class="field-help">URL halaman profil: /maxlab/maxlabtest/profil</p></div>
- </div>`;
+ return '<div class="navbar-config-form"><div class="navbar-field-group"><h4>Konten Section About</h4><div class="form-grid">' +
+ aboutInput("Nama Section","sectionName",c.sectionName) +
+ aboutInput("Judul","title",c.title,true) +
+ '<label class="field field--full"><span>Deskripsi</span><textarea data-about-field="description" rows="4">' + escAttr(c.description) + '</textarea></label>' +
+ aboutInput("Label Read More","readMoreLabel",c.readMoreLabel) +
+ '</div></div><div class="navbar-field-group"><h4>Halaman Profil Lengkap</h4><div class="form-grid">' +
+ aboutInput("Judul Halaman Profil","profileTitle",c.profileTitle,true) +
+ '<label class="field field--full"><span>Isi Profil</span><textarea data-about-field="profileContent" rows="10">' + escAttr(c.profileContent) + '</textarea></label>' +
+ '</div></div><p class="field-help">Tahap ini hanya pemetaan field. Database dan frontend belum disambungkan.</p></div>';
 }
-function collectAboutForm(){const c={...(aboutConfigCache||aboutDefaults)};document.querySelectorAll("[data-about-field]").forEach(el=>c[el.dataset.aboutField]=el.value);aboutConfigCache=c;return c;}
-async function loadAboutConfig(){if(aboutConfigLoaded)return;try{const r=await fetch("/api/maxlab/about",{cache:"no-store"});const d=await r.json();if(!r.ok)throw new Error(d.error||"Gagal memuat About");const local=localStorage.getItem("maxlab:maxlabtest:about:draft");aboutConfigCache={...aboutDefaults,...(local?JSON.parse(local):(d.config||{}))};aboutConfigLoaded=true;if(state.activePage==="sections"&&state.activeSection==="about")render();}catch(e){const status=$("#about-save-status");if(status)status.textContent=e.message;}}
-async function saveAboutLocalDraft(){const b=$("#about-local-draft"),status=$("#about-save-status");try{b.disabled=true;localStorage.setItem("maxlab:maxlabtest:about:draft",JSON.stringify(collectAboutForm()));status.textContent="Draft About tersimpan di browser ini.";}catch(e){status.textContent=e.message;}finally{b.disabled=false;}}
-async function saveAboutDatabase(){const b=$("#about-save-database"),status=$("#about-save-status");try{b.disabled=true;b.textContent="Saving...";const config=collectAboutForm();const r=await fetch("/api/maxlab/about",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({config})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Gagal menyimpan About.");aboutConfigCache=d.config;aboutConfigLoaded=true;localStorage.removeItem("maxlab:maxlabtest:about:draft");status.textContent="About tersimpan di database. Frontend mengambil data terbaru saat refresh.";b.textContent="Saved ✓";}catch(e){status.textContent=e.message;b.textContent="Save";}finally{b.disabled=false;}}
-async function publishAbout(){const status=$("#about-save-status");try{const r=await fetch("/api/maxlab/about",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"publish"})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Gagal publish About.");status.textContent="About berhasil dipublikasikan.";}catch(e){status.textContent=e.message;}}
+function collectAboutForm(){const c={...aboutDefaults,...(aboutConfigCache||{})};document.querySelectorAll("[data-about-field]").forEach(el=>c[el.dataset.aboutField]=el.value);aboutConfigCache=c;return c;}
+async function saveAboutLocalDraft(){const b=$("#about-local-draft"),status=$("#about-save-status");try{b.disabled=true;localStorage.setItem("maxlab:maxlabtest:about:draft",JSON.stringify(collectAboutForm()));status.textContent="Draft field About tersimpan di browser ini.";}catch(e){status.textContent=e.message;}finally{b.disabled=false;}}
 
 function renderSectionFields(section) {
   if (section.id === "hero") return renderHeroFields();
+  if (section.id === "about") return renderAboutFields();
   if (section.id !== "navbar") return `<div class="section-fields-placeholder"><strong>Field ${section.name}</strong><p>Konfigurasi section ini belum dikerjakan. Saat ini pengerjaan dibatasi pada Navbar dan Hero.</p></div>`;
   return [
     '<div class="navbar-config-form">',
@@ -189,7 +190,7 @@ function renderSections() {
     <div class="panel-heading"><div><h3>Konten Website</h3><p>Atur section yang ditampilkan dan urutannya. Buka setiap section untuk melihat konfigurasi field.</p></div><span class="state-chip">Draft</span></div>
     <div class="section-accordion-intro"><strong>Struktur Konten</strong><span>${state.sections.length} section</span><small>Centang untuk menampilkan. Gunakan ikon titik untuk drag and drop.</small></div>
     <div class="section-accordion" id="section-list">${rows}</div>
-    <div class="form-actions section-form-actions"><span id="${state.activeSection === "hero" ? "hero-save-status" : state.activeSection === "about" ? "about-save-status" : "navbar-save-status"}">Draft lokal belum disimpan.</span><div class="button-group">${state.activeSection === "hero" ? `<button class="secondary-button" id="hero-local-draft" type="button">Draft</button><button class="secondary-button" id="hero-save-database" type="button">Save</button>` : state.activeSection === "about" ? `<button class="secondary-button" id="about-local-draft" type="button">Draft</button><button class="secondary-button" id="about-save-database" type="button">Save</button>` : `<button class="secondary-button" id="navbar-local-draft" type="button">Draft</button><button class="secondary-button" id="navbar-save-database" type="button">Save</button>`}<button class="primary-button" id="${state.activeSection === "about" ? "about-publish" : "navbar-publish"}" type="button">Publish</button></div></div>`;
+    <div class="form-actions section-form-actions"><span id="${state.activeSection === "hero" ? "hero-save-status" : state.activeSection === "about" ? "about-save-status" : "navbar-save-status"}">Draft lokal belum disimpan.</span><div class="button-group">${state.activeSection === "hero" ? `<button class="secondary-button" id="hero-local-draft" type="button">Draft</button><button class="secondary-button" id="hero-save-database" type="button">Save</button>` : state.activeSection === "about" ? `<button class="secondary-button" id="about-local-draft" type="button">Draft</button><button class="secondary-button" type="button" disabled>Save — menunggu persetujuan field</button>` : `<button class="secondary-button" id="navbar-local-draft" type="button">Draft</button><button class="secondary-button" id="navbar-save-database" type="button">Save</button>`}${state.activeSection === "about" ? `<button class="primary-button" type="button" disabled>Publish</button>` : `<button class="primary-button" id="navbar-publish" type="button">Publish</button>`}</div></div>`;
 }
 
 function renderSeo() {
@@ -222,7 +223,7 @@ function render() {
   content.innerHTML = state.activePage === "general" ? renderGeneral() : state.activePage === "sections" ? renderSections() : renderSeo();
   bindInteractions();
   if (state.activePage === "sections" && state.activeSection === "hero") { loadHeroConfig(); }
-  if (state.activePage === "sections" && state.activeSection === "about") { loadAboutConfig(); }
+  if (state.activePage === "sections" && state.activeSection === "about") { aboutConfigCache = aboutConfigCache || aboutDefaults; }
   if (state.activePage === "sections" && state.activeSection === "navbar") {
     if (navbarFormCache) restoreNavbarFormCache();
     else if (!navbarDataLoaded) loadNavbarDraftIntoForm();
@@ -249,8 +250,6 @@ function bindInteractions() {
   $("#hero-local-draft")?.addEventListener("click", saveHeroLocalDraft);
   $("#hero-save-database")?.addEventListener("click", saveHeroDatabase);
   $("#about-local-draft")?.addEventListener("click", saveAboutLocalDraft);
-  $("#about-save-database")?.addEventListener("click", saveAboutDatabase);
-  $("#about-publish")?.addEventListener("click", publishAbout);
   const heroFile = $("#hero-background-file");
   if (heroFile) heroFile.addEventListener("change", async () => {
     const file = heroFile.files?.[0]; if (!file) return;
