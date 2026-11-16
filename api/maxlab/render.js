@@ -131,13 +131,18 @@ function servicesHtml(config) {
   (hasHeading ? '<div class="section-head">' + (config.sectionName ? '<p class="section-lead">' + esc(config.sectionName) + '</p>' : "") + (config.headline ? '<h2 class="section-title">' + esc(config.headline) + '</h2>' : "") + (config.subheadline ? '<p class="section-lead">' + esc(config.subheadline) + '</p>' : "") + '</div>' : "") +
   (cards ? '<ul class="services-grid">' + cards + '</ul>' : "") + '</div></section>';
 }
+function quoteImageHtml(config) {
+ if (!config || (!String(config.imageUrl || "").trim() && !String(config.quote?.html || "").trim())) return "";
+ const image = String(config.imageUrl || "").trim(); const quote = String(config.quote?.html || "");
+ return '<section class="quote-image-section" id="quote-image"><div class="quote-image-layout">' + (image ? '<div class="quote-image-visual"><img src="' + esc(image) + '" alt=""></div>' : "") + (quote ? '<blockquote class="quote-image-quote">' + quote + '</blockquote>' : "") + '</div></section>';
+}
 function profileHtml(config) {
   const title = esc(config?.profile_title || "");
   const paragraphs = String(config?.profile_content || "").split(/\r?\n\s*\r?\n/).map(p => p.trim()).filter(Boolean);
   const content = paragraphs.map(p => "<p>" + esc(p).replace(/\r?\n/g, "<br>") + "</p>").join("");
   return '<!doctype html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + title + '</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-education-experience.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-services.css?v=1"></head><body><main class="about-profile-page"><article class="about-profile-inner"><h1>' + title + '</h1><div class="about-profile-content">' + content + '</div></article></main></body></html>';
 }
-function pageHtml(website, config, menuItems, heroConfig, aboutConfig, experienceConfig, servicesConfig) {
+function pageHtml(website, config, menuItems, heroConfig, aboutConfig, experienceConfig, servicesConfig, quoteImageConfig) {
   const brand = config?.brand_name || website.name || "Website";
   const logo = config?.logo_url ? `<img src="${esc(config.logo_url)}" alt="">` : "";
   const menus = (menuItems || []).filter(item => item.is_active !== false).map(item =>
@@ -153,7 +158,7 @@ function pageHtml(website, config, menuItems, heroConfig, aboutConfig, experienc
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-hero.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=2">
-<link rel="stylesheet" href="/assets/css/maxlab-education-experience.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-services.css?v=1">\n<style>
+<link rel="stylesheet" href="/assets/css/maxlab-education-experience.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-services.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-quote-image.css?v=1">\n<style>
 *{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
 /* Navbar color and controls aligned to Dokter Faisal reference: white surface, blue identity. */
 .site-nav{position:sticky;top:0;z-index:20;min-height:76px;padding:12px clamp(18px,5vw,72px);display:flex;align-items:center;justify-content:space-between;gap:24px;background:#fff;border-bottom:1px solid #d5e4f3;color:#14305a}
@@ -177,6 +182,7 @@ ${heroHtml(heroConfig)}
 ${aboutHtml(aboutConfig, website.slug)}
 ${experienceHtml(experienceConfig)}
 ${servicesHtml(servicesConfig)}
+${quoteImageHtml(quoteImageConfig)}
 <script>(function(){const b=document.getElementById("nav-toggle"),m=document.getElementById("site-menu");if(!b||!m)return;function setOpen(v){m.classList.toggle("is-open",v);b.setAttribute("aria-expanded",String(v));b.setAttribute("aria-label",v?"Tutup menu":"Buka menu")}b.addEventListener("click",()=>setOpen(!m.classList.contains("is-open")));m.addEventListener("click",e=>{if(e.target.closest("a"))setOpen(false)});document.addEventListener("keydown",e=>{if(e.key==="Escape")setOpen(false)});window.addEventListener("resize",()=>{if(window.innerWidth>767)setOpen(false)})})();</script>
 </body></html>`;
 }
@@ -206,9 +212,11 @@ export default async function handler(req, res) {
     const experienceConfig = experienceRows?.[0]?.config || null;
     const servicesRows = await db(`maxlab_services_configs?select=config,status&website_id=eq.${website.id}&limit=1`);
     const servicesConfig = servicesRows?.[0]?.config || null;
+    const quoteImageRows = await db(`maxlab_quote_image_configs?select=config,status&website_id=eq.${website.id}&limit=1`);
+    const quoteImageConfig = quoteImageRows?.[0]?.config || null;
     if (String(req.query?.view || "") === "profile") { if (!aboutConfig || !String(aboutConfig.profile_title || "").trim() || !String(aboutConfig.profile_content || "").trim()) return res.status(404).send("Halaman profil belum tersedia."); return res.status(200).send(profileHtml(aboutConfig)); }
 
-    return res.status(200).send(pageHtml(website, config, menuItems || [], heroConfig, aboutConfig, experienceConfig, servicesConfig));
+    return res.status(200).send(pageHtml(website, config, menuItems || [], heroConfig, aboutConfig, experienceConfig, servicesConfig, quoteImageConfig));
   } catch (error) {
     console.error("MaxLab SSR render error", error);
     return res.status(500).send("Gagal merender halaman website. Detail: " + String(error?.message || error).slice(0, 500));
