@@ -96,6 +96,7 @@ h1{margin:0 0 10px;font-size:26px}p{margin:0;color:#667085;line-height:1.7}
 <nav class="nav-links" id="site-menu" aria-label="Navigasi utama">${menus}</nav>${cta}
 <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Buka menu"><span></span><span></span><span></span></button></header>
 ${heroHtml(heroConfig)}
+${aboutHtml(aboutConfig, website.slug)}
 <script>(function(){const b=document.getElementById("nav-toggle"),m=document.getElementById("site-menu");if(!b||!m)return;function setOpen(v){m.classList.toggle("is-open",v);b.setAttribute("aria-expanded",String(v));b.setAttribute("aria-label",v?"Tutup menu":"Buka menu")}b.addEventListener("click",()=>setOpen(!m.classList.contains("is-open")));m.addEventListener("click",e=>{if(e.target.closest("a"))setOpen(false)});document.addEventListener("keydown",e=>{if(e.key==="Escape")setOpen(false)});window.addEventListener("resize",()=>{if(window.innerWidth>767)setOpen(false)})})();</script>
 </body></html>`;
 }
