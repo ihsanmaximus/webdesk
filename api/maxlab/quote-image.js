@@ -1,9 +1,25 @@
-import { isAdminAuthorized } from "../admin/auth.js";
+const { createHmac, timingSafeEqual } = require("node:crypto");
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const WEBSITE_SLUG = "maxlabtest";
 const DEFAULT_CONFIG = { imageUrl: "", quote: { type: "richtext", html: "" } };
+const SESSION_SECRET = process.env.WEBDESK_SESSION_SECRET || process.env.WEBDESK_ADMIN_TOKEN || "";
+const COOKIE_NAME = "webdesk_admin_session";
+
+function isAdminAuthorized(req) {
+  if (!SESSION_SECRET) return false;
+  const cookies = String(req.headers.cookie || "").split(";").map(x => x.trim());
+  const entry = cookies.find(x => x.startsWith(COOKIE_NAME + "="));
+  if (!entry) return false;
+  let raw;
+  try { raw = decodeURIComponent(entry.slice(COOKIE_NAME.length + 1)); } catch { return false; }
+  const [expires, signature] = raw.split(".");
+  if (!expires || !signature || !/^\\d+$/.test(expires) || Number(expires) < Math.floor(Date.now() / 1000)) return false;
+  const expected = Buffer.from(createHmac("sha256", SESSION_SECRET).update(expires).digest("base64url"));
+  const actual = Buffer.from(signature);
+  return expected.length === actual.length && timingSafeEqual(expected, actual);
+}
 
 function json(res, status, body) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -26,7 +42,7 @@ function sanitizeRichText(value) {
   const html = String(value || "").slice(0, 30000);
   return html
     .replace(/<(script|style|iframe|object|embed|form|svg|math)[^>]*>[\\s\\S]*?<\\/\\1\\s*>/gi, "")
-    .replace(/<!--([\\s\\S]*?)-->/g, "")
+    .replace(/<!--[\\s\\S]*?-->/g, "")
     .replace(/\\s+on[a-z]+\\s*=\\s*("[^"]*"|'[^']*'|[^\\s>]+)/gi, "")
     .replace(/javascript\\s*:/gi, "")
     .replace(/<(?!\\/?(?:p|br|strong|b|em|i|u|span|div|ul|ol|li)(?:\\s|>|\\/))[^>]*>/gi, "")
@@ -45,7 +61,7 @@ function normalize(input = {}) {
     quote: { type: "richtext", html: sanitizeRichText(row.quote?.html || "") }
   };
 }
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (!SUPABASE_URL || !SERVICE_KEY) return json(res, 503, { error: "Konfigurasi Supabase belum lengkap." });
   try {
     const sites = await db(`maxlab_websites?select=id,slug&slug=eq.${WEBSITE_SLUG}&limit=1`);
@@ -77,4 +93,4 @@ export default async function handler(req, res) {
     console.error("MaxLab Quote & Image API error", error);
     return json(res, error.status || 500, { error: error.message || "Gagal memproses Quote & Image." });
   }
-}
+};
