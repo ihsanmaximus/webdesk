@@ -41,7 +41,7 @@ function sanitizeRichText(value) {
 function normalize(input = {}) {
   const row = input && typeof input === "object" ? input : {};
   return {
-    imageUrl: String(row.imageUrl || "").trim().slice(0, 2000),
+    imageUrl: String(row.imageUrl || "").trim().slice(0, 2200000),
     quote: { type: "richtext", html: sanitizeRichText(row.quote?.html || "") }
   };
 }
