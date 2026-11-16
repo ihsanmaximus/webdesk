@@ -4,6 +4,7 @@ const sectionSeed = [
   { id: "about", name: "About", enabled: true, description: "Profil singkat dan tautan ke halaman profil lengkap." },
   { id: "experience", name: "Experience", enabled: true, description: "Pendidikan, pekerjaan, dan pengalaman profesional." },
   { id: "services", name: "Services", enabled: true, description: "Layanan atau informasi utama." },
+  { id: "quote-image", name: "Quote & Image", enabled: true, description: "Gambar di sisi kiri dan kutipan di sisi kanan." },
   { id: "portfolio", name: "Portfolio", enabled: true, description: "Karya dan pengalaman." },
   { id: "testimonials", name: "Testimonials", enabled: true, description: "Ulasan dan kepercayaan." },
   { id: "faq", name: "FAQ", enabled: true, description: "Pertanyaan yang sering diajukan." },
@@ -352,11 +353,56 @@ function renderExperienceFields() {
     ], experienceConfig.experience) +
     '</div>';
 }
+const quoteImageDefaults = { imageUrl: "", quote: { type: "richtext", html: "" } };
+let quoteImageConfig = JSON.parse(JSON.stringify(quoteImageDefaults));
+let quoteImageLoaded = false;
+async function loadQuoteImageConfig() {
+  if (quoteImageLoaded) return;
+  try {
+    const response = await fetch("/api/maxlab/quote-image", { cache: "no-store" });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Gagal memuat Quote & Image.");
+    const local = localStorage.getItem("maxlab:maxlabtest:quote-image:draft");
+    quoteImageConfig = { ...quoteImageDefaults, ...(data.config || {}), quote: { ...quoteImageDefaults.quote, ...(data.config?.quote || {}) }, ...(local ? JSON.parse(local) : {}) };
+    quoteImageLoaded = true;
+    if (state.activePage === "sections" && state.activeSection === "quote-image") render();
+  } catch (error) { const status = $("#quote-image-save-status"); if (status) status.textContent = error.message; }
+}
+function renderQuoteImageFields() {
+  const image = quoteImageConfig.imageUrl || "";
+  const html = quoteImageConfig.quote?.html || "";
+  return '<div class="quote-image-config"><div class="quote-image-fields-grid">' +
+    '<section class="quote-image-field-panel"><h4>01. Image</h4><label class="field"><span>Upload Image</span><input id="quote-image-file" type="file" accept="image/jpeg,image/png,image/webp"><small class="field-help">JPG, PNG, atau WebP. Maksimal 1,5 MB.</small></label><div class="quote-image-preview-wrap"><img id="quote-image-preview" src="' + escAttr(image) + '" alt="Preview gambar" ' + (image ? "" : "hidden") + '><span id="quote-image-empty" ' + (image ? "hidden" : "") + '>Preview gambar akan tampil di sini.</span></div></section>' +
+    '<section class="quote-image-field-panel"><h4>02. Quote</h4><div class="quote-rte-toolbar" role="toolbar" aria-label="Format teks quote"><button type="button" data-quote-command="bold"><strong>B</strong></button><button type="button" data-quote-command="italic"><em>I</em></button><button type="button" data-quote-command="underline"><u>U</u></button><label>A <input type="color" data-quote-color="foreColor" value="#2563eb" aria-label="Warna teks"></label><label>▰ <input type="color" data-quote-color="hiliteColor" value="#bfdbfe" aria-label="Warna highlight"></label></div><div id="quote-image-rte" class="quote-image-rte" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Tulis kutipan di sini...">' + html + '</div><small class="field-help">Pilih teks untuk memberi format bold, italic, underline, warna teks, atau highlight.</small></section>' +
+    '</div></div>';
+}
+function collectQuoteImageForm() { const editor = $("#quote-image-rte"); if (editor) quoteImageConfig.quote = { type: "richtext", html: editor.innerHTML }; return quoteImageConfig; }
+async function saveQuoteImageDatabase() {
+  const button = $("#quote-image-save-database"), status = $("#quote-image-save-status");
+  try {
+    if (button) { button.disabled = true; button.textContent = "Saving..."; }
+    const config = collectQuoteImageForm();
+    const response = await fetch("/api/maxlab/quote-image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ config }) });
+    const data = await response.json(); if (!response.ok) throw new Error(data.error || "Gagal menyimpan Quote & Image.");
+    quoteImageConfig = data.config; quoteImageLoaded = true; localStorage.removeItem("maxlab:maxlabtest:quote-image:draft");
+    if (status) status.textContent = "Quote & Image berhasil disimpan ke database."; if (button) button.textContent = "Saved ✓";
+  } catch (error) { if (status) status.textContent = error.message; if (button) button.textContent = "Save"; } finally { if (button) button.disabled = false; }
+}
+async function publishQuoteImage() {
+  const button = $("#quote-image-publish"), status = $("#quote-image-save-status");
+  try { if (button) { button.disabled = true; button.textContent = "Publishing..."; }
+    const response = await fetch("/api/maxlab/quote-image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "publish" }) });
+    const data = await response.json(); if (!response.ok) throw new Error(data.error || "Gagal memublikasikan Quote & Image.");
+    if (status) status.textContent = "Quote & Image berhasil dipublikasikan."; const page = window.open("/maxlab/maxlabtest/", "_blank"); if (!page && status) status.textContent += " Buka /maxlab/maxlabtest/ untuk melihat hasil."; if (button) button.textContent = "Published ✓";
+  } catch (error) { if (status) status.textContent = error.message; if (button) button.textContent = "Publish"; } finally { if (button) button.disabled = false; }
+}
+
 function renderSectionFields(section) {
   if (section.id === "hero") return renderHeroFields();
   if (section.id === "about") return renderAboutFields();
   if (section.id === "experience") return renderExperienceFields();
   if (section.id === "services") { if (!servicesConfigLoaded) loadServicesConfig(); return renderServicesFields(); }
+  if (section.id === "quote-image") { if (!quoteImageLoaded) loadQuoteImageConfig(); return renderQuoteImageFields(); }
   if (section.id !== "navbar") return `<div class="section-fields-placeholder"><strong>Field ${section.name}</strong><p>Konfigurasi section ini belum dikerjakan. Konfigurasi section ini belum dikerjakan.</p></div>`;
   return [
     '<div class="navbar-config-form">',
@@ -397,10 +443,10 @@ function renderWebsiteStructure() {
 
 function renderSections() {
   const section = state.sections.find(item => item.id === state.activeSection) || state.sections[0];
-  const statusId = state.activeSection === "hero" ? "hero-save-status" : state.activeSection === "about" ? "about-save-status" : state.activeSection === "experience" ? "experience-save-status" : state.activeSection === "services" ? "services-save-status" : "navbar-save-status";
-  const draftButton = state.activeSection === "hero" ? '<button class="secondary-button" id="hero-local-draft" type="button">Draft</button>' : state.activeSection === "about" ? '<button class="secondary-button" id="about-local-draft" type="button">Draft</button>' : state.activeSection === "experience" ? '<button class="secondary-button" id="experience-local-draft" type="button">Draft</button>' : state.activeSection === "services" ? '<button class="secondary-button" id="services-local-draft" type="button">Draft</button>' : '<button class="secondary-button" id="navbar-local-draft" type="button">Draft</button>';
-  const saveButton = state.activeSection === "hero" ? '<button class="secondary-button" id="hero-save-database" type="button">Save</button>' : state.activeSection === "about" ? '<button class="secondary-button" id="about-save-database" type="button">Save</button>' : state.activeSection === "experience" ? '<button class="secondary-button" id="experience-save" type="button">Save</button>' : state.activeSection === "services" ? '<button class="secondary-button" id="services-save-database" type="button">Save</button>' : '<button class="secondary-button" id="navbar-save-database" type="button">Save</button>';
-  const publishButton = state.activeSection === "services" ? '<button class="primary-button" id="services-publish" type="button">Publish</button>' : state.activeSection === "about" ? '<button class="primary-button" id="about-publish" type="button">Publish</button>' : '<button class="primary-button" id="navbar-publish" type="button">Publish</button>';
+  const statusId = state.activeSection === "hero" ? "hero-save-status" : state.activeSection === "about" ? "about-save-status" : state.activeSection === "experience" ? "experience-save-status" : state.activeSection === "services" ? "services-save-status" : state.activeSection === "quote-image" ? "quote-image-save-status" : "navbar-save-status";
+  const draftButton = state.activeSection === "hero" ? '<button class="secondary-button" id="hero-local-draft" type="button">Draft</button>' : state.activeSection === "about" ? '<button class="secondary-button" id="about-local-draft" type="button">Draft</button>' : state.activeSection === "experience" ? '<button class="secondary-button" id="experience-local-draft" type="button">Draft</button>' : state.activeSection === "services" ? '<button class="secondary-button" id="services-local-draft" type="button">Draft</button>' : state.activeSection === "quote-image" ? '<button class="secondary-button" id="quote-image-local-draft" type="button">Draft</button>' : '<button class="secondary-button" id="navbar-local-draft" type="button">Draft</button>';
+  const saveButton = state.activeSection === "hero" ? '<button class="secondary-button" id="hero-save-database" type="button">Save</button>' : state.activeSection === "about" ? '<button class="secondary-button" id="about-save-database" type="button">Save</button>' : state.activeSection === "experience" ? '<button class="secondary-button" id="experience-save" type="button">Save</button>' : state.activeSection === "services" ? '<button class="secondary-button" id="services-save-database" type="button">Save</button>' : state.activeSection === "quote-image" ? '<button class="secondary-button" id="quote-image-save-database" type="button">Save</button>' : '<button class="secondary-button" id="navbar-save-database" type="button">Save</button>';
+  const publishButton = state.activeSection === "services" ? '<button class="primary-button" id="services-publish" type="button">Publish</button>' : state.activeSection === "about" ? '<button class="primary-button" id="about-publish" type="button">Publish</button>' : state.activeSection === "quote-image" ? '<button class="primary-button" id="quote-image-publish" type="button">Publish</button>' : '<button class="primary-button" id="navbar-publish" type="button">Publish</button>';
   return `
     <div class="panel-heading section-config-header">
       <div class="section-config-title"><h3>${section.name}</h3><p>${section.description}</p><span class="section-save-status" id="${statusId}">Draft lokal belum disimpan.</span></div>
@@ -475,6 +521,19 @@ function bindInteractions() {
   $("#services-local-draft")?.addEventListener("click", () => { collectServicesForm(); localStorage.setItem("maxlab:maxlabtest:services:draft", JSON.stringify(servicesConfig)); const status=$("#services-save-status"); if(status) status.textContent="Draft Services tersimpan lokal di browser ini. Belum masuk database."; });
   $("#services-save-database")?.addEventListener("click", saveServicesDatabase);
   $("#services-publish")?.addEventListener("click", publishServices);
+  $("#quote-image-local-draft")?.addEventListener("click", () => { collectQuoteImageForm(); localStorage.setItem("maxlab:maxlabtest:quote-image:draft", JSON.stringify(quoteImageConfig)); const status = $("#quote-image-save-status"); if (status) status.textContent = "Draft Quote & Image tersimpan lokal di browser ini."; });
+  $("#quote-image-save-database")?.addEventListener("click", saveQuoteImageDatabase);
+  $("#quote-image-publish")?.addEventListener("click", publishQuoteImage);
+  $("#quote-image-file")?.addEventListener("change", async event => {
+    const file = event.target.files?.[0]; if (!file) return; const status = $("#quote-image-save-status");
+    if (!["image/jpeg","image/png","image/webp"].includes(file.type)) { if (status) status.textContent = "Format gambar harus JPG, PNG, atau WebP."; event.target.value = ""; return; }
+    if (file.size > 1572864) { if (status) status.textContent = "Ukuran gambar melebihi 1,5 MB."; event.target.value = ""; return; }
+    const encoded = await fileToBase64(file); const dataUrl = "data:" + file.type + ";base64," + encoded; quoteImageConfig.imageUrl = dataUrl;
+    const preview = $("#quote-image-preview"); if (preview) { preview.src = dataUrl; preview.hidden = false; } const empty = $("#quote-image-empty"); if (empty) empty.hidden = true;
+    if (status) status.textContent = "Gambar siap. Tekan Save untuk menyimpan ke database.";
+  });
+  document.querySelectorAll("[data-quote-command]").forEach(button => button.addEventListener("click", () => { $("#quote-image-rte")?.focus(); document.execCommand(button.dataset.quoteCommand, false, null); }));
+  document.querySelectorAll("[data-quote-color]").forEach(input => input.addEventListener("input", () => { $("#quote-image-rte")?.focus(); document.execCommand(input.dataset.quoteColor, false, input.value); }));
   document.querySelectorAll("[data-services-meta]").forEach(input => input.addEventListener("input", () => { servicesConfig[input.dataset.servicesMeta]=input.value; }));
   document.querySelectorAll("[data-services-index][data-services-key]").forEach(input => input.addEventListener("input", () => { servicesConfig.items[Number(input.dataset.servicesIndex)][input.dataset.servicesKey]=input.value; }));
   document.querySelectorAll("[data-services-icon]").forEach(button => button.addEventListener("click", () => { const index=Number(button.dataset.servicesIndex); servicesConfig.items[index].icon=button.dataset.servicesIcon; const card=button.closest(".services-field-card"); card.querySelectorAll("[data-services-icon]").forEach(option=>{const active=option===button;option.classList.toggle("is-selected",active);option.setAttribute("aria-pressed",active?"true":"false");}); const chosen=servicesIconLibrary.find(icon=>icon.id===button.dataset.servicesIcon); card.querySelector(".services-icon-picker__selected").innerHTML=chosen.svg+"<span>"+chosen.label+"</span>"; }));
