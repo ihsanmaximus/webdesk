@@ -38,7 +38,7 @@ let heroConfigCache = null;
 let heroConfigLoaded = false;
 let aboutConfigCache = null;
 let aboutConfigLoaded = false;
-const aboutDefaults = { sectionName:"", title:"", description:"", readMoreLabel:"", profileTitle:"", profileContent:"" };
+const aboutDefaults = { sectionName:"", title:"", description:"", readMoreLabel:"", profileTitle:"", profileContent:"", imageUrl:"" };
 const heroDefaults = { version:1, layout:"background-image", eyebrow:"", headline:"", subheadline:"", primaryCtaEnabled:true, primaryCtaLabel:"", primaryCtaTarget:"", secondaryCtaEnabled:false, secondaryCtaLabel:"", secondaryCtaTarget:"", imageUrl:"", imageAlt:"", gradientEnabled:true };
 function escAttr(value) { return String(value ?? "").replace(/[&<>"\']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[ch])); }
 function sanitizeHeroPlaceholders(config) {
@@ -143,7 +143,7 @@ function renderAboutFields(){
  '</div></div><div class="navbar-field-group"><h4>Halaman Profil Lengkap</h4><div class="form-grid">' +
  aboutInput("Judul Halaman Profil","profileTitle",c.profileTitle,true) +
  '<label class="field field--full"><span>Isi Profil</span><textarea data-about-field="profileContent" rows="10">' + escAttr(c.profileContent) + '</textarea></label>' +
- '</div></div></div>';
+ '</div></div><div class="navbar-field-group"><h4>Gambar About</h4><div class="form-grid"><label class="field field--full"><span>Upload Gambar About</span><input id="about-image-file" type="file" accept="image/jpeg,image/png,image/webp"><small class="field-help">Format JPG, PNG, WebP. Maksimal 3 MB.</small><div id="about-upload-status" class="field-help"></div><img id="about-image-preview" alt="Preview gambar About" src="' + escAttr(c.imageUrl) + '" style="' + (c.imageUrl ? "display:block;" : "display:none;") + 'max-width:100%;max-height:220px;object-fit:cover;border-radius:10px"></label></div></div></div>';
 }
 function collectAboutForm(){const c={...aboutDefaults,...(aboutConfigCache||{})};document.querySelectorAll("[data-about-field]").forEach(el=>c[el.dataset.aboutField]=el.value);aboutConfigCache=c;return c;}
 async function loadAboutConfig(){if(aboutConfigLoaded)return;try{const r=await fetch("/api/maxlab/about",{cache:"no-store"});const d=await r.json();if(!r.ok)throw new Error(d.error||"Gagal memuat About");const local=localStorage.getItem("maxlab:maxlabtest:about:draft");aboutConfigCache={...aboutDefaults,...(d.config||{}),...(local?JSON.parse(local):{})};aboutConfigLoaded=true;if(state.activePage==="sections"&&state.activeSection==="about")render();}catch(e){const status=$("#about-save-status");if(status)status.textContent=e.message;}}
@@ -255,6 +255,21 @@ function bindInteractions() {
   $("#about-local-draft")?.addEventListener("click", saveAboutLocalDraft);
   $("#about-save-database")?.addEventListener("click", saveAboutDatabase);
   $("#about-publish")?.addEventListener("click", publishAbout);
+  const aboutFile = $("#about-image-file");
+  if (aboutFile) aboutFile.addEventListener("change", async () => {
+    const file = aboutFile.files?.[0]; if (!file) return;
+    const status = $("#about-upload-status"), preview = $("#about-image-preview");
+    if (!["image/jpeg","image/png","image/webp"].includes(file.type) || file.size > 3*1024*1024) { status.textContent = "Pilih JPG, PNG, atau WebP maksimal 3 MB."; aboutFile.value = ""; return; }
+    try {
+      status.textContent = "Mengunggah gambar...";
+      const base64 = await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(",")[1]);reader.onerror=()=>reject(new Error("File gagal dibaca."));reader.readAsDataURL(file);});
+      const response = await fetch("/api/maxlab/hero-upload",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({fileName:file.name,mimeType:file.type,data:base64,section:"about"})});
+      const result = await response.json(); if(!response.ok) throw new Error(result.error||"Upload gagal.");
+      aboutConfigCache = {...(aboutConfigCache||aboutDefaults), imageUrl:result.publicUrl};
+      status.textContent = "Upload berhasil. URL gambar tersimpan di Draft lokal saat menekan Draft.";
+      if(preview){preview.src=result.publicUrl;preview.style.display="block";}
+    } catch(error){status.textContent=error.message;}
+  });
   const heroFile = $("#hero-background-file");
   if (heroFile) heroFile.addEventListener("change", async () => {
     const file = heroFile.files?.[0]; if (!file) return;
