@@ -22,16 +22,12 @@ async function db(path, options = {}) {
   return data;
 }
 const defaults = {
-  version: 1, layout: "background-image", eyebrow: "", headline: "Bangun Sesuatu yang Luar Biasa",
-  subheadline: "Perkenalkan bisnis Anda dengan pesan yang jelas, menarik, dan mudah diingat.",
-  primaryCtaEnabled: true, primaryCtaLabel: "Hubungi Kami", primaryCtaTarget: "#contact",
-  secondaryCtaEnabled: false, secondaryCtaLabel: "Pelajari Lebih Lanjut", secondaryCtaTarget: "#about",
-  points: [
-    { icon: "people", text: "Kesehatan Anak Menyeluruh" },
-    { icon: "shield", text: "Pendekatan Tepat & Aman" },
-    { icon: "heart", text: "Ramah Anak & Keluarga" }
-  ],
-  imageUrl: "", imageAlt: "Background Hero", gradientEnabled: true
+  version: 1, layout: "background-image", eyebrow: "", headline: "",
+  subheadline: "",
+  primaryCtaEnabled: true, primaryCtaLabel: "", primaryCtaTarget: "",
+  secondaryCtaEnabled: false, secondaryCtaLabel: "", secondaryCtaTarget: "",
+  points: [],
+  imageUrl: "", imageAlt: "", gradientEnabled: true
 };
 function normalize(input = {}) {
   const c = { ...defaults, ...(input && typeof input === "object" ? input : {}) };
@@ -48,7 +44,7 @@ export default async function handler(req, res) {
     if (!sites?.length) return json(res, 404, { error: "Website MaxLab tidak ditemukan." });
     if (req.method === "GET") {
       const rows = await db(`maxlab_hero_configs?select=config,updated_at&website_id=eq.${sites[0].id}&limit=1`);
-      return json(res, 200, { config: normalize(rows?.[0]?.config || defaults), updatedAt: rows?.[0]?.updated_at || null });
+      return json(res, 200, { config: rows?.[0]?.config ? normalize(rows[0].config) : null, updatedAt: rows?.[0]?.updated_at || null });
     }
     if (req.method !== "POST") { res.setHeader("Allow", "GET, POST"); return json(res, 405, { error: "Method not allowed." }); }
     if (!isAdminAuthorized(req)) return json(res, 401, { error: "Sesi admin tidak valid. Silakan login kembali." });
