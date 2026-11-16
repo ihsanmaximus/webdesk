@@ -251,10 +251,16 @@ function renderWebsiteStructure() {
 
 function renderSections() {
   const section = state.sections.find(item => item.id === state.activeSection) || state.sections[0];
+  const statusId = state.activeSection === "hero" ? "hero-save-status" : state.activeSection === "about" ? "about-save-status" : state.activeSection === "experience" ? "experience-save-status" : "navbar-save-status";
+  const draftButton = state.activeSection === "hero" ? '<button class="secondary-button" id="hero-local-draft" type="button">Draft</button>' : state.activeSection === "about" ? '<button class="secondary-button" id="about-local-draft" type="button">Draft</button>' : state.activeSection === "experience" ? '<button class="secondary-button" id="experience-local-draft" type="button">Draft</button>' : '<button class="secondary-button" id="navbar-local-draft" type="button">Draft</button>';
+  const saveButton = state.activeSection === "hero" ? '<button class="secondary-button" id="hero-save-database" type="button">Save</button>' : state.activeSection === "about" ? '<button class="secondary-button" id="about-save-database" type="button">Save</button>' : state.activeSection === "experience" ? '<button class="secondary-button" id="experience-save" type="button">Save</button>' : '<button class="secondary-button" id="navbar-save-database" type="button">Save</button>';
+  const publishButton = state.activeSection === "about" ? '<button class="primary-button" id="about-publish" type="button">Publish</button>' : '<button class="primary-button" id="navbar-publish" type="button">Publish</button>';
   return `
-    <div class="panel-heading"><div><h3>${section.name}</h3><p>${section.description}</p></div></div>
-    <div class="accordion-body configurator-section-body">${renderSectionFields(section)}</div>
-    <div class="form-actions section-form-actions"><span id="${state.activeSection === "hero" ? "hero-save-status" : state.activeSection === "about" ? "about-save-status" : state.activeSection === "experience" ? "experience-save-status" : "navbar-save-status"}">Draft lokal belum disimpan.</span><div class="button-group">${state.activeSection === "hero" ? `<button class="secondary-button" id="hero-local-draft" type="button">Draft</button><button class="secondary-button" id="hero-save-database" type="button">Save</button>` : state.activeSection === "about" ? `<button class="secondary-button" id="about-local-draft" type="button">Draft</button><button class="secondary-button" id="about-save-database" type="button">Save</button>` : state.activeSection === "experience" ? `<button class="secondary-button" id="experience-local-draft" type="button">Draft</button><button class="secondary-button" id="experience-save" type="button">Save</button>` : `<button class="secondary-button" id="navbar-local-draft" type="button">Draft</button><button class="secondary-button" id="navbar-save-database" type="button">Save</button>`}${state.activeSection === "about" ? `<button class="primary-button" id="about-publish" type="button">Publish</button>` : `<button class="primary-button" id="navbar-publish" type="button">Publish</button>`}</div></div>`;
+    <div class="panel-heading section-config-header">
+      <div class="section-config-title"><h3>${section.name}</h3><p>${section.description}</p><span class="section-save-status" id="${statusId}">Draft lokal belum disimpan.</span></div>
+      <div class="section-config-actions">${draftButton}${saveButton}${publishButton}</div>
+    </div>
+    <div class="accordion-body configurator-section-body">${renderSectionFields(section)}</div>`;
 }
 
 function renderSeo() {
