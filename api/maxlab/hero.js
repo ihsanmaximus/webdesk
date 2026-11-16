@@ -26,6 +26,11 @@ const defaults = {
   subheadline: "Perkenalkan bisnis Anda dengan pesan yang jelas, menarik, dan mudah diingat.",
   primaryCtaEnabled: true, primaryCtaLabel: "Hubungi Kami", primaryCtaTarget: "#contact",
   secondaryCtaEnabled: false, secondaryCtaLabel: "Pelajari Lebih Lanjut", secondaryCtaTarget: "#about",
+  points: [
+    { icon: "people", text: "Kesehatan Anak Menyeluruh" },
+    { icon: "shield", text: "Pendekatan Tepat & Aman" },
+    { icon: "heart", text: "Ramah Anak & Keluarga" }
+  ],
   imageUrl: "", imageAlt: "Background Hero", gradientEnabled: true
 };
 function normalize(input = {}) {
