@@ -47,7 +47,18 @@ function heroHtml(config) {
   const cssVars = `--hero-image:url('${image}');--hero-background:${esc(c.backgroundColor || "#eaf5fc")};--hero-text:${esc(c.textColor || "#14305a")};--hero-accent:${esc(c.accentColor || "#b4c540")};--hero-eyebrow-color:${esc(c.eyebrowColor || "#176b9b")};--hero-headline-color:${esc(c.headlineColor || "#123d63")};--hero-description-color:${esc(c.descriptionColor || "#405c73")};--hero-alignment:${esc(c.alignment || "left")}`;
   return `<section class="hero-section ${esc(layoutClass)} ${heightClass}${c.gradientEnabled ? "" : " no-gradient"}" style="${cssVars}">${gradient}<div class="hero-inner">${layout}</div></section>`;
 }
-function aboutHtml(config, slug) {\n  if (!config) return "";\n  const c = config;\n  const image = "https://raw.githubusercontent.com/ihsanmaximus/dokter-faisal/main/assets/images/about-teddy.jpg";\n  return `<section class="about-section" id="about"><div class="container about-inner"><div><div class="section-head"><h2 class="section-title">${esc(c.section_name || "Tentang")}</h2></div><h3 class="about-copy-title">${esc(c.title || "")}</h3><p class="about-description">${esc(c.description || "")}</p><a class="about-read-more" href="/maxlab/${esc(slug)}/profil">${esc(c.read_more_label || "Profil Lengkap")} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div><img class="about-photo" src="${image}" alt="" loading="lazy"></div></section>`;\n}\nfunction profileHtml(config) {\n  const title = esc(config?.profile_title || "Profil Lengkap");\n  const content = String(config?.profile_content || "").split(/\\r?\\n\\s*\\r?\\n/).map(p => p.trim()).filter(Boolean).map(p => `<p>${esc(p).replace(/\\r?\\n/g,"<br>")}</p>`).join("");\n  return `<!doctype html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${title}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/assets/css/maxlab-about.css?v=1"></head><body><main class="about-profile-page"><article class="about-profile-inner"><h1>${title}</h1><div class="about-profile-content">${content}</div></article></main></body></html>`;\n}\nfunction pageHtml(website, config, menuItems, heroConfig, aboutConfig) {
+function aboutHtml(config, slug) {
+  if (!config) return "";
+  const image = "https://raw.githubusercontent.com/ihsanmaximus/dokter-faisal/main/assets/images/about-teddy.jpg";
+  return '<section class="about-section" id="about"><div class="container about-inner"><div><div class="section-head"><h2 class="section-title">' + esc(config.section_name || "Tentang") + '</h2></div><h3 class="about-copy-title">' + esc(config.title || "") + '</h3><p class="about-description">' + esc(config.description || "") + '</p><a class="about-read-more" href="/maxlab/' + esc(slug) + '/profil">' + esc(config.read_more_label || "Profil Lengkap") + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div><img class="about-photo" src="' + image + '" alt="" loading="lazy"></div></section>';
+}
+function profileHtml(config) {
+  const title = esc(config?.profile_title || "Profil Lengkap");
+  const paragraphs = String(config?.profile_content || "").split(/\r?\n\s*\r?\n/).map(p => p.trim()).filter(Boolean);
+  const content = paragraphs.map(p => "<p>" + esc(p).replace(/\r?\n/g, "<br>") + "</p>").join("");
+  return '<!doctype html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + title + '</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/assets/css/maxlab-about.css?v=1"></head><body><main class="about-profile-page"><article class="about-profile-inner"><h1>' + title + '</h1><div class="about-profile-content">' + content + '</div></article></main></body></html>';
+}
+function pageHtml(website, config, menuItems, heroConfig, aboutConfig) {
   const brand = config?.brand_name || website.name || "Website";
   const logo = config?.logo_url ? `<img src="${esc(config.logo_url)}" alt="">` : "";
   const menus = (menuItems || []).filter(item => item.is_active !== false).map(item =>
@@ -62,7 +73,7 @@ function aboutHtml(config, slug) {\n  if (!config) return "";\n  const c = confi
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/assets/css/maxlab-hero.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=1">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/assets/css/maxlab-hero.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=1">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
 /* Navbar color and controls aligned to Dokter Faisal reference: white surface, blue identity. */
@@ -108,8 +119,11 @@ export default async function handler(req, res) {
     // Load the saved Hero configuration for this website and pass it to the renderer.
     const heroRows = await db(`maxlab_hero_configs?select=config&website_id=eq.${website.id}&limit=1`);
     const heroConfig = heroRows?.[0]?.config || null;
+    const aboutRows = await db(`maxlab_about_configs?select=*&website_id=eq.${website.id}&limit=1`);
+    const aboutConfig = aboutRows?.[0] || null;
+    if (String(req.query?.view || "") === "profile") return res.status(200).send(profileHtml(aboutConfig));
 
-    return res.status(200).send(pageHtml(website, config, menuItems || [], heroConfig));
+    return res.status(200).send(pageHtml(website, config, menuItems || [], heroConfig, aboutConfig));
   } catch (error) {
     console.error("MaxLab SSR render error", error);
     return res.status(500).send("Gagal merender halaman website.");
