@@ -68,7 +68,7 @@ function pageHtml(website, config, menuItems, heroConfig, aboutConfig) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/assets/css/maxlab-hero.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=1">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-hero.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=2">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
 /* Navbar color and controls aligned to Dokter Faisal reference: white surface, blue identity. */
