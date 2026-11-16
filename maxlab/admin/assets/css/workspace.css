@@ -327,3 +327,33 @@
   background: #2870ff;
   box-shadow: 0 0 0 3px rgb(40 112 255 / 13%);
 }
+
+
+/* Section configurator actions sit in the header, outside the fields card */
+.section-config-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.section-config-title { min-width: 0; }
+.section-config-title h3 { margin: 0; }
+.section-config-title p { margin: 6px 0 0; }
+.section-save-status {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--ml-muted);
+  font-size: 12px;
+}
+.section-config-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+@media (max-width: 760px) {
+  .section-config-header { flex-direction: column; align-items: stretch; gap: 12px; }
+  .section-config-actions { justify-content: flex-start; flex-wrap: wrap; }
+}
