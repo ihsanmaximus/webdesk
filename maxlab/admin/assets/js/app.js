@@ -132,6 +132,15 @@ function renderGeneral() {
     <div class="form-actions"><span>Database belum dibuat. Form ini merupakan rancangan antarmuka.</span><button class="primary-button" disabled>Save General Setup</button></div>`;
 }
 
+async function fileToBase64(file){
+ const buffer=await file.arrayBuffer();
+ const bytes=new Uint8Array(buffer);
+ let binary="";
+ for(let offset=0;offset<bytes.length;offset+=0x8000){
+  binary+=String.fromCharCode(...bytes.subarray(offset,offset+0x8000));
+ }
+ return btoa(binary);
+}
 function aboutInput(label,key,value,full=false){return '<label class="field ' + (full?"field--full":"") + '"><span>' + label + '</span><input data-about-field="' + key + '" type="text" value="' + escAttr(value??"") + '"></label>';}
 function renderAboutFields(){
  const c=aboutConfigCache||aboutDefaults;
@@ -149,7 +158,7 @@ function collectAboutForm(){const c={...aboutDefaults,...(aboutConfigCache||{})}
 async function loadAboutConfig(){if(aboutConfigLoaded)return;try{const r=await fetch("/api/maxlab/about",{cache:"no-store"});const d=await r.json();if(!r.ok)throw new Error(d.error||"Gagal memuat About");const local=localStorage.getItem("maxlab:maxlabtest:about:draft");aboutConfigCache={...aboutDefaults,...(d.config||{}),...(local?JSON.parse(local):{})};aboutConfigLoaded=true;if(state.activePage==="sections"&&state.activeSection==="about")render();}catch(e){const status=$("#about-save-status");if(status)status.textContent=e.message;}}
 async function saveAboutLocalDraft(){const b=$("#about-local-draft"),status=$("#about-save-status");try{b.disabled=true;localStorage.setItem("maxlab:maxlabtest:about:draft",JSON.stringify(collectAboutForm()));status.textContent="Draft About tersimpan di browser ini.";}catch(e){status.textContent=e.message;}finally{b.disabled=false;}}
 async function saveAboutDatabase(){const b=$("#about-save-database"),status=$("#about-save-status");try{b.disabled=true;b.textContent="Saving...";const config=collectAboutForm();const r=await fetch("/api/maxlab/about",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({config})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Gagal menyimpan About");aboutConfigCache={...aboutDefaults,...d.config};aboutConfigLoaded=true;localStorage.removeItem("maxlab:maxlabtest:about:draft");status.textContent="About berhasil disimpan ke database.";b.textContent="Saved ✓";}catch(e){status.textContent=e.message;b.textContent="Save";}finally{b.disabled=false;}}
-async function publishAbout(){const b=$("#about-publish"),status=$("#about-save-status");try{b.disabled=true;b.textContent="Publishing...";const r=await fetch("/api/maxlab/about",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"publish"})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Gagal publish About");status.textContent="About berhasil dipublikasikan.";b.textContent="Published ✓";}catch(e){status.textContent=e.message;b.textContent="Publish";}finally{b.disabled=false;}}
+function publishAbout(){const status=$("#about-save-status");const page=window.open("/maxlab/maxlabtest/","_blank");if(page)status.textContent="Frontend dibuka di tab baru. Data yang sudah di-Save akan tampil setelah halaman dimuat ulang.";else status.textContent="Browser memblokir tab baru. Izinkan pop-up untuk Webdesk lalu tekan Publish lagi."; }
 
 function renderSectionFields(section) {
   if (section.id === "hero") return renderHeroFields();
@@ -262,11 +271,11 @@ function bindInteractions() {
     if (!["image/jpeg","image/png","image/webp"].includes(file.type) || file.size > 3*1024*1024) { status.textContent = "Pilih JPG, PNG, atau WebP maksimal 3 MB."; aboutFile.value = ""; return; }
     try {
       status.textContent = "Mengunggah gambar...";
-      const base64 = await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(",")[1]);reader.onerror=()=>reject(new Error("File gagal dibaca."));reader.readAsDataURL(file);});
+      const base64 = await fileToBase64(file);
       const response = await fetch("/api/maxlab/hero-upload",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({fileName:file.name,mimeType:file.type,data:base64,section:"about"})});
       const result = await response.json(); if(!response.ok) throw new Error(result.error||"Upload gagal.");
       aboutConfigCache = {...(aboutConfigCache||aboutDefaults), imageUrl:result.publicUrl};
-      status.textContent = "Upload berhasil. URL gambar tersimpan di Draft lokal saat menekan Draft.";
+      status.textContent = "Upload berhasil. Gambar siap disimpan bersama field About melalui tombol Save.";
       if(preview){preview.src=result.publicUrl;preview.style.display="block";}
     } catch(error){status.textContent=error.message;}
   });
