@@ -40,11 +40,17 @@
       <nav class="sidebar__nav" aria-label="Navigasi utama">
         <div class="sidebar__group">
           <p class="sidebar__label">Website</p>
-          <button class="nav-item is-active" data-page="general"><span class="nav-item__number">01</span><span class="nav-item__icon">⚙</span><span>General Setup</span></button>
-          <button class="nav-item" data-page="structure"><span class="nav-item__number">02</span><span class="nav-item__icon">▱</span><span>Website Structure</span></button>
+          <button class="nav-item nav-item--parent is-active" data-page="general">
+            <svg class="nav-item__svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 2.9-.2-.1a1.7 1.7 0 0 0-1.8.1 1.7 1.7 0 0 0-.9 1.5v.2H9v-.2a1.7 1.7 0 0 0-.9-1.5 1.7 1.7 0 0 0-1.8-.1l-.2.1-1.7-2.9.1-.1A1.7 1.7 0 0 0 4.8 15a1.7 1.7 0 0 0-1.4-1H3v-3h.4a1.7 1.7 0 0 0 1.4-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 1.7-2.9.2.1a1.7 1.7 0 0 0 1.8-.1A1.7 1.7 0 0 0 9 3.6v-.2h6v.2a1.7 1.7 0 0 0 .9 1.5 1.7 1.7 0 0 0 1.8.1l.2-.1 1.7 2.9-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.4 1h.4v3h-.4a1.7 1.7 0 0 0-1.2 1z"/></svg>
+            <span>General Setup</span>
+          </button>
+          <button class="nav-item nav-item--parent" data-page="structure">
+            <svg class="nav-item__svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1.5"/><rect x="3" y="15" width="18" height="5" rx="1.5"/><path d="M8 9v6m8-6v6"/></svg>
+            <span>Website Structure</span>
+          </button>
         </div>
-        <div class="sidebar__group">
-          <p class="sidebar__label">Configurator</p>
+        <div class="sidebar__group sidebar__group--configurator">
+          <div class="sidebar__label sidebar__label--parent"><svg class="nav-item__svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/><circle cx="9" cy="5" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="7" cy="19" r="2"/></svg><span>Configurator</span></div>
           <div class="sidebar__children">
             <button class="nav-item nav-item--child" data-page="sections" data-section="navbar"><span>Navbar</span></button>
             <button class="nav-item nav-item--child" data-page="sections" data-section="hero"><span>Hero</span></button>
@@ -60,7 +66,7 @@
         </div>
         <div class="sidebar__group">
           <p class="sidebar__label">Website</p>
-          <button class="nav-item" data-page="seo"><span class="nav-item__number">03</span><span class="nav-item__icon">⌕</span><span>SEO</span></button>
+          <button class="nav-item nav-item--parent" data-page="seo"><svg class="nav-item__svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5M8 10.8h5.6M10.8 8v5.6"/></svg><span>SEO</span></button>
         </div>
       </nav>
       <div class="sidebar__footer"><span>PAIRED WEBSITE WORKSPACE</span><strong>MAXLAB · V1.0</strong></div>
