@@ -25,9 +25,9 @@ function json(res, status, body) {
   return res.status(status).json(body);
 }
 async function db(path, options = {}) {
-  const response = await fetch(\`\${SUPABASE_URL}/rest/v1/\${path}\`, {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     ...options,
-    headers: { apikey: SERVICE_KEY, Authorization: \`Bearer \${SERVICE_KEY}\`, Accept: "application/json", ...(options.headers || {}) },
+    headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, Accept: "application/json", ...(options.headers || {}) },
     cache: "no-store"
   });
   const raw = await response.text();
@@ -48,7 +48,7 @@ function sanitizeRichText(value) {
     const safe = style.split(";").map(rule => rule.trim()).filter(rule =>
       /^(color|background-color)\s*:\s*(#[0-9a-f]{3,8}|[a-z]{3,20}|rgba?\([0-9.,%\s]+\))$/i.test(rule)
     ).join(";");
-    return safe ? \` style="\${safe}"\` : "";
+    return safe ? ` style="${safe}"` : "";
   });
   return html;
 }
@@ -62,18 +62,18 @@ function normalize(input = {}) {
 module.exports = async function handler(req, res) {
   if (!SUPABASE_URL || !SERVICE_KEY) return json(res, 503, { error: "Konfigurasi Supabase belum lengkap." });
   try {
-    const sites = await db(\`maxlab_websites?select=id,slug&slug=eq.\${WEBSITE_SLUG}&limit=1\`);
+    const sites = await db(`maxlab_websites?select=id,slug&slug=eq.${WEBSITE_SLUG}&limit=1`);
     if (!sites?.length) return json(res, 404, { error: "Website MaxLab tidak ditemukan." });
     const websiteId = sites[0].id;
     if (req.method === "GET") {
-      const rows = await db(\`maxlab_quote_image_configs?select=config,status,updated_at&website_id=eq.\${websiteId}&limit=1\`);
+      const rows = await db(`maxlab_quote_image_configs?select=config,status,updated_at&website_id=eq.${websiteId}&limit=1`);
       return json(res, 200, { config: rows?.[0] ? normalize(rows[0].config) : DEFAULT_CONFIG, status: rows?.[0]?.status || null, updatedAt: rows?.[0]?.updated_at || null });
     }
     if (req.method !== "POST") { res.setHeader("Allow", "GET, POST"); return json(res, 405, { error: "Method not allowed." }); }
     if (!isAdminAuthorized(req)) return json(res, 401, { error: "Sesi admin tidak valid. Silakan login kembali." });
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
     if (body.action === "publish") {
-      const rows = await db(\`maxlab_quote_image_configs?website_id=eq.\${websiteId}&select=id,status\`, {
+      const rows = await db(`maxlab_quote_image_configs?website_id=eq.${websiteId}&select=id,status`, {
         method: "PATCH", headers: { "Content-Type": "application/json", Prefer: "return=representation" },
         body: JSON.stringify({ status: "published", updated_at: new Date().toISOString() })
       });
