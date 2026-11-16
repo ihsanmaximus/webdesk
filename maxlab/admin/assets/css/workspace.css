@@ -115,3 +115,21 @@
   .experience-entry-fields { grid-template-columns: minmax(0, 1fr); }
   .experience-entry-fields .field--full { grid-column: auto; }
 }
+
+
+/* Sidebar child navigation for section configurators */
+.sidebar__children {
+  display: grid;
+  gap: 5px;
+  margin: 2px 0 0 17px;
+  padding-left: 13px;
+  border-left: 1px solid #263653;
+}
+.nav-item--child {
+  min-height: 38px;
+  padding: 9px 12px;
+  font-size: 13px;
+}
+.nav-item--child .nav-item__number,
+.nav-item--child .nav-item__icon { display: none; }
+.configurator-section-body { margin-top: 4px; }
