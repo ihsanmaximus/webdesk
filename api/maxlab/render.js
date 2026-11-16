@@ -68,7 +68,7 @@ function pageHtml(website, config, menuItems, heroConfig, aboutConfig) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-hero.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=2">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-global.css?v=1">\n<link rel="stylesheet" href="/assets/css/maxlab-hero.css?v=2">\n<link rel="stylesheet" href="/assets/css/maxlab-about.css?v=2">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
 /* Navbar color and controls aligned to Dokter Faisal reference: white surface, blue identity. */
@@ -78,7 +78,6 @@ function pageHtml(website, config, menuItems, heroConfig, aboutConfig) {
 .nav-links a:hover{color:#0b5cad}.cta{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border-radius:999px;background:#0b5cad;color:#fff;text-decoration:none;font-size:14px;font-weight:700;white-space:nowrap}
 .nav-toggle{display:none;width:44px;height:44px;padding:9px;border:0;border-radius:9px;background:transparent;color:#0b5cad;cursor:pointer}
 .nav-toggle span{display:block;height:2.5px;margin:6px 0;background:currentColor;border-radius:2px;transition:transform .2s ease,opacity .2s ease}
-h1{margin:0 0 10px;font-size:26px}p{margin:0;color:#667085;line-height:1.7}
 @media(max-width:767px){.site-nav{min-height:68px;padding:12px 18px;gap:12px;background:#fff;border-bottom:1px solid #d5e4f3}.brand{font-size:16px;flex:1;color:#083a73}.brand img{width:42px;height:42px;flex-basis:42px}.nav-toggle{display:block;flex:0 0 44px;color:#0b5cad}.site-nav>.cta{display:none}
 .nav-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(8px) rotate(45deg)}.nav-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}.nav-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
 .nav-links{position:absolute;top:100%;left:0;right:0;display:none;flex-direction:column;align-items:stretch;gap:0;padding:8px 18px 16px;background:#fff;border-top:1px solid #d5e4f3;box-shadow:0 12px 24px rgba(8,58,115,.12)}
