@@ -15,7 +15,9 @@ export default async function handler(req,res){
   if(!encoded||encoded.length>14*1024*1024)return json(res,400,{error:"Ukuran gambar maksimal 10 MB."});
   const bytes=Buffer.from(encoded,"base64");
   if(!bytes.length||bytes.length>10*1024*1024)return json(res,400,{error:"Ukuran gambar maksimal 10 MB."});
-  const path=`maxlab/hero/background-${Date.now()}.${allowed[mime]}`;
+  const section=String(body.section||"hero");
+  if(!["hero","about"].includes(section))return json(res,400,{error:"Section upload tidak valid."});
+  const path=`maxlab/${section}/${section==="hero"?"background":"image"}-${Date.now()}.${allowed[mime]}`;
   const response=await fetch(`${SUPABASE_URL}/storage/v1/object/minisite-assets/${path}`,{method:"POST",headers:{apikey:SERVICE_KEY,Authorization:`Bearer ${SERVICE_KEY}`,"Content-Type":mime,"x-upsert":"false"},body:bytes});
   const raw=await response.text();let result={};try{result=raw?JSON.parse(raw):{};}catch{}
   if(!response.ok)throw new Error(result.message||result.error||"Supabase Storage menolak upload.");
