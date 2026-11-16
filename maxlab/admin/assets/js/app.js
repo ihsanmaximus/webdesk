@@ -411,14 +411,34 @@ function bindInteractions() {
   }));
   document.querySelectorAll("[data-experience-add]").forEach(button => button.addEventListener("click", () => {
     const group = button.dataset.experienceAdd;
+    const openGroups = [...document.querySelectorAll(".experience-subaccordion")]
+      .filter(item => item.open)
+      .map(item => item.querySelector("[data-experience-add]")?.dataset.experienceAdd)
+      .filter(Boolean);
+    const scrollTop = window.scrollY;
     const blank = group === "education" ? {label:"",degree:"",faculty:"",institution:""} : group === "work" ? {position:"",institution:"",period:"",current:false} : {role:"",organization:"",detail:""};
     experienceConfig[group].push(blank);
     render();
+    document.querySelectorAll(".experience-subaccordion").forEach(item => {
+      const key = item.querySelector("[data-experience-add]")?.dataset.experienceAdd;
+      item.open = key === group || openGroups.includes(key);
+    });
+    window.scrollTo({ top: scrollTop, behavior: "instant" });
   }));
   document.querySelectorAll("[data-experience-remove]").forEach(button => button.addEventListener("click", () => {
     const group = button.dataset.experienceRemove;
+    const openGroups = [...document.querySelectorAll(".experience-subaccordion")]
+      .filter(item => item.open)
+      .map(item => item.querySelector("[data-experience-add]")?.dataset.experienceAdd)
+      .filter(Boolean);
+    const scrollTop = window.scrollY;
     experienceConfig[group].splice(Number(button.dataset.experienceIndex), 1);
     render();
+    document.querySelectorAll(".experience-subaccordion").forEach(item => {
+      const key = item.querySelector("[data-experience-add]")?.dataset.experienceAdd;
+      item.open = openGroups.includes(key);
+    });
+    window.scrollTo({ top: scrollTop, behavior: "instant" });
   }));
   const aboutFile = $("#about-image-file");
   if (aboutFile) aboutFile.addEventListener("change", async () => {
