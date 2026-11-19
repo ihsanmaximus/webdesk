@@ -18,6 +18,10 @@
   ],
   "rewrites": [
     {
+      "source": "/inv-online/:slug",
+      "destination": "/inv-online/frontend/index.html"
+    },
+    {
       "source": "/maxlab/:slug/profil",
       "destination": "/api/maxlab/render?slug=:slug&view=profile"
     },
